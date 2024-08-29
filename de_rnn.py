@@ -251,7 +251,7 @@ def preprocess_data(dataset_type, LOCAL_PATH_TO_FILE, testing_set_proportion):
 
 def train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, dataset_test):
     x, y = next(dataset_train)
-    beta_values = [1, 3, 10]
+    beta_values = [3, 10]
     penalty_scales = [1e-10]
 
     os.makedirs('plots', exist_ok=True)
@@ -313,61 +313,6 @@ def train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, 
         
         return disrnn_params
 
-def evaluate_model(disrnn_params, dataset_train, dataset_test, latent_size, update_mlp_shape, choice_mlp_shape):
-    def evaluate(dataset, model_fun, params):
-        xs, actual_choices = next(dataset)
-        model_outputs, _ = rnn_utils.eval_model(model_fun, params, xs)
-        predicted_log_choice_probabilities = np.array(jax.nn.log_softmax(model_outputs[:, :, :2]))
-        return predicted_log_choice_probabilities, actual_choices, xs
-
-    pred_train, act_train, xs_train = evaluate(dataset_train, make_disrnn, disrnn_params)
-    pred_test, act_test, xs_test = evaluate(dataset_test, make_disrnn, disrnn_params)
-
-    _c0 = act_train == 0
-    _c1 = act_train == 1
-    _cn = ~np.isin(act_train, [0, 1])
-    _c = np.concatenate([_c0, _c1, _cn], axis=2)
-    _nan = np.empty([*pred_train.shape[:2], 1])
-    _nan.fill(np.nan)
-    _pred_train_expand = np.concatenate([pred_train, _nan], axis=2)
-    _pred_train_acc = _pred_train_expand[_c]
-    _pred_train_acc = _pred_train_acc.reshape(act_train.shape)
-
-    df_train = pd.DataFrame({'act': act_train[:, :, 0].ravel(),
-                             'pred': np.exp(pred_train[:, :, 1].ravel()),
-                             'pred_acc': np.exp(_pred_train_acc.ravel()),
-                             'rwd': np.vstack((np.zeros((1, xs_train.shape[1])), xs_train[1:, :, 0])).ravel()})
-
-    _c0 = act_test == 0
-    _c1 = act_test == 1
-    _cn = ~np.isin(act_test, [0, 1])
-    _c = np.concatenate([_c0, _c1, _cn], axis=2)
-    _nan = np.empty([*pred_test.shape[:2], 1])
-    _nan.fill(np.nan)
-    _pred_test_expand = np.concatenate([pred_test, _nan], axis=2)
-    _pred_test_acc = _pred_test_expand[_c]
-    _pred_test_acc = _pred_test_acc.reshape(act_test.shape)
-
-    df_test = pd.DataFrame({'act': act_test[:, :, 0].ravel(),
-                            'pred': np.exp(pred_test[:, :, 1].ravel()),
-                            'pred_acc': np.exp(_pred_test_acc.ravel()),
-                            'rwd': np.vstack((np.zeros((1, xs_test.shape[1])), xs_test[1:, :, 0])).ravel()})
-
-    for dt, df, ds in [('train', df_train, dataset_train), ('test', df_test, dataset_test)]:
-        _trial_num = np.tile(np.arange(ds._xs.shape[0]), [ds._xs.shape[1], 1]).transpose()
-
-        plt.figure(figsize=(16, 8))
-        _ax = sns.lineplot(data=df, x=_trial_num.ravel(), y='rwd', label='actual')
-        sns.lineplot(data=df, x=_trial_num.ravel(), y='pred_acc', ax=_ax, label='pred.')
-        plt.legend()
-        plt.xlabel('Trial Number')
-        plt.ylabel('Proportion Correct')
-        plt.xlim(left=1)
-        plt.ylim(bottom=0.45)
-        plt.title(f'{dt.capitalize()} Data: Accuracy over Trials')
-        plt.savefig(os.path.join('plots', f'accuracy_over_trials_{dt}.png'))
-
-
 def main(latent_size, update_mlp_shape, choice_mlp_shape):
     gpu_devices = jax.devices("gpu")
 
@@ -385,10 +330,6 @@ def main(latent_size, update_mlp_shape, choice_mlp_shape):
 
     # Train model
     disrnn_params = train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, dataset_test)
-
-    # Evaluate model
-    evaluate_model(disrnn_params, dataset_train, dataset_test, latent_size, update_mlp_shape, choice_mlp_shape)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
