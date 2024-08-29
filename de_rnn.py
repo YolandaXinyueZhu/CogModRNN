@@ -15,7 +15,12 @@ import warnings
 import scipy.io as sio
 import copy
 from datetime import datetime
+import sys
+
+
 # Import the necessary modules from the CogModelingRNNsTutorial package
+#from CogModelingRNNsTutorial import bandits, disrnn, hybrnn, plotting, rat_data, rnn_utils
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from CogModelingRNNsTutorial.CogModelingRNNsTutorial import bandits, disrnn, hybrnn, plotting, rat_data, rnn_utils
 # Suppress warnings
 import warnings
@@ -373,10 +378,10 @@ def main(latent_size, update_mlp_shape, choice_mlp_shape):
 
     # Preprocess Data
     dataset_type = 'RealWorldKimmelfMRIDataset'
-    LOCAL_PATH_TO_FILE = "tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-1_nTrialsPerBlock-100_b-0.3_NaN_30_0.93_0.45_NaN_NaN_withOptimalChoice_20240718_fast.mat"
+    LOCAL_PATH_TO_FILE = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-1_nTrialsPerBlock-100_b-0.3_NaN_30_0.93_0.45_NaN_NaN_withOptimalChoice_20240718_fast.mat"
     testing_set_proportion = 0.1
 
-    dataset_train, dataset_test = preprocess_data(dataset_type, LOCAL_PATH_TO_FILE, testing_set_proportion)
+    dataset_train, dataset_test, *_ = preprocess_data(dataset_type, LOCAL_PATH_TO_FILE, testing_set_proportion)
 
     # Train model
     disrnn_params = train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, dataset_test)
