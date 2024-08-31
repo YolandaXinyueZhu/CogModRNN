@@ -251,7 +251,7 @@ def preprocess_data(dataset_type, LOCAL_PATH_TO_FILE, testing_set_proportion):
 
 def train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, dataset_test):
     x, y = next(dataset_train)
-    beta_values = [3, 10]
+    beta_values = [1e-5]
     penalty_scales = [1e-10]
 
     os.makedirs('plots', exist_ok=True)

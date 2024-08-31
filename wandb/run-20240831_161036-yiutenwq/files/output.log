@@ -1,0 +1,7 @@
+
+Training with beta_scale: 1e-05 and penalty_scale: 1e-10
+Step 10 of 10; Loss: 1.2356e+05. Model Size: 5346 (Time: 10.1s)
+Model not yet converged - Running more steps of gradient descent. Time elapsed = 3e-05s.
+Step 10 of 10; Loss: 1.2351e+05. Model Size: 5346 (Time: 9.7s)
+Model Converged! Time elapsed = 3e-05s.
+Saved disrnn_params to checkpoints/ls_16_umlp_[8, 8]_cmlp_[8, 8]_beta_1e-05_penalty_1e-10_20240831_161037/disrnn_params_ls_16_umlp_[8, 8]_cmlp_[8, 8]_penalty_1e-10_beta_1e-05_lr_1e-3.pkl

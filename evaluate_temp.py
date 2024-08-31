@@ -14,43 +14,12 @@ import scipy.io as sio
 import copy
 from datetime import datetime
 from typing import Optional, List
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from CogModelingRNNsTutorial.CogModelingRNNsTutorial import bandits, disrnn, hybrnn, plotting, rat_data, rnn_utils
-from de_rnn import load_data_for_one_human, to_onehot, zs_to_onehot, dataset_size, format_into_datasets_flexible
+from de_rnn import load_data_for_one_human, to_onehot, zs_to_onehot, dataset_size, format_into_datasets_flexible, preprocess_data
 
 warnings.filterwarnings("ignore")
-
-# Directories for saving files
-checkpoint_dir = './checkpoints'
-plot_dir = './plots'
-loss_dir = './losses'
-
-# Dataset loading and processing
-def load_dataset(dataset_type: str):
-    if dataset_type in ['RealWorldRatDataset', 'RealWorldKimmelfMRIDataset']:
-        local_file_path = "tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-1_nTrialsPerBlock-100_b-0.3_NaN_30_0.93_0.45_NaN_NaN_withOptimalChoice_20240718_fast.mat"
-        if not os.path.exists(local_file_path):
-            raise ValueError('File not found.')
-        fname_ = local_file_path
-
-        sigma = 0.1
-        environment = bandits.EnvironmentBanditsDrift(sigma=sigma)
-
-        if dataset_type == 'RealWorldKimmelfMRIDataset':
-            xs, ys, zs, _, _, bitResponseAIsCorr, P_A = load_data_for_one_human(fname_)
-            inputs = np.concatenate([xs, zs], axis=-1)
-
-            dataset_train, dataset_test, bitResponseAIsCorr_train, bitResponseAIsCorr_test, P_A_train, P_A_test = format_into_datasets_flexible(
-                inputs, ys.copy(), bitResponseAIsCorr, P_A, rnn_utils.DatasetRNN, testing_prop=0.1
-            )
-
-            # Print the size of the dataset
-            train_size, test_size = dataset_size(dataset_train._xs, dataset_test._xs)
-            print(f'Training dataset size: {train_size} samples')
-            print(f'Testing dataset size: {test_size} samples')
-
-            return dataset_train, dataset_test, bitResponseAIsCorr_train, bitResponseAIsCorr_test, P_A_train, P_A_test
-    else:
-        raise ValueError(f"Unsupported dataset type: {dataset_type}")
 
 # Model-related functions
 def make_disrnn():
@@ -62,7 +31,7 @@ def make_disrnn():
         update_mlp_shape=(8, 8),
         choice_mlp_shape=(8, 8),
         eval_mode=0.0,
-        beta_scale=1e-05,
+        beta_scale=3,
         activation=jax.nn.relu
     )
     return model
@@ -552,19 +521,25 @@ def plot_bottlenecks(params, sort_latents=True, obs_names=None):
     return fig
 
 def main():
-    dataset_type = 'RealWorldKimmelfMRIDataset'  # Specify dataset type
-    dataset_train, dataset_test, bitResponseAIsCorr_train, bitResponseAIsCorr_test, P_A_train, P_A_test = load_dataset(dataset_type)
+    # Directories for saving files
+    checkpoint_dir = './checkpoints'
+    plot_dir = './plots'
+    loss_dir = './losses'
+
+    dataset_type = 'RealWorldKimmelfMRIDataset'  
+    local_file_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-1_nTrialsPerBlock-100_b-0.3_NaN_30_0.93_0.45_NaN_NaN_withOptimalChoice_20240718_fast.mat"
+    dataset_train, dataset_test, bitResponseAIsCorr_train, bitResponseAIsCorr_test, P_A_train, P_A_test = preprocess_data(dataset_type, local_file_path, 0.1)
 
     # Load the checkpoint parameters
-    checkpoint_name = 'checkpoints/ls_16_umlp_[8, 8]_cmlp_[8, 8]_beta_0.01_penalty_1e-10_20240827_193759/disrnn_params_ls_16_umlp_[8, 8]_cmlp_[8, 8]_penalty_1e-10_beta_0.01_lr_1e-3.pkl'
+    checkpoint_name = 'checkpoints/ls_16_umlp_[8, 8]_cmlp_[8, 8]_beta_1e-05_penalty_1e-10_20240831_141822/disrnn_params_ls_16_umlp_[8, 8]_cmlp_[8, 8]_penalty_1e-10_beta_1e-05_lr_1e-3.pkl'
     with open(checkpoint_name, 'rb') as file:
         disrnn_params = pickle.load(file)
     print(f'Loaded disrnn_params from {checkpoint_name}')
 
     # Compute log-likelihood and accuracy for training and test datasets
-    #print('Normalized Likelihoods and Accuracies for disRNN')
-    #print('Training Dataset')
-    #compute_log_likelihood_and_accuracy(dataset_train, make_disrnn, disrnn_params)
+    print('Normalized Likelihoods and Accuracies for disRNN')
+    print('Training Dataset')
+    compute_log_likelihood_and_accuracy(dataset_train, make_disrnn, disrnn_params)
     #print('Held-Out Dataset')
     #compute_log_likelihood_and_accuracy(dataset_test, make_disrnn, disrnn_params)
 
@@ -592,7 +567,7 @@ def main():
                                         P_A_train=P_A_train, 
                                         disrnn_params=disrnn_params, 
                                         make_disrnn=make_disrnn)
-    plot_update_rules(disrnn_params, make_disrnn)
+    # plot_update_rules(disrnn_params, make_disrnn)
 
 
 

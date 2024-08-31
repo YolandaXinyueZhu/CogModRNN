@@ -1,0 +1,19 @@
+
+Training with beta_scale: 1e-05 and penalty_scale: 1e-10
+
+
+
+Step 40 of 500; Loss: 1.2347e+05. Model Size: 5346 (Time: 20.9s)
+Traceback (most recent call last):
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 299, in <module>
+    main(args.validation_proportion, args.latent_size, args.update_mlp_shape, args.choice_mlp_shape, args.beta_scale, args.penalty_scale)
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 286, in main
+    disrnn_params = train_model(dataset_train, latent_size, update_mlp_shape, choice_mlp_shape, beta_scale, penalty_scale)
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 240, in train_model
+    disrnn_params, opt_state, losses = rnn_utils.fit_model(
+  File "/home/rsw0/Desktop/yolanda/temp/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 352, in fit_model
+    params, opt_state, losses = train_model(
+  File "/home/rsw0/Desktop/yolanda/temp/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 272, in train_model
+    loss, params, opt_state = train_step(params, opt_state, xs, ys, key_i)
+  File "<string>", line 1, in <lambda>
+KeyboardInterrupt
