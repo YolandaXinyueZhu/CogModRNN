@@ -1,0 +1,6 @@
+
+Training with beta_scale: 1e-05 and penalty_scale: 1e-10
+Exception ignored in: <function _xla_gc_callback at 0x2b4fffa5ea60>
+Traceback (most recent call last):
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/lib/__init__.py", line 96, in _xla_gc_callback
+    def _xla_gc_callback(*args):
