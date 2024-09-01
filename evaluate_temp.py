@@ -17,7 +17,7 @@ from typing import Optional, List
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from CogModelingRNNsTutorial.CogModelingRNNsTutorial import bandits, disrnn, hybrnn, plotting, rat_data, rnn_utils
-from de_rnn import load_data_for_one_human, to_onehot, zs_to_onehot, dataset_size, format_into_datasets_flexible, preprocess_data
+from train_disrnn import load_data, to_onehot, zs_to_onehot, dataset_size, create_train_test_datasets, preprocess_data
 
 warnings.filterwarnings("ignore")
 
@@ -28,8 +28,8 @@ def make_disrnn():
         obs_size=6,
         target_size=2,
         latent_size=16,
-        update_mlp_shape=(8, 8),
-        choice_mlp_shape=(8, 8),
+        update_mlp_shape=(2, 2),
+        choice_mlp_shape=(2, 2),
         eval_mode=0.0,
         beta_scale=3,
         activation=jax.nn.relu
@@ -62,13 +62,7 @@ def compute_log_likelihood_and_accuracy(dataset, model_fun, params):
     print(f'Model Thresholded Classifier Accuracy for Human-Chosen Actions: {accuracy * 100}%')
     return normalized_likelihood, accuracy
 
-'''
-def evaluate(dataset, model_fun, params):
-    xs, actual_choices = next(dataset)
-    model_outputs, _ = rnn_utils.eval_model(model_fun, params, xs)
-    predicted_log_choice_probabilities = np.array(jax.nn.log_softmax(model_outputs[:, :, :2]))
-    return predicted_log_choice_probabilities, actual_choices, xs
-'''
+
 def evaluate(xs, actual_choices, model_fun, params):
     model_outputs, _ = rnn_utils.eval_model(model_fun, params, xs)
     predicted_log_choice_probabilities = np.array(jax.nn.log_softmax(model_outputs[:, :, :2]))
@@ -367,6 +361,10 @@ def plot_update_rules(params, make_network):
   return figs
 
 def plot_training_results(df_train, dataset_train):
+    checkpoint_dir = './checkpoints'
+    plot_dir = './plots'
+    loss_dir = './losses'
+
     _trial_num = np.tile(np.arange(dataset_train._xs.shape[0]), [dataset_train._xs.shape[1], 1]).transpose()
 
     # Normalized likelihood vs upper bound
@@ -527,21 +525,23 @@ def main():
     loss_dir = './losses'
 
     dataset_type = 'RealWorldKimmelfMRIDataset'  
-    local_file_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-1_nTrialsPerBlock-100_b-0.3_NaN_30_0.93_0.45_NaN_NaN_withOptimalChoice_20240718_fast.mat"
-    dataset_train, dataset_test, bitResponseAIsCorr_train, bitResponseAIsCorr_test, P_A_train, P_A_test = preprocess_data(dataset_type, local_file_path, 0.1)
+    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-1_nTrialsPerBlock-100_b-0.3_NaN_30_0.93_0.45_NaN_NaN_withOptimalChoice_20240718_fast.mat"
+    dataset_train, dataset_test, bitResponseAIsCorr_train, bitResponseAIsCorr_test, P_A_train, P_A_test = preprocess_data(dataset_type, dataset_path, 0.1)
 
     # Load the checkpoint parameters
-    checkpoint_name = 'checkpoints/ls_16_umlp_[8, 8]_cmlp_[8, 8]_beta_1e-05_penalty_1e-10_20240831_141822/disrnn_params_ls_16_umlp_[8, 8]_cmlp_[8, 8]_penalty_1e-10_beta_1e-05_lr_1e-3.pkl'
+    checkpoint_name = 'checkpoints/ls_16_umlp_[2, 2]_cmlp_[2, 2]_beta_1e-05_penalty_1e-10_20240901_001206/disrnn_params_ls_16_umlp_[2, 2]_cmlp_[2, 2]_penalty_1e-10_beta_1e-05_lr_1e-3.pkl'
     with open(checkpoint_name, 'rb') as file:
-        disrnn_params = pickle.load(file)
+        checkpoint = pickle.load(file)
+    args_dict = checkpoint['args_dict']
+    disrnn_params = checkpoint['disrnn_params']
     print(f'Loaded disrnn_params from {checkpoint_name}')
 
     # Compute log-likelihood and accuracy for training and test datasets
     print('Normalized Likelihoods and Accuracies for disRNN')
     print('Training Dataset')
     compute_log_likelihood_and_accuracy(dataset_train, make_disrnn, disrnn_params)
-    #print('Held-Out Dataset')
-    #compute_log_likelihood_and_accuracy(dataset_test, make_disrnn, disrnn_params)
+    print('Held-Out Dataset')
+    compute_log_likelihood_and_accuracy(dataset_test, make_disrnn, disrnn_params)
 
     # Get the first batch of data from the dataset
     xs_train, act_train = next(dataset_train)

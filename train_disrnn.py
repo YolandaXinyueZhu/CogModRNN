@@ -1,33 +1,29 @@
 import argparse
 import os
 import pickle
+import sys
+import math
+import copy
+import warnings
+from datetime import datetime
+
 import jax
 import jax.numpy as jnp
 import haiku as hk
-import jax
-import jax.numpy as jnp
-import matplotlib.pyplot as plt
-import numpy as np
 import optax
-import pandas as pd
-import seaborn as sns
-import warnings
+import numpy as np
 import scipy.io as sio
-import copy
-from datetime import datetime
-import sys
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 import wandb
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from CogModelingRNNsTutorial.CogModelingRNNsTutorial import bandits, disrnn, hybrnn, plotting, rat_data, rnn_utils
-# Suppress warnings
-import warnings
-import itertools
 
 warnings.filterwarnings("ignore")
 
-
-# Define necessary functions
-def load_data_for_one_human(fname, data_dir='./'):
+def load_data(fname, data_dir='./'):
     """Load data for one human subject from a MATLAB file and organize into features, labels, and state information.
     
     mat_contents contains the following keys:
@@ -108,80 +104,15 @@ def zs_to_onehot(zs):
     assert np.all((zs_oh.sum(-1) == 0) == (zs == -1))
     return zs_oh
 
-def format_into_datasets_flexible(xs, ys, optimal_choice, P_A, dataset_constructor, testing_prop=0.5):
-    import math
-    if testing_prop == 0.5:
-        n = int(xs.shape[1] // 2) * 2
-        dataset_train = dataset_constructor(xs[:, :n:2], ys[:, :n:2])
-        dataset_test = dataset_constructor(xs[:, 1:n:2], ys[:, 1:n:2])
-
-        optimal_choice_train = optimal_choice[:, :n:2]
-        optimal_choice_test = optimal_choice[:, 1:n:2]
-        P_A_train = P_A[:, :n:2]
-        P_A_test = P_A[:, 1:n:2]
-        
-    else:
-        n = int(xs.shape[1])
-        n_test = int(math.ceil(float(n) * testing_prop))
-        n_train = int(n - n_test)
-        assert n_train > 0
-        assert n_test > 0
-        idx = np.random.permutation(n)
-        dataset_train = dataset_constructor(xs[:, idx[:n_train]], ys[:, idx[:n_train]])
-        dataset_test = dataset_constructor(xs[:, idx[n_train:]], ys[:, idx[n_train:]])
-
-        optimal_choice_train = optimal_choice[:, idx[:n_train]]
-        optimal_choice_test = optimal_choice[:, idx[n_train:]]
-        P_A_train = P_A[:, idx[:n_train]]
-        P_A_test = P_A[:, idx[n_train:]]
-        
-    return dataset_train, dataset_test, optimal_choice_train, optimal_choice_test, P_A_train, P_A_test
-
-def compute_log_likelihood(dataset, model_fun, params):
-    xs, actual_choices = next(dataset)
-    print(f"xs shape: {xs.shape}, actual_choices shape: {actual_choices.shape}")
-    n_trials_per_session, n_sessions = actual_choices.shape[:2]
-    model_outputs, model_states = rnn_utils.eval_model(model_fun, params, xs)
-    print(f"model_outputs shape: {model_outputs.shape}")
-    predicted_log_choice_probabilities = np.array(jax.nn.log_softmax(model_outputs[:, :, :2]))
-    log_likelihood = 0
-    n = 0  # Total number of trials across sessions.
-    for sess_i in range(n_sessions):
-        for trial_i in range(n_trials_per_session):
-            actual_choice = int(actual_choices[trial_i, sess_i])
-            if (actual_choice >= 0) and (0 <= actual_choice < predicted_log_choice_probabilities.shape[2]):  # Ensure actual_choice is valid
-                log_likelihood += predicted_log_choice_probabilities[trial_i, sess_i, actual_choice]
-                n += 1
-    normalized_likelihood = np.exp(log_likelihood / n)
-    print(f'Normalized Likelihood: {100 * normalized_likelihood}%')
-    return normalized_likelihood
-
-def dataset_size(xs, ys):
-    """Calculate the size of the dataset in terms of number of samples."""
-    return xs.shape[0] * xs.shape[1], ys.shape[0] * ys.shape[1]  # (number of timesteps * number of episodes)
-
-def make_disrnn():
-        model = disrnn.HkDisRNN(
-            obs_size=18,
-            target_size=2,
-            latent_size=32,
-            update_mlp_shape=(8,8),
-            choice_mlp_shape=(8,8),
-            eval_mode=0.0,
-            beta_scale=1e-05,
-            activation=jax.nn.relu
-        )
-        return model
-
 def preprocess_data(dataset_type, LOCAL_PATH_TO_FILE, testing_set_proportion):
     if dataset_type in ['RealWorldRatDataset', 'RealWorldKimmelfMRIDataset']:
         if not os.path.exists(LOCAL_PATH_TO_FILE):
             raise ValueError('File not found.')
         
-        xs, ys, zs, _, _, bitResponseAIsCorr, P_A = load_data_for_one_human(LOCAL_PATH_TO_FILE)
+        xs, ys, zs, _, _, bitResponseAIsCorr, P_A = load_data(LOCAL_PATH_TO_FILE)
         inputs = np.concatenate([xs, zs], axis=-1)
 
-        dataset_train, dataset_test, bitResponseAIsCorr_train, bitResponseAIsCorr_test, P_A_train, P_A_test = format_into_datasets_flexible(
+        dataset_train, dataset_test, bitResponseAIsCorr_train, bitResponseAIsCorr_test, P_A_train, P_A_test = create_train_test_datasets(
             inputs, ys.copy(), bitResponseAIsCorr, P_A, rnn_utils.DatasetRNN, testing_set_proportion
         )
 
@@ -193,9 +124,30 @@ def preprocess_data(dataset_type, LOCAL_PATH_TO_FILE, testing_set_proportion):
     else:
         raise ValueError('Unsupported dataset type.')
     
+def create_train_test_datasets(xs, ys, optimal_choice, P_A, dataset_constructor, testing_prop=0.5):
+    num_trials = int(xs.shape[1])
+    num_test_trials = int(math.ceil(float(num_trials) * testing_prop))
+    num_train_trials = int(num_trials - num_test_trials)
+    
+    assert num_train_trials > 0 and num_test_trials > 0, "Invalid train/test split"
+    
+    idx = np.random.permutation(num_trials)
+    dataset_train = dataset_constructor(xs[:, idx[:num_train_trials]], ys[:, idx[:num_train_trials]])
+    dataset_test = dataset_constructor(xs[:, idx[num_train_trials:]], ys[:, idx[num_train_trials:]])
+    
+    optimal_choice_train = optimal_choice[:, idx[:num_train_trials]]
+    optimal_choice_test = optimal_choice[:, idx[num_train_trials:]]
+    P_A_train = P_A[:, idx[:num_train_trials]]
+    P_A_test = P_A[:, idx[num_train_trials:]]
+    
+    return dataset_train, dataset_test, optimal_choice_train, optimal_choice_test, P_A_train, P_A_test
 
+def dataset_size(xs, ys):
+    """Calculate the size of the dataset in terms of number of samples."""
+    return xs.shape[0] * xs.shape[1], ys.shape[0] * ys.shape[1]  # (number of timesteps * number of episodes)
 
-def train_model(dataset_train, 
+def train_model(args_dict,
+                dataset_train, 
                 latent_size, 
                 update_mlp_shape, 
                 choice_mlp_shape, 
@@ -255,15 +207,22 @@ def train_model(dataset_train,
     for step, loss in enumerate(losses):
         wandb.log({"loss": loss, "step": step})
 
+    checkpoint = {
+        'args_dict': args_dict,
+        'disrnn_params': disrnn_params
+    }
+
     filename = os.path.join(checkpoint_dir, f'disrnn_params_ls_{latent_size}_umlp_{update_mlp_shape}_cmlp_{choice_mlp_shape}_penalty_{penalty_scale}_beta_{beta_scale}_lr_1e-3.pkl')
     with open(filename, 'wb') as file:
-        pickle.dump(disrnn_params, file)
+        pickle.dump(checkpoint, file)
 
     print(f'Saved disrnn_params to {filename}')
     
     return disrnn_params
 
-def main(validation_proportion, 
+def main(args_dict,
+         seed,
+         validation_proportion, 
          latent_size, 
          update_mlp_shape, 
          choice_mlp_shape, 
@@ -279,14 +238,16 @@ def main(validation_proportion,
     else:
         print("No GPU found, JAX is using CPU.")
 
+    np.random.seed(seed)
+
     # Preprocess Data
     dataset_type = 'RealWorldKimmelfMRIDataset'
-    LOCAL_PATH_TO_FILE = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-1_nTrialsPerBlock-100_b-0.3_NaN_30_0.93_0.45_NaN_NaN_withOptimalChoice_20240718_fast.mat"
-
-    dataset_train, dataset_test, *_ = preprocess_data(dataset_type, LOCAL_PATH_TO_FILE, validation_proportion)
+    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-1_nTrialsPerBlock-100_b-0.3_NaN_30_0.93_0.45_NaN_NaN_withOptimalChoice_20240718_fast.mat"
+    dataset_train, dataset_test, *_ = preprocess_data(dataset_type, dataset_path, validation_proportion)
 
     # Train model
-    disrnn_params = train_model(dataset_train, 
+    disrnn_params = train_model(args_dict,
+                                dataset_train, 
                                 latent_size, 
                                 update_mlp_shape, 
                                 choice_mlp_shape, 
@@ -297,18 +258,33 @@ def main(validation_proportion,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--seed", nargs=1, type=int, default=42, help="Seed for reproducibility.")
     parser.add_argument("--validation_proportion", nargs=1, type=int, default=0.1, help="The percentage for validation dataset.")
     parser.add_argument("--latent_size", type=int, default=16, help="Number of latent units in the model")
-    parser.add_argument("--update_mlp_shape", nargs=2, type=int, default=[8, 8], help="Number of hidden units in each of the two layers of the update MLP")
-    parser.add_argument("--choice_mlp_shape", nargs=2, type=int, default=[8, 8], help="Number of hidden units in each of the two layers of the choice MLP")
+    parser.add_argument("--update_mlp_shape", nargs="+", type=int, default=[8, 8], help="Number of hidden units in each of the two layers of the update MLP")
+    parser.add_argument("--choice_mlp_shape", nargs="+", type=int, default=[8, 8], help="Number of hidden units in each of the two layers of the choice MLP")
     parser.add_argument("--beta_scale", type=float, required=True, help="Value for the beta scaling parameter")
     parser.add_argument("--penalty_scale", type=float, required=True, help="Value for the penalty scaling parameter")
-    parser.add_argument("--n_step_max", type=int, default=10000, required=True, help="The maximum number of iterations to run, even if convergence is not reached")
-    parser.add_argument("--n_steps_per_call", type=float, default=500,required=True, help="The number of steps to give to train_model")
+    parser.add_argument("--n_step_max", type=int, default=10000, help="The maximum number of iterations to run, even if convergence is not reached")
+    parser.add_argument("--n_steps_per_call", type=float, default=500, help="The number of steps to give to train_model")
 
     args = parser.parse_args()
 
-    main(args.validation_proportion, 
+    args_dict = {
+        'seed': args.seed,
+        'validation_proportion': args.validation_proportion,
+        'latent_size': args.latent_size,
+        'update_mlp_shape': args.update_mlp_shape,
+        'choice_mlp_shape': args.choice_mlp_shape,
+        'beta_scale': args.beta_scale,
+        'penalty_scale': args.penalty_scale,
+        'n_step_max': args.n_step_max,
+        'n_steps_per_call': args.n_steps_per_call
+    }
+
+    main(args_dict,
+         args.seed,
+         args.validation_proportion, 
          args.latent_size, 
          args.update_mlp_shape, 
          args.choice_mlp_shape, 

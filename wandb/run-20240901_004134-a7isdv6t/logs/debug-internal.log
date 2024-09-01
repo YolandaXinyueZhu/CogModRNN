@@ -1,0 +1,195 @@
+2024-09-01 00:41:34,287 INFO    StreamThr :1731920 [internal.py:wandb_internal():85] W&B internal server running at pid: 1731920, started at: 2024-09-01 00:41:34.286891
+2024-09-01 00:41:34,288 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: status
+2024-09-01 00:41:34,290 INFO    WriterThread:1731920 [datastore.py:open_for_write():87] open: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/run-a7isdv6t.wandb
+2024-09-01 00:41:34,291 DEBUG   SenderThread:1731920 [sender.py:send():391] send: header
+2024-09-01 00:41:34,309 DEBUG   SenderThread:1731920 [sender.py:send():391] send: run
+2024-09-01 00:41:34,455 INFO    SenderThread:1731920 [dir_watcher.py:__init__():211] watching files in: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files
+2024-09-01 00:41:34,455 INFO    SenderThread:1731920 [sender.py:_start_run_threads():1200] run started: a7isdv6t with start time 1725165694.286935
+2024-09-01 00:41:34,462 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: run_start
+2024-09-01 00:41:34,469 DEBUG   HandlerThread:1731920 [system_info.py:__init__():26] System info init
+2024-09-01 00:41:34,469 DEBUG   HandlerThread:1731920 [system_info.py:__init__():41] System info init done
+2024-09-01 00:41:34,469 INFO    HandlerThread:1731920 [system_monitor.py:start():194] Starting system monitor
+2024-09-01 00:41:34,470 INFO    SystemMonitor:1731920 [system_monitor.py:_start():158] Starting system asset monitoring threads
+2024-09-01 00:41:34,470 INFO    HandlerThread:1731920 [system_monitor.py:probe():214] Collecting system info
+2024-09-01 00:41:34,470 INFO    SystemMonitor:1731920 [interfaces.py:start():188] Started cpu monitoring
+2024-09-01 00:41:34,470 INFO    SystemMonitor:1731920 [interfaces.py:start():188] Started disk monitoring
+2024-09-01 00:41:34,470 INFO    SystemMonitor:1731920 [interfaces.py:start():188] Started gpu monitoring
+2024-09-01 00:41:34,471 INFO    SystemMonitor:1731920 [interfaces.py:start():188] Started memory monitoring
+2024-09-01 00:41:34,471 INFO    SystemMonitor:1731920 [interfaces.py:start():188] Started network monitoring
+2024-09-01 00:41:34,481 DEBUG   HandlerThread:1731920 [system_info.py:probe():152] Probing system
+2024-09-01 00:41:34,487 DEBUG   HandlerThread:1731920 [system_info.py:_probe_git():137] Probing git
+2024-09-01 00:41:34,499 DEBUG   HandlerThread:1731920 [system_info.py:_probe_git():145] Probing git done
+2024-09-01 00:41:34,500 DEBUG   HandlerThread:1731920 [system_info.py:probe():200] Probing system done
+2024-09-01 00:41:34,500 DEBUG   HandlerThread:1731920 [system_monitor.py:probe():223] {'os': 'Linux-6.8.0-40-generic-x86_64-with-glibc2.35', 'python': '3.9.19', 'heartbeatAt': '2024-09-01T04:41:34.481078', 'startedAt': '2024-09-01T04:41:34.283270', 'docker': None, 'cuda': None, 'args': ('--beta_scale', '1e-5', '--penalty_scale', '1e-10', '--latent_size', '8', '--update_mlp_shape', '8', '8', '8'), 'state': 'running', 'program': '/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py', 'codePathLocal': 'train_disrnn.py', 'codePath': 'train_disrnn.py', 'git': {'remote': 'git@github.com:YolandaXinyueZhu/CogModRNN.git', 'commit': 'e3957f4707c48c31471d5a14fa632f3fe0994948'}, 'email': 'rw2967@columbia.edu', 'root': '/home/rsw0/Desktop/yolanda/temp/CogModRNN', 'host': 'rsw0', 'username': 'rsw0', 'executable': '/home/rsw0/miniforge3/envs/yolanda/bin/python3', 'cpu_count': 16, 'cpu_count_logical': 32, 'cpu_freq': {'current': 5059.074906249999, 'min': 400.0, 'max': 5881.0}, 'cpu_freq_per_core': [{'current': 5447.69, 'min': 400.0, 'max': 5881.0}, {'current': 5447.784, 'min': 400.0, 'max': 5881.0}, {'current': 5438.468, 'min': 400.0, 'max': 5881.0}, {'current': 5439.612, 'min': 400.0, 'max': 5881.0}, {'current': 5447.745, 'min': 400.0, 'max': 5881.0}, {'current': 5447.703, 'min': 400.0, 'max': 5881.0}, {'current': 5447.843, 'min': 400.0, 'max': 5881.0}, {'current': 5446.926, 'min': 400.0, 'max': 5881.0}, {'current': 5021.251, 'min': 400.0, 'max': 5881.0}, {'current': 5018.199, 'min': 400.0, 'max': 5881.0}, {'current': 5021.245, 'min': 400.0, 'max': 5881.0}, {'current': 5021.374, 'min': 400.0, 'max': 5881.0}, {'current': 5021.39, 'min': 400.0, 'max': 5881.0}, {'current': 5021.282, 'min': 400.0, 'max': 5881.0}, {'current': 4960.991, 'min': 400.0, 'max': 5881.0}, {'current': 5021.326, 'min': 400.0, 'max': 5881.0}, {'current': 5424.586, 'min': 400.0, 'max': 5881.0}, {'current': 5406.861, 'min': 400.0, 'max': 5881.0}, {'current': 5447.643, 'min': 400.0, 'max': 5881.0}, {'current': 5442.965, 'min': 400.0, 'max': 5881.0}, {'current': 5436.204, 'min': 400.0, 'max': 5881.0}, {'current': 5367.353, 'min': 400.0, 'max': 5881.0}, {'current': 5438.74, 'min': 400.0, 'max': 5881.0}, {'current': 5443.233, 'min': 400.0, 'max': 5881.0}, {'current': 4893.299, 'min': 400.0, 'max': 5881.0}, {'current': 4983.065, 'min': 400.0, 'max': 5881.0}, {'current': 4983.074, 'min': 400.0, 'max': 5881.0}, {'current': 4950.895, 'min': 400.0, 'max': 5881.0}, {'current': 5010.915, 'min': 400.0, 'max': 5881.0}, {'current': 5017.135, 'min': 400.0, 'max': 5881.0}, {'current': 4983.147, 'min': 400.0, 'max': 5881.0}, {'current': 5012.119, 'min': 400.0, 'max': 5881.0}], 'disk': {'/': {'total': 915.3232879638672, 'used': 577.5567588806152}}, 'gpu': 'NVIDIA GeForce RTX 3090 Ti', 'gpu_count': 1, 'gpu_devices': [{'name': 'NVIDIA GeForce RTX 3090 Ti', 'memory_total': 25757220864}], 'memory': {'total': 61.95573806762695}}
+2024-09-01 00:41:34,500 INFO    HandlerThread:1731920 [system_monitor.py:probe():224] Finished collecting system info
+2024-09-01 00:41:34,500 INFO    HandlerThread:1731920 [system_monitor.py:probe():227] Publishing system info
+2024-09-01 00:41:34,500 DEBUG   HandlerThread:1731920 [system_info.py:_save_conda():209] Saving list of conda packages installed into the current environment
+2024-09-01 00:41:35,218 DEBUG   HandlerThread:1731920 [system_info.py:_save_conda():224] Saving conda packages done
+2024-09-01 00:41:35,219 INFO    HandlerThread:1731920 [system_monitor.py:probe():229] Finished publishing system info
+2024-09-01 00:41:35,221 DEBUG   SenderThread:1731920 [sender.py:send():391] send: files
+2024-09-01 00:41:35,221 INFO    SenderThread:1731920 [sender.py:_save_file():1466] saving file wandb-metadata.json with policy now
+2024-09-01 00:41:35,252 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: python_packages
+2024-09-01 00:41:35,252 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: python_packages
+2024-09-01 00:41:35,253 DEBUG   SenderThread:1731920 [sender.py:send():391] send: telemetry
+2024-09-01 00:41:35,253 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: stop_status
+2024-09-01 00:41:35,253 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: stop_status
+2024-09-01 00:41:35,254 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: internal_messages
+2024-09-01 00:41:35,456 INFO    Thread-12 :1731920 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/wandb-metadata.json
+2024-09-01 00:41:35,456 INFO    Thread-12 :1731920 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/output.log
+2024-09-01 00:41:35,456 INFO    Thread-12 :1731920 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/requirements.txt
+2024-09-01 00:41:35,456 INFO    Thread-12 :1731920 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/conda-environment.yaml
+2024-09-01 00:41:35,500 INFO    wandb-upload_0:1731920 [upload_job.py:push():130] Uploaded file /tmp/tmp60z_9sdqwandb/qtaunkm4-wandb-metadata.json
+2024-09-01 00:41:37,456 INFO    Thread-12 :1731920 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/output.log
+2024-09-01 00:41:39,399 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: status_report
+2024-09-01 00:41:44,400 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: status_report
+2024-09-01 00:41:45,253 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: internal_messages
+2024-09-01 00:41:49,458 INFO    Thread-12 :1731920 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/output.log
+2024-09-01 00:41:49,853 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: status_report
+2024-09-01 00:41:50,252 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: stop_status
+2024-09-01 00:41:50,252 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: stop_status
+2024-09-01 00:41:52,568 DEBUG   SenderThread:1731920 [sender.py:send():391] send: exit
+2024-09-01 00:41:52,568 INFO    SenderThread:1731920 [sender.py:send_exit():598] handling exit code: 255
+2024-09-01 00:41:52,568 INFO    SenderThread:1731920 [sender.py:send_exit():600] handling runtime: 18
+2024-09-01 00:41:52,569 INFO    SenderThread:1731920 [sender.py:_save_file():1466] saving file wandb-summary.json with policy end
+2024-09-01 00:41:52,569 INFO    SenderThread:1731920 [sender.py:send_exit():606] send defer
+2024-09-01 00:41:52,569 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:52,569 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 0
+2024-09-01 00:41:52,569 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:52,569 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 0
+2024-09-01 00:41:52,569 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 1
+2024-09-01 00:41:52,569 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:52,569 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 1
+2024-09-01 00:41:52,569 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:52,569 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 1
+2024-09-01 00:41:52,569 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 2
+2024-09-01 00:41:52,569 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:52,569 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 2
+2024-09-01 00:41:52,569 INFO    HandlerThread:1731920 [system_monitor.py:finish():203] Stopping system monitor
+2024-09-01 00:41:52,570 INFO    HandlerThread:1731920 [interfaces.py:finish():200] Joined cpu monitor
+2024-09-01 00:41:52,570 INFO    HandlerThread:1731920 [interfaces.py:finish():200] Joined disk monitor
+2024-09-01 00:41:52,570 DEBUG   SystemMonitor:1731920 [system_monitor.py:_start():172] Starting system metrics aggregation loop
+2024-09-01 00:41:52,570 DEBUG   SystemMonitor:1731920 [system_monitor.py:_start():179] Finished system metrics aggregation loop
+2024-09-01 00:41:52,570 DEBUG   SystemMonitor:1731920 [system_monitor.py:_start():183] Publishing last batch of metrics
+2024-09-01 00:41:52,621 INFO    HandlerThread:1731920 [interfaces.py:finish():200] Joined gpu monitor
+2024-09-01 00:41:52,621 INFO    HandlerThread:1731920 [interfaces.py:finish():200] Joined memory monitor
+2024-09-01 00:41:52,621 INFO    HandlerThread:1731920 [interfaces.py:finish():200] Joined network monitor
+2024-09-01 00:41:52,621 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:52,621 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 2
+2024-09-01 00:41:52,621 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 3
+2024-09-01 00:41:52,621 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:52,621 DEBUG   SenderThread:1731920 [sender.py:send():391] send: stats
+2024-09-01 00:41:52,621 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 3
+2024-09-01 00:41:52,622 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:52,622 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 3
+2024-09-01 00:41:52,622 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 4
+2024-09-01 00:41:52,622 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:52,622 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 4
+2024-09-01 00:41:52,622 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:52,622 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 4
+2024-09-01 00:41:52,622 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 5
+2024-09-01 00:41:52,622 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:52,622 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 5
+2024-09-01 00:41:52,622 DEBUG   SenderThread:1731920 [sender.py:send():391] send: summary
+2024-09-01 00:41:52,622 INFO    SenderThread:1731920 [sender.py:_save_file():1466] saving file wandb-summary.json with policy end
+2024-09-01 00:41:52,623 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:52,623 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 5
+2024-09-01 00:41:52,623 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 6
+2024-09-01 00:41:52,623 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:52,623 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 6
+2024-09-01 00:41:52,623 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:52,623 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 6
+2024-09-01 00:41:52,625 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: status_report
+2024-09-01 00:41:52,699 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 7
+2024-09-01 00:41:52,699 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:52,699 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 7
+2024-09-01 00:41:52,699 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:52,699 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 7
+2024-09-01 00:41:53,459 INFO    Thread-12 :1731920 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/config.yaml
+2024-09-01 00:41:53,460 INFO    Thread-12 :1731920 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/output.log
+2024-09-01 00:41:53,460 INFO    Thread-12 :1731920 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/wandb-summary.json
+2024-09-01 00:41:53,568 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: poll_exit
+2024-09-01 00:41:54,571 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 8
+2024-09-01 00:41:54,571 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: poll_exit
+2024-09-01 00:41:54,571 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:54,571 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 8
+2024-09-01 00:41:54,572 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:54,572 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 8
+2024-09-01 00:41:54,572 INFO    SenderThread:1731920 [job_builder.py:build():443] Attempting to build job artifact
+2024-09-01 00:41:54,572 INFO    SenderThread:1731920 [job_builder.py:_get_source_type():572] is repo sourced job
+2024-09-01 00:41:54,585 INFO    SenderThread:1731920 [job_builder.py:build():548] adding wandb-job metadata file
+2024-09-01 00:41:54,599 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 9
+2024-09-01 00:41:54,599 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:54,599 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 9
+2024-09-01 00:41:54,599 DEBUG   SenderThread:1731920 [sender.py:send():391] send: artifact
+2024-09-01 00:41:55,000 INFO    wandb-upload_0:1731920 [upload_job.py:push():85] Skipped uploading /home/rsw0/.local/share/wandb/artifacts/staging/tmpac2g1l0p
+2024-09-01 00:41:55,082 INFO    wandb-upload_1:1731920 [upload_job.py:push():88] Uploaded file /tmp/tmpsh7q9y6x/wandb-job.json
+2024-09-01 00:41:55,460 INFO    Thread-12 :1731920 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/output.log
+2024-09-01 00:41:55,569 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: poll_exit
+2024-09-01 00:41:55,688 INFO    SenderThread:1731920 [sender.py:send_artifact():1549] sent artifact job-git_github.com_YolandaXinyueZhu_CogModRNN.git_train_disrnn.py - {'id': 'QXJ0aWZhY3Q6MTE3NDgwOTM4OQ==', 'state': 'PENDING', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjQxOTA3NzYzNQ==', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6MTE3NDc4OTU4MA==', 'versionIndex': 5}}}
+2024-09-01 00:41:55,688 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:55,688 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 9
+2024-09-01 00:41:55,688 INFO    SenderThread:1731920 [dir_watcher.py:finish():358] shutting down directory watcher
+2024-09-01 00:41:56,460 INFO    SenderThread:1731920 [dir_watcher.py:finish():388] scan: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files
+2024-09-01 00:41:56,461 INFO    SenderThread:1731920 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/wandb-summary.json wandb-summary.json
+2024-09-01 00:41:56,461 INFO    SenderThread:1731920 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/output.log output.log
+2024-09-01 00:41:56,462 INFO    SenderThread:1731920 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/wandb-metadata.json wandb-metadata.json
+2024-09-01 00:41:56,462 INFO    SenderThread:1731920 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/requirements.txt requirements.txt
+2024-09-01 00:41:56,463 INFO    SenderThread:1731920 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/config.yaml config.yaml
+2024-09-01 00:41:56,465 INFO    SenderThread:1731920 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/conda-environment.yaml conda-environment.yaml
+2024-09-01 00:41:56,465 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 10
+2024-09-01 00:41:56,465 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: poll_exit
+2024-09-01 00:41:56,465 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:56,465 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 10
+2024-09-01 00:41:56,467 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:56,467 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 10
+2024-09-01 00:41:56,467 INFO    SenderThread:1731920 [file_pusher.py:finish():169] shutting down file pusher
+2024-09-01 00:41:56,569 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: poll_exit
+2024-09-01 00:41:56,570 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: poll_exit
+2024-09-01 00:41:56,641 INFO    wandb-upload_0:1731920 [upload_job.py:push():130] Uploaded file /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/wandb-summary.json
+2024-09-01 00:41:56,682 INFO    wandb-upload_3:1731920 [upload_job.py:push():130] Uploaded file /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/config.yaml
+2024-09-01 00:41:56,682 INFO    wandb-upload_1:1731920 [upload_job.py:push():130] Uploaded file /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/output.log
+2024-09-01 00:41:56,687 INFO    wandb-upload_2:1731920 [upload_job.py:push():130] Uploaded file /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/requirements.txt
+2024-09-01 00:41:56,708 INFO    wandb-upload_4:1731920 [upload_job.py:push():130] Uploaded file /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/files/conda-environment.yaml
+2024-09-01 00:41:56,909 INFO    Thread-11 :1731920 [sender.py:transition_state():626] send defer: 11
+2024-09-01 00:41:56,909 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:56,909 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 11
+2024-09-01 00:41:56,909 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:56,909 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 11
+2024-09-01 00:41:56,909 INFO    SenderThread:1731920 [file_pusher.py:join():175] waiting for file pusher
+2024-09-01 00:41:56,909 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 12
+2024-09-01 00:41:56,909 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:56,909 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 12
+2024-09-01 00:41:56,909 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:56,909 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 12
+2024-09-01 00:41:56,910 INFO    SenderThread:1731920 [file_stream.py:finish():601] file stream finish called
+2024-09-01 00:41:56,977 INFO    SenderThread:1731920 [file_stream.py:finish():605] file stream finish is done
+2024-09-01 00:41:56,977 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 13
+2024-09-01 00:41:56,977 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:56,977 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 13
+2024-09-01 00:41:56,977 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:56,977 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 13
+2024-09-01 00:41:56,977 INFO    SenderThread:1731920 [sender.py:transition_state():626] send defer: 14
+2024-09-01 00:41:56,977 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: defer
+2024-09-01 00:41:56,977 INFO    HandlerThread:1731920 [handler.py:handle_request_defer():184] handle defer: 14
+2024-09-01 00:41:56,977 DEBUG   SenderThread:1731920 [sender.py:send():391] send: final
+2024-09-01 00:41:56,977 DEBUG   SenderThread:1731920 [sender.py:send():391] send: footer
+2024-09-01 00:41:56,978 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: defer
+2024-09-01 00:41:56,978 INFO    SenderThread:1731920 [sender.py:send_request_defer():622] handle sender defer: 14
+2024-09-01 00:41:56,978 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: poll_exit
+2024-09-01 00:41:56,978 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: poll_exit
+2024-09-01 00:41:56,978 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: server_info
+2024-09-01 00:41:56,979 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: server_info
+2024-09-01 00:41:56,980 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: poll_exit
+2024-09-01 00:41:56,980 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: get_summary
+2024-09-01 00:41:56,981 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: sampled_history
+2024-09-01 00:41:56,981 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: internal_messages
+2024-09-01 00:41:57,016 DEBUG   SenderThread:1731920 [sender.py:send_request():418] send_request: poll_exit
+2024-09-01 00:41:57,017 INFO    MainThread:1731920 [wandb_run.py:_footer_history_summary_info():4078] rendering history
+2024-09-01 00:41:57,017 INFO    MainThread:1731920 [wandb_run.py:_footer_history_summary_info():4110] rendering summary
+2024-09-01 00:41:57,017 INFO    MainThread:1731920 [wandb_run.py:_footer_sync_info():4037] logging synced files
+2024-09-01 00:41:57,017 DEBUG   HandlerThread:1731920 [handler.py:handle_request():158] handle_request: shutdown
+2024-09-01 00:41:57,017 INFO    HandlerThread:1731920 [handler.py:finish():884] shutting down handler
+2024-09-01 00:41:57,980 INFO    WriterThread:1731920 [datastore.py:close():296] close: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20240901_004134-a7isdv6t/run-a7isdv6t.wandb
+2024-09-01 00:41:58,017 INFO    SenderThread:1731920 [sender.py:finish():1631] shutting down sender
+2024-09-01 00:41:58,017 INFO    SenderThread:1731920 [file_pusher.py:finish():169] shutting down file pusher
+2024-09-01 00:41:58,017 INFO    SenderThread:1731920 [file_pusher.py:join():175] waiting for file pusher
