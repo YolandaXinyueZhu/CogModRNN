@@ -1,0 +1,78 @@
+
+Training with beta_scale: 1e-05 and penalty_scale: 0.01
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 500 of 500; Loss: 5.1707e+04. Model Size: 4346 (Time: 75.1s)
+Model not yet converged - Running more steps of gradient descent. Time elapsed = 7e-05s.
+Traceback (most recent call last):
+  File "/share/nklab/users/xz3013/CogModRNN/train_disrnn.py", line 285, in <module>
+    main(args_dict,
+  File "/share/nklab/users/xz3013/CogModRNN/train_disrnn.py", line 249, in main
+    disrnn_params = train_model(args_dict,
+  File "/share/nklab/users/xz3013/CogModRNN/train_disrnn.py", line 195, in train_model
+    disrnn_params, opt_state, losses = rnn_utils.fit_model(
+  File "/share/nklab/users/xz3013/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 352, in fit_model
+    params, opt_state, losses = train_model(
+  File "/share/nklab/users/xz3013/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 272, in train_model
+    loss, params, opt_state = train_step(params, opt_state, xs, ys, key_i)
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/traceback_util.py", line 179, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/pjit.py", line 327, in cache_miss
+    outs, out_flat, out_tree, args_flat, jaxpr, attrs_tracked = _python_pjit_helper(
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/pjit.py", line 185, in _python_pjit_helper
+    out_flat = pjit_p.bind(*args_flat, **params)
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/core.py", line 2834, in bind
+    return self.bind_with_trace(top_trace, args, params)
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/core.py", line 420, in bind_with_trace
+    out = trace.process_primitive(self, map(trace.full_raise, args), params)
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/core.py", line 921, in process_primitive
+    return primitive.impl(*tracers, **params)
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/pjit.py", line 1635, in _pjit_call_impl
+    return xc._xla.pjit(
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/pjit.py", line 1614, in call_impl_cache_miss
+    out_flat, compiled = _pjit_call_impl_python(
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/pjit.py", line 1536, in _pjit_call_impl_python
+    compiled = _resolve_and_lower(
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/interpreters/pxla.py", line 2496, in compile
+    executable = UnloadedMeshExecutable.from_hlo(
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/interpreters/pxla.py", line 2995, in from_hlo
+    xla_executable = _cached_compilation(
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/interpreters/pxla.py", line 2810, in _cached_compilation
+    xla_executable = compiler.compile_or_get_cached(
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/compiler.py", line 378, in compile_or_get_cached
+    return _compile_and_write_cache(
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/compiler.py", line 608, in _compile_and_write_cache
+    executable = backend_compile(
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/profiler.py", line 335, in wrapper
+    return func(*args, **kwargs)
+  File "/home/xz3013/.conda/envs/yolanda/lib/python3.9/site-packages/jax/_src/compiler.py", line 238, in backend_compile
+    return backend.compile(built_c, compile_options=options)
+KeyboardInterrupt

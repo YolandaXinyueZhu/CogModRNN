@@ -1,0 +1,46 @@
+wandb_version: 1
+
+latent_size:
+  desc: null
+  value: 6
+update_mlp_shape:
+  desc: null
+  value:
+  - 23
+  - 23
+choice_mlp_shape:
+  desc: null
+  value:
+  - 8
+  - 8
+beta_scale:
+  desc: null
+  value: 1.0
+penalty_scale:
+  desc: null
+  value: 0.01
+_wandb:
+  desc: null
+  value:
+    python_version: 3.9.19
+    cli_version: 0.17.8
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1725258033
+    t:
+      1:
+      - 12
+      - 45
+      - 55
+      2:
+      - 12
+      - 45
+      - 55
+      3:
+      - 16
+      - 23
+      4: 3.9.19
+      5: 0.17.8
+      8:
+      - 5
+      13: linux-x86_64
