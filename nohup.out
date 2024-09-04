@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/share/nklab/users/xz3013/CogModRNN/train_disrnn.py", line 10, in <module>
+    import jax
+ModuleNotFoundError: No module named 'jax'
+Traceback (most recent call last):
+  File "/share/nklab/users/xz3013/CogModRNN/train_disrnn.py", line 10, in <module>
+    import jax
+ModuleNotFoundError: No module named 'jax'
