@@ -249,9 +249,8 @@ def preprocess_data(dataset_type, LOCAL_PATH_TO_FILE, testing_set_proportion):
     
 
 
-def train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, dataset_test):
+def train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, dataset_test, beta_values):
     x, y = next(dataset_train)
-    beta_values = [1e-5,1e-4,1e-3,1e-2,1e-1,1,2,3]
     penalty_scales = [1e-10]
 
     os.makedirs('plots', exist_ok=True)
@@ -313,7 +312,7 @@ def train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, 
         
         return disrnn_params
 
-def main(latent_size, update_mlp_shape, choice_mlp_shape):
+def main(latent_size, update_mlp_shape, choice_mlp_shape, beta_values):
     gpu_devices = jax.devices("gpu")
 
     if gpu_devices:
@@ -329,14 +328,15 @@ def main(latent_size, update_mlp_shape, choice_mlp_shape):
     dataset_train, dataset_test, *_ = preprocess_data(dataset_type, LOCAL_PATH_TO_FILE, testing_set_proportion)
 
     # Train model
-    disrnn_params = train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, dataset_test)
+    disrnn_params = train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, dataset_test, beta_values)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--latent_size", type=int, default=8, help="Number of latent units in the model")
-    parser.add_argument("--update_mlp_shape", nargs=2, type=int, default=[10, 10], help="Number of hidden units in each of the two layers of the update MLP")
-    parser.add_argument("--choice_mlp_shape", nargs=2, type=int, default=[10, 10], help="Number of hidden units in each of the two layers of the choice MLP")
+    parser.add_argument("--update_mlp_shape", nargs=2, type=int, default=[16, 16, 16], help="Number of hidden units in each of the two layers of the update MLP")
+    parser.add_argument("--choice_mlp_shape", nargs=2, type=int, default=[16, 16, 16], help="Number of hidden units in each of the two layers of the choice MLP")
+    parser.add_argument("--beta_values", type=int, default=[1e-5,1e-4,1e-3,1e-2], help="Number of hidden units in each of the two layers of the choice MLP")
 
     args = parser.parse_args()
 
-    main(args.latent_size, args.update_mlp_shape, args.choice_mlp_shape)
+    main(args.latent_size, args.update_mlp_shape, args.choice_mlp_shape, args.beta_values)
