@@ -1,0 +1,312 @@
+2024-10-07 09:58:04,898 INFO    StreamThr :144759 [internal.py:wandb_internal():85] W&B internal server running at pid: 144759, started at: 2024-10-07 09:58:04.891931
+2024-10-07 09:58:04,937 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status
+2024-10-07 09:58:04,972 INFO    WriterThread:144759 [datastore.py:open_for_write():87] open: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/run-byk39b83.wandb
+2024-10-07 09:58:04,973 DEBUG   SenderThread:144759 [sender.py:send():391] send: header
+2024-10-07 09:58:04,994 DEBUG   SenderThread:144759 [sender.py:send():391] send: run
+2024-10-07 09:58:05,222 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: run_start
+2024-10-07 09:58:05,245 INFO    SenderThread:144759 [dir_watcher.py:__init__():211] watching files in: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files
+2024-10-07 09:58:05,246 INFO    SenderThread:144759 [sender.py:_start_run_threads():1200] run started: byk39b83 with start time 1728309484.873348
+2024-10-07 09:58:05,327 DEBUG   HandlerThread:144759 [system_info.py:__init__():26] System info init
+2024-10-07 09:58:05,327 DEBUG   HandlerThread:144759 [system_info.py:__init__():41] System info init done
+2024-10-07 09:58:05,327 INFO    HandlerThread:144759 [system_monitor.py:start():194] Starting system monitor
+2024-10-07 09:58:05,332 INFO    SystemMonitor:144759 [system_monitor.py:_start():158] Starting system asset monitoring threads
+2024-10-07 09:58:05,333 INFO    HandlerThread:144759 [system_monitor.py:probe():214] Collecting system info
+2024-10-07 09:58:05,350 INFO    SystemMonitor:144759 [interfaces.py:start():188] Started cpu monitoring
+2024-10-07 09:58:05,368 INFO    SystemMonitor:144759 [interfaces.py:start():188] Started disk monitoring
+2024-10-07 09:58:05,391 INFO    SystemMonitor:144759 [interfaces.py:start():188] Started gpu monitoring
+2024-10-07 09:58:05,403 INFO    SystemMonitor:144759 [interfaces.py:start():188] Started memory monitoring
+2024-10-07 09:58:05,413 INFO    SystemMonitor:144759 [interfaces.py:start():188] Started network monitoring
+2024-10-07 09:58:05,421 DEBUG   HandlerThread:144759 [system_info.py:probe():152] Probing system
+2024-10-07 09:58:05,477 DEBUG   HandlerThread:144759 [system_info.py:_probe_git():137] Probing git
+2024-10-07 09:58:05,560 DEBUG   HandlerThread:144759 [system_info.py:_probe_git():145] Probing git done
+2024-10-07 09:58:05,560 DEBUG   HandlerThread:144759 [system_info.py:probe():200] Probing system done
+2024-10-07 09:58:05,560 DEBUG   HandlerThread:144759 [system_monitor.py:probe():223] {'os': 'Linux-3.10.0-1160.92.1.el7.x86_64-x86_64-with-glibc2.17', 'python': '3.9.19', 'heartbeatAt': '2024-10-07T13:58:05.421793', 'startedAt': '2024-10-07T13:58:04.839974', 'docker': None, 'cuda': '8.0.61', 'args': ('--penalty_scale', '1e-1', '--beta_scale', '3'), 'state': 'running', 'program': '/share/nklab/users/xz3013/CogModRNN/train_disrnn.py', 'codePathLocal': 'train_disrnn.py', 'codePath': 'train_disrnn.py', 'git': {'remote': 'git@github.com:YolandaXinyueZhu/CogModRNN.git', 'commit': 'fb2085413221c27081803cbbf5ab2e1ca311c575'}, 'email': None, 'root': '/share/nklab/users/xz3013/CogModRNN', 'host': 'ax01.rc.zi.columbia.edu', 'username': 'xz3013', 'executable': '/home/xz3013/.conda/envs/yolanda/bin/python3', 'cpu_count': 24, 'cpu_count_logical': 48, 'cpu_freq': {'current': 1358.5467291666662, 'min': 1000.0, 'max': 3700.0}, 'cpu_freq_per_core': [{'current': 3490.258, 'min': 1000.0, 'max': 3700.0}, {'current': 3392.663, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 3495.971, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.708, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.231, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.231, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.866, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 3392.663, 'min': 1000.0, 'max': 3700.0}, {'current': 3407.739, 'min': 1000.0, 'max': 3700.0}, {'current': 3490.258, 'min': 1000.0, 'max': 3700.0}, {'current': 1001.818, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.231, 'min': 1000.0, 'max': 3700.0}, {'current': 3471.374, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.549, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.549, 'min': 1000.0, 'max': 3700.0}, {'current': 1010.705, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 1002.136, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.231, 'min': 1000.0, 'max': 3700.0}, {'current': 1053.234, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 1001.184, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.708, 'min': 1000.0, 'max': 3700.0}, {'current': 1000.073, 'min': 1000.0, 'max': 3700.0}, {'current': 999.914, 'min': 1000.0, 'max': 3700.0}, {'current': 1001.025, 'min': 1000.0, 'max': 3700.0}], 'disk': {'/': {'total': 49.9755859375, 'used': 18.651294708251953}}, 'gpu': 'NVIDIA GeForce RTX 2080 Ti', 'gpu_count': 6, 'gpu_devices': [{'name': 'NVIDIA GeForce RTX 2080 Ti', 'memory_total': 11811160064}, {'name': 'NVIDIA GeForce RTX 2080 Ti', 'memory_total': 11811160064}, {'name': 'NVIDIA GeForce RTX 2080 Ti', 'memory_total': 11811160064}, {'name': 'NVIDIA GeForce RTX 2080 Ti', 'memory_total': 11811160064}, {'name': 'NVIDIA GeForce RTX 2080 Ti', 'memory_total': 11811160064}, {'name': 'NVIDIA GeForce RTX 2080 Ti', 'memory_total': 11811160064}], 'memory': {'total': 187.37261581420898}}
+2024-10-07 09:58:05,561 INFO    HandlerThread:144759 [system_monitor.py:probe():224] Finished collecting system info
+2024-10-07 09:58:05,561 INFO    HandlerThread:144759 [system_monitor.py:probe():227] Publishing system info
+2024-10-07 09:58:05,561 DEBUG   HandlerThread:144759 [system_info.py:_save_conda():209] Saving list of conda packages installed into the current environment
+2024-10-07 09:58:06,237 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_created():271] file/dir created: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/conda-environment.yaml
+2024-10-07 09:58:16,250 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/conda-environment.yaml
+2024-10-07 09:58:17,247 DEBUG   HandlerThread:144759 [system_info.py:_save_conda():224] Saving conda packages done
+2024-10-07 09:58:17,250 INFO    HandlerThread:144759 [system_monitor.py:probe():229] Finished publishing system info
+2024-10-07 09:58:17,252 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_created():271] file/dir created: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/wandb-metadata.json
+2024-10-07 09:58:17,258 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: keepalive
+2024-10-07 09:58:17,258 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:58:17,258 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: keepalive
+2024-10-07 09:58:17,258 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:58:17,259 DEBUG   SenderThread:144759 [sender.py:send():391] send: files
+2024-10-07 09:58:17,259 INFO    SenderThread:144759 [sender.py:_save_file():1466] saving file wandb-metadata.json with policy now
+2024-10-07 09:58:17,529 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: python_packages
+2024-10-07 09:58:17,531 INFO    wandb-upload_0:144759 [upload_job.py:push():130] Uploaded file /tmp/tmphq0fcraawandb/mgpivev7-wandb-metadata.json
+2024-10-07 09:58:17,531 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: python_packages
+2024-10-07 09:58:17,562 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 09:58:17,562 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 09:58:17,583 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 09:58:17,656 DEBUG   SenderThread:144759 [sender.py:send():391] send: telemetry
+2024-10-07 09:58:18,253 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_created():271] file/dir created: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/requirements.txt
+2024-10-07 09:58:18,254 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_created():271] file/dir created: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 09:58:20,256 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 09:58:20,659 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:58:26,583 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:58:27,577 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 09:58:32,561 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 09:58:32,562 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 09:58:32,695 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:58:37,577 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 09:58:38,587 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:58:39,275 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/config.yaml
+2024-10-07 09:58:44,583 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:58:47,566 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 09:58:47,567 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 09:58:47,606 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 09:58:49,653 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:58:55,592 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:58:57,577 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 09:59:01,592 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:59:02,566 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 09:59:02,567 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 09:59:05,414 DEBUG   SystemMonitor:144759 [system_monitor.py:_start():172] Starting system metrics aggregation loop
+2024-10-07 09:59:05,416 DEBUG   SenderThread:144759 [sender.py:send():391] send: stats
+2024-10-07 09:59:07,418 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:59:07,579 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 09:59:12,599 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:59:17,578 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 09:59:17,578 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 09:59:17,617 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 09:59:17,658 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:59:23,643 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:59:27,584 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 09:59:28,643 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:59:32,590 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 09:59:32,591 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 09:59:33,734 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:59:35,418 DEBUG   SenderThread:144759 [sender.py:send():391] send: stats
+2024-10-07 09:59:37,585 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 09:59:39,705 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:59:44,717 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:59:47,584 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 09:59:47,588 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 09:59:47,589 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 09:59:49,741 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:59:55,706 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 09:59:57,585 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:00:01,706 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:00:02,590 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 10:00:02,590 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 10:00:05,420 DEBUG   SenderThread:144759 [sender.py:send():391] send: stats
+2024-10-07 10:00:07,422 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:00:07,585 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:00:12,707 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:00:17,585 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:00:17,589 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 10:00:17,589 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 10:00:17,736 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:00:23,706 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:00:27,586 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:00:28,707 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:00:32,589 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 10:00:32,590 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 10:00:33,739 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:00:35,422 DEBUG   SenderThread:144759 [sender.py:send():391] send: stats
+2024-10-07 10:00:37,586 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:00:38,399 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:00:39,162 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:00:40,401 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:00:44,406 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:00:44,885 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:00:46,409 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:00:47,585 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:00:47,589 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 10:00:47,590 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 10:00:48,412 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:00:49,928 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:00:50,416 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:00:52,420 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:00:55,753 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:00:56,425 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:00:57,586 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:00:58,428 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:00,430 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:01,503 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:01:02,590 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 10:01:02,591 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 10:01:04,437 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:05,424 DEBUG   SenderThread:144759 [sender.py:send():391] send: stats
+2024-10-07 10:01:06,440 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:07,231 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:01:07,586 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:01:08,443 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:10,445 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:12,448 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:12,716 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:01:14,450 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:17,586 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:01:17,589 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 10:01:17,590 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 10:01:17,866 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:01:18,454 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:20,457 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:22,460 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:23,809 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:01:24,462 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:26,465 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:27,586 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:01:29,717 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:01:30,470 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:32,472 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:32,590 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-07 10:01:32,591 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: stop_status
+2024-10-07 10:01:34,474 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:34,858 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:01:35,426 DEBUG   SenderThread:144759 [sender.py:send():391] send: stats
+2024-10-07 10:01:36,477 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:37,586 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:01:38,480 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:40,559 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:01:42,485 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:44,179 DEBUG   SenderThread:144759 [sender.py:send():391] send: exit
+2024-10-07 10:01:44,180 INFO    SenderThread:144759 [sender.py:send_exit():598] handling exit code: 255
+2024-10-07 10:01:44,180 INFO    SenderThread:144759 [sender.py:send_exit():600] handling runtime: 218
+2024-10-07 10:01:44,182 INFO    SenderThread:144759 [sender.py:_save_file():1466] saving file wandb-summary.json with policy end
+2024-10-07 10:01:44,183 INFO    SenderThread:144759 [sender.py:send_exit():606] send defer
+2024-10-07 10:01:44,183 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:44,183 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 0
+2024-10-07 10:01:44,183 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:44,183 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 0
+2024-10-07 10:01:44,184 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 1
+2024-10-07 10:01:44,184 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:44,184 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 1
+2024-10-07 10:01:44,184 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:44,184 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 1
+2024-10-07 10:01:44,184 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 2
+2024-10-07 10:01:44,184 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:44,184 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 2
+2024-10-07 10:01:44,184 INFO    HandlerThread:144759 [system_monitor.py:finish():203] Stopping system monitor
+2024-10-07 10:01:44,184 INFO    HandlerThread:144759 [interfaces.py:finish():200] Joined cpu monitor
+2024-10-07 10:01:44,191 INFO    HandlerThread:144759 [interfaces.py:finish():200] Joined disk monitor
+2024-10-07 10:01:44,185 DEBUG   SystemMonitor:144759 [system_monitor.py:_start():179] Finished system metrics aggregation loop
+2024-10-07 10:01:44,191 DEBUG   SystemMonitor:144759 [system_monitor.py:_start():183] Publishing last batch of metrics
+2024-10-07 10:01:44,487 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:44,488 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_created():271] file/dir created: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/wandb-summary.json
+2024-10-07 10:01:46,495 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:46,687 INFO    HandlerThread:144759 [interfaces.py:finish():200] Joined gpu monitor
+2024-10-07 10:01:46,687 INFO    HandlerThread:144759 [interfaces.py:finish():200] Joined memory monitor
+2024-10-07 10:01:46,687 INFO    HandlerThread:144759 [interfaces.py:finish():200] Joined network monitor
+2024-10-07 10:01:46,688 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-07 10:01:46,688 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:01:46,688 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:46,688 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 2
+2024-10-07 10:01:46,688 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 3
+2024-10-07 10:01:46,689 DEBUG   SenderThread:144759 [sender.py:send():391] send: stats
+2024-10-07 10:01:46,689 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: poll_exit
+2024-10-07 10:01:46,690 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:46,690 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 3
+2024-10-07 10:01:46,690 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:46,690 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 3
+2024-10-07 10:01:46,690 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 4
+2024-10-07 10:01:46,690 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:46,690 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 4
+2024-10-07 10:01:46,691 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:46,691 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 4
+2024-10-07 10:01:46,691 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 5
+2024-10-07 10:01:46,691 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:46,691 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 5
+2024-10-07 10:01:46,691 DEBUG   SenderThread:144759 [sender.py:send():391] send: summary
+2024-10-07 10:01:46,693 INFO    SenderThread:144759 [sender.py:_save_file():1466] saving file wandb-summary.json with policy end
+2024-10-07 10:01:46,693 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:46,693 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 5
+2024-10-07 10:01:46,694 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 6
+2024-10-07 10:01:46,694 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:46,694 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 6
+2024-10-07 10:01:46,694 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:46,694 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 6
+2024-10-07 10:01:46,694 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 7
+2024-10-07 10:01:46,694 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: status_report
+2024-10-07 10:01:46,694 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:46,694 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 7
+2024-10-07 10:01:46,696 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:46,696 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 7
+2024-10-07 10:01:47,179 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-07 10:01:47,496 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/wandb-summary.json
+2024-10-07 10:01:48,188 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 8
+2024-10-07 10:01:48,188 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: poll_exit
+2024-10-07 10:01:48,189 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:48,189 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 8
+2024-10-07 10:01:48,189 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:48,189 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 8
+2024-10-07 10:01:48,189 INFO    SenderThread:144759 [job_builder.py:build():443] Attempting to build job artifact
+2024-10-07 10:01:48,191 INFO    SenderThread:144759 [job_builder.py:_get_source_type():572] is repo sourced job
+2024-10-07 10:01:48,313 INFO    SenderThread:144759 [job_builder.py:build():548] adding wandb-job metadata file
+2024-10-07 10:01:48,325 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 9
+2024-10-07 10:01:48,326 DEBUG   SenderThread:144759 [sender.py:send():391] send: artifact
+2024-10-07 10:01:48,326 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:48,330 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 9
+2024-10-07 10:01:48,497 INFO    Thread-12 :144759 [dir_watcher.py:_on_file_modified():288] file/dir modified: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:48,929 INFO    wandb-upload_1:144759 [upload_job.py:push():85] Skipped uploading /tmp/tmps0yvt8bc/wandb-job.json
+2024-10-07 10:01:49,178 INFO    wandb-upload_0:144759 [upload_job.py:push():88] Uploaded file /home/xz3013/.local/share/wandb/artifacts/staging/tmppp_6pcjx
+2024-10-07 10:01:49,184 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-07 10:01:49,818 INFO    SenderThread:144759 [sender.py:send_artifact():1549] sent artifact job-git_github.com_YolandaXinyueZhu_CogModRNN.git_train_disrnn.py - {'id': 'QXJ0aWZhY3Q6MTI2NDIzNzg3Mg==', 'state': 'PENDING', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjQxOTA3NzYzNQ==', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6MTI2NDIzMTY5NA==', 'versionIndex': 13}}}
+2024-10-07 10:01:49,818 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:49,818 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 9
+2024-10-07 10:01:49,819 INFO    SenderThread:144759 [dir_watcher.py:finish():358] shutting down directory watcher
+2024-10-07 10:01:50,499 INFO    SenderThread:144759 [dir_watcher.py:finish():388] scan: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files
+2024-10-07 10:01:50,504 INFO    SenderThread:144759 [dir_watcher.py:finish():402] scan save: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/wandb-summary.json wandb-summary.json
+2024-10-07 10:01:50,504 INFO    SenderThread:144759 [dir_watcher.py:finish():402] scan save: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/config.yaml config.yaml
+2024-10-07 10:01:50,504 INFO    SenderThread:144759 [dir_watcher.py:finish():402] scan save: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/conda-environment.yaml conda-environment.yaml
+2024-10-07 10:01:50,504 INFO    SenderThread:144759 [dir_watcher.py:finish():402] scan save: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log output.log
+2024-10-07 10:01:50,505 INFO    SenderThread:144759 [dir_watcher.py:finish():402] scan save: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/wandb-metadata.json wandb-metadata.json
+2024-10-07 10:01:50,505 INFO    SenderThread:144759 [dir_watcher.py:finish():402] scan save: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/requirements.txt requirements.txt
+2024-10-07 10:01:50,505 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 10
+2024-10-07 10:01:50,505 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: poll_exit
+2024-10-07 10:01:50,505 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:50,505 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 10
+2024-10-07 10:01:50,509 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:50,510 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 10
+2024-10-07 10:01:50,510 INFO    SenderThread:144759 [file_pusher.py:finish():169] shutting down file pusher
+2024-10-07 10:01:50,702 INFO    wandb-upload_1:144759 [upload_job.py:push():130] Uploaded file /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/wandb-summary.json
+2024-10-07 10:01:50,728 INFO    wandb-upload_0:144759 [upload_job.py:push():130] Uploaded file /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/config.yaml
+2024-10-07 10:01:50,747 INFO    wandb-upload_2:144759 [upload_job.py:push():130] Uploaded file /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/conda-environment.yaml
+2024-10-07 10:01:50,760 INFO    wandb-upload_3:144759 [upload_job.py:push():130] Uploaded file /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/output.log
+2024-10-07 10:01:50,764 INFO    wandb-upload_4:144759 [upload_job.py:push():130] Uploaded file /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/files/requirements.txt
+2024-10-07 10:01:50,965 INFO    Thread-11 :144759 [sender.py:transition_state():626] send defer: 11
+2024-10-07 10:01:50,965 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:50,965 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 11
+2024-10-07 10:01:50,966 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:50,966 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 11
+2024-10-07 10:01:50,966 INFO    SenderThread:144759 [file_pusher.py:join():175] waiting for file pusher
+2024-10-07 10:01:50,966 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 12
+2024-10-07 10:01:50,966 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:50,966 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 12
+2024-10-07 10:01:50,967 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:50,967 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 12
+2024-10-07 10:01:50,967 INFO    SenderThread:144759 [file_stream.py:finish():601] file stream finish called
+2024-10-07 10:01:51,163 INFO    SenderThread:144759 [file_stream.py:finish():605] file stream finish is done
+2024-10-07 10:01:51,163 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 13
+2024-10-07 10:01:51,163 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:51,163 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 13
+2024-10-07 10:01:51,164 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:51,164 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 13
+2024-10-07 10:01:51,164 INFO    SenderThread:144759 [sender.py:transition_state():626] send defer: 14
+2024-10-07 10:01:51,164 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: defer
+2024-10-07 10:01:51,164 DEBUG   SenderThread:144759 [sender.py:send():391] send: final
+2024-10-07 10:01:51,164 INFO    HandlerThread:144759 [handler.py:handle_request_defer():184] handle defer: 14
+2024-10-07 10:01:51,165 DEBUG   SenderThread:144759 [sender.py:send():391] send: footer
+2024-10-07 10:01:51,165 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: defer
+2024-10-07 10:01:51,165 INFO    SenderThread:144759 [sender.py:send_request_defer():622] handle sender defer: 14
+2024-10-07 10:01:51,166 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-07 10:01:51,166 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: server_info
+2024-10-07 10:01:51,167 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-07 10:01:51,167 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: get_summary
+2024-10-07 10:01:51,168 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: sampled_history
+2024-10-07 10:01:51,168 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-07 10:01:51,168 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: poll_exit
+2024-10-07 10:01:51,168 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: server_info
+2024-10-07 10:01:51,225 DEBUG   SenderThread:144759 [sender.py:send_request():418] send_request: poll_exit
+2024-10-07 10:01:51,225 INFO    MainThread:144759 [wandb_run.py:_footer_history_summary_info():4078] rendering history
+2024-10-07 10:01:51,225 INFO    MainThread:144759 [wandb_run.py:_footer_history_summary_info():4110] rendering summary
+2024-10-07 10:01:51,225 INFO    MainThread:144759 [wandb_run.py:_footer_sync_info():4037] logging synced files
+2024-10-07 10:01:51,227 DEBUG   HandlerThread:144759 [handler.py:handle_request():158] handle_request: shutdown
+2024-10-07 10:01:51,227 INFO    HandlerThread:144759 [handler.py:finish():884] shutting down handler
+2024-10-07 10:01:52,167 INFO    WriterThread:144759 [datastore.py:close():296] close: /share/nklab/users/xz3013/CogModRNN/wandb/run-20241007_095804-byk39b83/run-byk39b83.wandb
+2024-10-07 10:01:52,225 INFO    SenderThread:144759 [sender.py:finish():1631] shutting down sender
+2024-10-07 10:01:52,225 INFO    SenderThread:144759 [file_pusher.py:finish():169] shutting down file pusher
+2024-10-07 10:01:52,225 INFO    SenderThread:144759 [file_pusher.py:join():175] waiting for file pusher

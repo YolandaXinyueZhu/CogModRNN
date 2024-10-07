@@ -1,0 +1,43 @@
+
+Training with beta_scale: 3.0 and penalty_scale: 0.1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 280 of 500; Loss: 3.0687e+06. Model Size: 8898 (Time: 149.3s)
+Traceback (most recent call last):
+  File "/share/nklab/users/xz3013/CogModRNN/train_disrnn.py", line 285, in <module>
+    main(args_dict,
+  File "/share/nklab/users/xz3013/CogModRNN/train_disrnn.py", line 249, in main
+    disrnn_params = train_model(args_dict,
+  File "/share/nklab/users/xz3013/CogModRNN/train_disrnn.py", line 195, in train_model
+    disrnn_params, opt_state, losses = rnn_utils.fit_model(
+  File "/share/nklab/users/xz3013/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 352, in fit_model
+    params, opt_state, losses = train_model(
+  File "/share/nklab/users/xz3013/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 272, in train_model
+    loss, params, opt_state = train_step(params, opt_state, xs, ys, key_i)
+  File "<string>", line 1, in <lambda>
+KeyboardInterrupt
