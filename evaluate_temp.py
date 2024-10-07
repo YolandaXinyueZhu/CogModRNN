@@ -425,74 +425,138 @@ def create_dataframe_for_plotting(predictions, actions, bitResponseAIsCorr, P_A,
     return df
 
 def plot_bottlenecks(params, save_folder_name, sort_latents=True, obs_names=None):
-    """Plot the bottleneck sigmas from an hk.CompartmentalizedRNN."""
+    """Plot the bottleneck sigmas from an hk.CompartmentalizedRNN and save sigma values to text files.
+    
+    Additionally, the plot indicates whether darker colors correspond to higher sigma values.
+    """
+    import matplotlib.colors as mcolors  # Importing here to keep imports organized
+    
     plot_dir = 'plots/bottlenecks'
     save_dir = os.path.join(plot_dir, save_folder_name)
-    os.makedirs(os.path.dirname(save_dir), exist_ok=True)  # Ensure the full directory path exists
-    save_path = f"{save_dir}.png"  # Save file directly to the full path with the given name
-
+    os.makedirs(save_dir, exist_ok=True)  # Ensure the directory exists
+    
+    # Extract the base name to use as the plot filename
+    base_name = os.path.basename(save_folder_name)
+    if not base_name:
+        # If save_folder_name ends with a slash, get the second last part
+        base_name = os.path.basename(os.path.dirname(save_folder_name))
+    
+    plot_path = os.path.join(save_dir, f"{base_name}.png")  # Path to save the plot
+    
+    # Extract parameters for DisRNN
     params_disrnn = params['hk_dis_rnn']
     latent_dim = params_disrnn['latent_sigmas_unsquashed'].shape[0]
+    update_mlp_dim = params_disrnn['update_mlp_sigmas_unsquashed'].shape[1]  # Assuming shape [latent, update_mlp_inputs]
     obs_dim = params_disrnn['update_mlp_sigmas_unsquashed'].shape[0] - latent_dim
-
+    
+    # Assign observation names if not provided
     if obs_names is None:
         if obs_dim == 2:
             obs_names = ['Choice', 'Reward']
         elif obs_dim == 5:
             obs_names = ['A', 'B', 'C', 'D', 'Reward']
         else: 
-            obs_names = np.arange(1, obs_dim+1)
-
-    latent_sigmas = 60 * jax.nn.sigmoid(
+            obs_names = [f'Obs_{i}' for i in range(1, obs_dim+1)]
+    
+    # Compute sigmas using sigmoid activation scaled by 2
+    latent_sigmas = 2 * jax.nn.sigmoid(
         jnp.array(params_disrnn['latent_sigmas_unsquashed'])
     )
-
-    update_sigmas = 60 * jax.nn.sigmoid(
+    
+    update_sigmas = 2 * jax.nn.sigmoid(
         np.transpose(
             params_disrnn['update_mlp_sigmas_unsquashed']
         )
     )
-
+    
+    # Optionally sort latents based on their sigmas for better visualization
     if sort_latents:
         latent_sigma_order = np.argsort(
             params_disrnn['latent_sigmas_unsquashed']
         )
         latent_sigmas = latent_sigmas[latent_sigma_order]
-
+    
         update_sigma_order = np.concatenate(
-            (np.arange(0, obs_dim, 1), obs_dim + latent_sigma_order), axis=0
+            (np.arange(0, obs_dim, 1), latent_sigma_order + obs_dim),
+            axis=0
         )
         update_sigmas = update_sigmas[latent_sigma_order, :]
         update_sigmas = update_sigmas[:, update_sigma_order]
-
-    latent_names = np.arange(1, latent_dim + 1)
-    fig = plt.subplots(1, 2, figsize=(20, 10))
-    plt.subplot(1, 2, 1)
-    plt.imshow(np.swapaxes([1 - latent_sigmas], 0, 1), cmap='Oranges')
-    plt.clim(vmin=0, vmax=1)
-    plt.yticks(ticks=range(latent_dim), labels=latent_names)
-    plt.xticks(ticks=[])
-    plt.ylabel('Latent #')
-    plt.title('Latent Bottlenecks')
-
-    plt.subplot(1, 2, 2)
-    plt.imshow(1 - update_sigmas, cmap='Oranges')
-    plt.clim(vmin=0, vmax=1)
-    plt.colorbar()
-    plt.yticks(ticks=range(latent_dim), labels=latent_names)
-    xlabels = np.concatenate((np.array(obs_names), latent_names))
-    plt.xticks(
-        ticks=range(len(xlabels)),
-        labels=xlabels,
-        rotation='vertical',
-    )
-    plt.ylabel('Latent #')
-    plt.title('Update MLP Bottlenecks')
-
+    
+    # Assign names to latent variables
+    latent_names = [f'Latent_{i+1}' for i in range(latent_dim)]
+    
+    # Plotting
+    fig, axes = plt.subplots(1, 2, figsize=(25, 12))
+    
+    # Define a colormap where higher sigma corresponds to more intense (darker) colors
+    cmap='Oranges'
+    
+    # Plot Latent Bottlenecks
+    ax1 = axes[0]
+    im1 = ax1.imshow(latent_sigmas.reshape(1, -1), cmap=cmap, aspect='auto', vmin=0, vmax=1)
+    ax1.set_yticks([0])
+    ax1.set_yticklabels(['Latent #'])
+    ax1.set_xticks(range(latent_dim))
+    ax1.set_xticklabels(latent_names, rotation=90)
+    ax1.set_title('Latent Bottlenecks (Sigma)')
+    cbar1 = fig.colorbar(im1, ax=ax1, fraction=0.046, pad=0.04)
+    cbar1.set_label('Sigma Value')
+    
+    # Plot Update MLP Bottlenecks
+    ax2 = axes[1]
+    im2 = ax2.imshow(update_sigmas, cmap=cmap, aspect='auto', vmin=0, vmax=1)
+    ax2.set_yticks(range(latent_dim))
+    ax2.set_yticklabels(latent_names)
+    xlabels = obs_names + latent_names
+    ax2.set_xticks(range(len(xlabels)))
+    ax2.set_xticklabels(xlabels, rotation=90)
+    ax2.set_title('Update MLP Bottlenecks (Sigma)')
+    cbar2 = fig.colorbar(im2, ax=ax2, fraction=0.046, pad=0.04)
+    cbar2.set_label('Sigma Value')
+    
+    # Add annotation to indicate that darker colors represent higher sigma
+    fig.text(0.5, 0.95, 'Darker Colors → Higher Sigma Values', ha='center', fontsize=14, color='black')
+    
     plt.tight_layout()
-    plt.savefig(save_path)  # Save the figure to the specified path
-
+    plt.savefig(plot_path)  # Save the plot
+    plt.close(fig)  # Close the figure to free memory
+    
+    # **Printing Sigmas**
+    print("\n=== Latent Bottleneck Sigmas ===")
+    for i, sigma in enumerate(latent_sigmas):
+        print(f"Latent {i+1}: Sigma = {sigma:.4f}")
+    
+    print("\n=== Update MLP Bottleneck Sigmas ===")
+    for i in range(update_sigmas.shape[0]):
+        print(f"Latent {i+1} Update MLP Sigmas:")
+        for j, sigma in enumerate(update_sigmas[i]):
+            print(f"  Input {j+1} ({xlabels[j]}): Sigma = {sigma:.4f}")
+    
+    # **Saving Sigmas to Text Files**
+    # Define file paths
+    latent_sigmas_path = os.path.join(save_dir, "latent_sigmas.txt")
+    update_sigmas_path = os.path.join(save_dir, "update_mlp_sigmas.txt")
+    
+    # Save Latent Sigmas
+    with open(latent_sigmas_path, 'w') as f:
+        f.write("Latent Bottleneck Sigmas:\n")
+        for i, sigma in enumerate(latent_sigmas):
+            f.write(f"Latent {i+1}: {sigma:.6f}\n")
+    
+    # Save Update MLP Sigmas
+    with open(update_sigmas_path, 'w') as f:
+        f.write("Update MLP Bottleneck Sigmas:\n")
+        for i in range(update_sigmas.shape[0]):
+            f.write(f"Latent {i+1} Update MLP Sigmas:\n")
+            for j, sigma in enumerate(update_sigmas[i]):
+                f.write(f"  Input {j+1} ({xlabels[j]}): {sigma:.6f}\n")
+            f.write("\n")
+    
+    print(f"\nSigma values have been saved to:\n- {latent_sigmas_path}\n- {update_sigmas_path}")
+    
     return fig
+
 
 def main(seed, saved_checkpoint_pth):
     np.random.seed(seed)

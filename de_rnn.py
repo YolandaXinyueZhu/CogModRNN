@@ -251,7 +251,7 @@ def preprocess_data(dataset_type, LOCAL_PATH_TO_FILE, testing_set_proportion):
 
 def train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, dataset_test):
     x, y = next(dataset_train)
-    beta_values = [1e-5]
+    beta_values = [1e-5,1e-4,1e-3,1e-2,1e-1,1,2,3]
     penalty_scales = [1e-10]
 
     os.makedirs('plots', exist_ok=True)
@@ -260,7 +260,7 @@ def train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, 
 
     for beta_scale, penalty_scale in itertools.product(beta_values, penalty_scales):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        subdir = f'ls_{latent_size}_umlp_{update_mlp_shape}_cmlp_{choice_mlp_shape}_beta_{beta_scale}_penalty_{penalty_scale}_{timestamp}'
+        subdir = f'ls_{latent_size}_umlp_{update_mlp_shape[0]}{update_mlp_shape[1]}_cmlp_{choice_mlp_shape[0]}{choice_mlp_shape[1]}_beta_{beta_scale}_penalty_{penalty_scale}_{timestamp}'
         plot_dir = os.path.join('plots', subdir)
         checkpoint_dir = os.path.join('checkpoints', subdir)
         loss_dir = os.path.join('loss', subdir)
@@ -291,7 +291,7 @@ def train_model(latent_size, update_mlp_shape, choice_mlp_shape, dataset_train, 
             optimizer=optimizer,
             loss_fun='penalized_categorical',
             convergence_thresh=1e-3,
-            n_steps_max=10000,
+            n_steps_max=50000,
             n_steps_per_call=500,
             return_all_losses=True,
             penalty_scale=penalty_scale
@@ -333,9 +333,9 @@ def main(latent_size, update_mlp_shape, choice_mlp_shape):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--latent_size", type=int, default=16, help="Number of latent units in the model")
-    parser.add_argument("--update_mlp_shape", nargs=2, type=int, default=[8, 8], help="Number of hidden units in each of the two layers of the update MLP")
-    parser.add_argument("--choice_mlp_shape", nargs=2, type=int, default=[8, 8], help="Number of hidden units in each of the two layers of the choice MLP")
+    parser.add_argument("--latent_size", type=int, default=8, help="Number of latent units in the model")
+    parser.add_argument("--update_mlp_shape", nargs=2, type=int, default=[10, 10], help="Number of hidden units in each of the two layers of the update MLP")
+    parser.add_argument("--choice_mlp_shape", nargs=2, type=int, default=[10, 10], help="Number of hidden units in each of the two layers of the choice MLP")
 
     args = parser.parse_args()
 
