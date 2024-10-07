@@ -335,7 +335,7 @@ if __name__ == "__main__":
     parser.add_argument("--latent_size", type=int, default=8, help="Number of latent units in the model")
     parser.add_argument("--update_mlp_shape", nargs=2, type=int, default=[18, 18, 18], help="Number of hidden units in each of the two layers of the update MLP")
     parser.add_argument("--choice_mlp_shape", nargs=2, type=int, default=[16, 16, 16], help="Number of hidden units in each of the two layers of the choice MLP")
-    parser.add_argument("--beta_values", type=int, default=[1e-5,1e-4,1e-3,1e-2], help="Number of hidden units in each of the two layers of the choice MLP")
+    parser.add_argument("--beta_values",  nargs='+', type=float, default=[1e-5,1e-4,1e-3,1e-2], help="Number of hidden units in each of the two layers of the choice MLP")
 
     args = parser.parse_args()
 
