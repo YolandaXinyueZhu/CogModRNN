@@ -40,6 +40,7 @@ def load_data(fname, data_dir='./'):
     [array(['bitCorr_prev'], dtype='<U12')],
     [array(['bitResponseA_prev'], dtype='<U17')],
     [array(['bitResponseA'], dtype='<U12')]]
+    array(['trialNInBlock'], dtype='<U13')
     
     'vars_for_state': A nested list of arrays, where each inner array contains a single string representing a variable name related to state information.
     For example:
@@ -78,7 +79,9 @@ def load_data(fname, data_dir='./'):
     if '_nBlocks-1_' in fname:
         zs_oh = zs_oh[...,:4]
     elif '_nBlocks-2_' in fname:
-        zs_oh = zs_oh[...,:8]
+        zs_oh = zs_oh[...,:4]
+    elif '_nBlocks-4_' in fname:
+        zs_oh = zs_oh[...,:4]
     else:
         raise Exception("Dataset format is incorrect or contains more than two blocks of data.")
 
@@ -242,7 +245,7 @@ def main(args_dict,
 
     # Preprocess Data
     dataset_type = 'RealWorldKimmelfMRIDataset'
-    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-1_nTrialsPerBlock-100_b-0.3_NaN_30_0.93_0.45_NaN_NaN_withOptimalChoice_20240718_fast.mat"
+    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-4_nTrialsPerBlock-50_b-0.11_NaN_10.5_0.93_0.45_NaN_NaN_20241008.mat"
     dataset_train, dataset_test, *_ = preprocess_data(dataset_type, dataset_path, validation_proportion)
 
     # Train model
@@ -265,7 +268,7 @@ if __name__ == "__main__":
     parser.add_argument("--choice_mlp_shape", nargs="+", type=int, default=[16, 16, 16], help="Number of hidden units in each of the two layers of the choice MLP")
     parser.add_argument("--beta_scale", type=float, required=True, help="Value for the beta scaling parameter")
     parser.add_argument("--penalty_scale", type=float, required=True, help="Value for the penalty scaling parameter")
-    parser.add_argument("--n_step_max", type=int, default=10000, help="The maximum number of iterations to run, even if convergence is not reached")
+    parser.add_argument("--n_step_max", type=int, default=15000, help="The maximum number of iterations to run, even if convergence is not reached")
     parser.add_argument("--n_steps_per_call", type=float, default=500, help="The number of steps to give to train_model")
 
     args = parser.parse_args()

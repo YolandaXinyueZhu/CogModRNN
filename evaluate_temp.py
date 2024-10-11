@@ -172,185 +172,52 @@ def plot_latent_activations_for_session(sess_i, xs_train, pred_train, act_train,
 
     plot_session(choices, rewards, timeseries=disrnn_activations, timeseries_name='Network Activations', labels=labels)
 
+def plot_single_checkpoint_performance(metrics, save_folder, args_dict):
+    """Plot the performance metrics for a single checkpoint with hyperparameters."""
+    fig, ax = plt.subplots(1, 1, figsize=(10, 7))
 
-def plot_update_rules(params, make_network):
-  """Generates visualizations of the update ruled of a disRNN.
-  """
+    # Bar plot for normalized likelihoods
+    labels = ['Training', 'Test', 'Shuffled']
+    likelihoods = [metrics['train_norm_likelihood'], metrics['test_norm_likelihood'], metrics['shuffled_norm_likelihood']]
+    upper_bounds = [metrics['train_upper_bound'], metrics['test_upper_bound']]
 
-  def step(xs, state):
-    core = make_network()
-    output, new_state = core(jnp.expand_dims(jnp.array(xs), axis=0), state)
-    return output, new_state
+    bar_positions = np.arange(len(labels))
+    bar_width = 0.35
 
-  _, step_hk = hk.transform(step)
-  key = jax.random.PRNGKey(0)
-  step_hk = jax.jit(step_hk)
+    # Plot normalized likelihoods
+    bars = ax.bar(bar_positions, likelihoods, bar_width, label='Normalized Likelihood')
 
-  initial_state = np.array(rnn_utils.get_initial_state(make_network))
-  reference_state = np.zeros(initial_state.shape)
+    # Plot upper bounds as horizontal lines
+    ax.axhline(y=upper_bounds[0], color='orange', linestyle='--', label='Training Upper Bound')
+    ax.axhline(y=upper_bounds[1], color='gray', linestyle='-.', label='Test Upper Bound')
 
-  def plot_update_1d(params, unit_i, observations, titles):
-    lim = 3
-    state_bins = np.linspace(-lim, lim, 20)
-    colormap = plt.cm.get_cmap('viridis', 3)
-    colors = colormap.colors
+    # Set plot labels and titles
+    ax.set_xlabel('Dataset Type')
+    ax.set_ylabel('Normalized Likelihood')
+    ax.set_title('Model Performance Metrics')
+    ax.set_xticks(bar_positions)
+    ax.set_xticklabels(labels)
 
-    fig, ax = plt.subplots(
-        1, len(observations), figsize=(len(observations) * 4, 5.5)
-    )
-    plt.subplot(1, len(observations), 1)
-    plt.ylabel('Updated Activity')
+    # Make the legend slightly smaller
+    ax.legend(fontsize='small')
 
-    for observation_i in range(len(observations)):
-      observation = observations[observation_i]
-      plt.subplot(1, len(observations), observation_i + 1)
+    # Add hyperparameter information as text in the plot
+    hyperparams_text = "\n".join([f"{key}: {value}" for key, value in args_dict.items()])
+    plt.text(1.05, 0.5, hyperparams_text, transform=ax.transAxes, fontsize=10, va='center',
+             bbox=dict(boxstyle="round,pad=0.3", edgecolor="black", facecolor="lightgray", alpha=0.5))
 
-      plt.plot((-3, 3), (-3, 3), '--', color='grey')
-      plt.plot((-3, 3), (0, 0), color='black')
-      plt.plot((0, 0), (-3, 3), color='black')
+    # Save the plot in the specified directory
+    save_path = os.path.join(save_folder, 'checkpoint_performance.png')
+    plt.tight_layout()
+    plt.savefig(save_path)
+    plt.show()
+    plt.close(fig)
 
-      delta_states = np.zeros(shape=(len(state_bins), 1))
-      for s_i in np.arange(len(state_bins)):
-        state = reference_state
-        state[0, unit_i] = state_bins[s_i]
-        _, next_state = step_hk(
-            params, key, observation, state
-        )
-        next_state = np.array(next_state)
-        delta_states[s_i] = next_state[0, unit_i]  # - state[0, unit_i]
+    print(f"Performance plot saved to {save_path}")
 
-      plt.plot(state_bins, delta_states, color=colors[1])
 
-      plt.title(titles[observation_i])
-      plt.xlim(-lim, lim)
-      plt.ylim(-lim, lim)
-      plt.xlabel('Previous Activity')
-
-      if isinstance(ax, np.ndarray):
-        ax[observation_i].set_aspect('equal')
-      else:
-        ax.set_aspect('equal')
-    return fig
-
-  def plot_update_2d(params, unit_i, unit_input, observations, titles):
-    lim = 3
-
-    state_bins = np.linspace(-lim, lim, 20)
-    colormap = plt.cm.get_cmap('viridis', len(state_bins))
-    colors = colormap.colors
-
-    fig, ax = plt.subplots(
-        1, len(observations), figsize=(len(observations) * 2 + 10, 5.5)
-    )
-    plt.subplot(1, len(observations), 1)
-    plt.ylabel('Updated Latent ' + str(unit_i + 1) + ' Activity')
-
-    for observation_i in range(len(observations)):
-      observation = observations[observation_i]
-      plt.subplot(1, len(observations), observation_i + 1)
-
-      plt.plot((-3, 3), (-3, 3), '--', color='grey')
-      plt.plot((-3, 3), (0, 0), color='black')
-      plt.plot((0, 0), (-3, 3), color='black')
-
-      for si_i in np.arange(len(state_bins)):
-        delta_states = np.zeros(shape=(len(state_bins), 1))
-        for s_i in np.arange(len(state_bins)):
-          state = reference_state
-          state[0, unit_i] = state_bins[s_i]
-          state[0, unit_input] = state_bins[si_i]
-          print("s_i", si_i)
-          print(state[0, unit_input])
-          _, next_state = step_hk(params, key, observation, state)
-          next_state = np.array(next_state)
-          delta_states[s_i] = next_state[0, unit_i]
-
-        plt.plot(state_bins, delta_states, color=colors[si_i])
-
-      plt.title(titles[observation_i])
-      plt.xlim(-lim, lim)
-      plt.ylim(-lim, lim)
-      plt.xlabel('Latent ' + str(unit_i + 1) + ' Activity')
-
-      if isinstance(ax, np.ndarray):
-        ax[observation_i].set_aspect('equal')
-      else:
-        ax.set_aspect('equal')
-    return fig
-
-  latent_sigmas = 2*jax.nn.sigmoid(
-      jnp.array(params['hk_dis_rnn']['latent_sigmas_unsquashed'])
-      )
-  update_sigmas = 2*jax.nn.sigmoid(
-      np.transpose(
-          params['hk_dis_rnn']['update_mlp_sigmas_unsquashed']
-          )
-      )
-  latent_order = np.argsort(
-      params['hk_dis_rnn']['latent_sigmas_unsquashed']
-      )
-  figs = []
-
-  # Loop over latents. Plot update rules
-  for latent_i in latent_order:
-    # If this latent's bottleneck is o 
-    if latent_sigmas[latent_i] < 0.5:
-      # Which of its input bottlenecks are open?
-      update_mlp_inputs = np.argwhere(update_sigmas[latent_i] < 0.9)
-      # TODO: this needs to be checked
-      # In our dataset, xs[0] is whether previous choice was correct
-      # xs[1] is what was the previous choice
-      choice_sensitive = np.any(update_mlp_inputs == 1)
-      reward_sensitive = np.any(update_mlp_inputs == 0)
-      # Choose which observations to use based on input bottlenecks
-      if choice_sensitive and reward_sensitive:
-        observations = ([0, 0], [0, 1], [1, 0], [1, 1])
-        titles = ('Left, Unrewarded',
-                  'Left, Rewarded',
-                  'Right, Unrewarded',
-                  'Right, Rewarded')
-      elif choice_sensitive:
-        observations = ([0, 0], [1, 0])
-        titles = ('Choose Left', 'Choose Right')
-      elif reward_sensitive:
-        observations = ([0, 0], [0, 1])
-        titles = ('Rewarded', 'Unreward')
-      else:
-        observations = ([0, 0],)
-        titles = ('All Trials',)
-      # Choose whether to condition on other latent values
-      latent_sensitive = update_mlp_inputs[update_mlp_inputs > 1] - 2 - 4 #-4 because we have 4 other obs
-      # Doesn't count if it depends on itself (this'll be shown no matter what)
-      latent_sensitive = np.delete(
-          latent_sensitive, latent_sensitive == latent_i
-      )
-      if not latent_sensitive.size:  # Depends on no other latents
-        fig = plot_update_1d(params, latent_i, observations, titles)
-      else:  # It depends on latents other than itself.
-        print("latent sensitive", latent_sensitive)
-        print(latent_sensitive[np.argmax(latent_sensitive)])
-        fig = plot_update_2d(
-            params,
-            latent_i,
-            latent_sensitive[np.argmax(latent_sensitive)],
-            observations,
-            titles,
-        )
-      if len(latent_sensitive) > 1:
-        print(
-            'WARNING: This update rule depends on more than one '
-            + 'other latent. Plotting just one of them'
-        )
-
-      figs.append(fig)
-
-  return figs
-
-def plot_training_results(df_train, dataset_train):
-    checkpoint_dir = './checkpoints'
-    plot_dir = './plots'
-    loss_dir = './losses'
-
+def plot_training_results(df_train, dataset_train, save_folder):
+    """Plot the training results including log-likelihood and probability plots, saved to the same directory."""
     _trial_num = np.tile(np.arange(dataset_train._xs.shape[0]), [dataset_train._xs.shape[1], 1]).transpose()
 
     # Normalized likelihood vs upper bound
@@ -363,7 +230,7 @@ def plot_training_results(df_train, dataset_train):
     plt.xlim(left=1)
     plt.ylim(bottom=0, top=1.1)
     plt.title('Training Data: Normalized Log-Likelihood vs Upper Bound per Trial')
-    plt.savefig(os.path.join(plot_dir, 'normalized_log_likelihood_vs_upper_bound_train.png'))
+    plt.savefig(os.path.join(save_folder, 'normalized_log_likelihood_vs_upper_bound_train.png'))
     plt.close()
 
     # Probability of optimal choices over trials
@@ -376,7 +243,7 @@ def plot_training_results(df_train, dataset_train):
     plt.xlim(left=1)
     plt.ylim(bottom=-0.1, top=1.1)
     plt.title('Training Data: Probability of Optimal Choices over Trials')
-    plt.savefig(os.path.join(plot_dir, 'probability_optimal_choices_over_trials_train.png'))
+    plt.savefig(os.path.join(save_folder, 'probability_optimal_choices_over_trials_train.png'))
     plt.close()
 
     # Probability of chosen actions over trials
@@ -389,8 +256,148 @@ def plot_training_results(df_train, dataset_train):
     plt.xlim(left=1)
     plt.ylim(bottom=-0.1, top=1.1)
     plt.title('Training Data: Probability of Chosen Actions over Trials')
-    plt.savefig(os.path.join(plot_dir, 'probability_chosen_actions_over_trials_train.png'))
+    plt.savefig(os.path.join(save_folder, 'probability_chosen_actions_over_trials_train.png'))
     plt.close()
+
+    print(f"Training result plots saved to {save_folder}")
+
+
+def plot_bottlenecks(params, save_folder_name, sort_latents=True, obs_names=None):
+    """Plot the bottleneck sigmas from an hk.CompartmentalizedRNN and save sigma values to text files.
+
+    Additionally, the plot indicates whether darker colors correspond to higher sigma values, and the
+    actual sigma values are labeled on each grid cell.
+    """
+    import matplotlib.colors as mcolors
+
+    # Directory for saving plots and text files
+    save_dir = save_folder_name
+    os.makedirs(save_dir, exist_ok=True)  # Ensure the directory exists
+    plot_path = os.path.join(save_dir, "bottleneck.png")  # Path to save the plot
+
+    # Extract parameters for DisRNN
+    params_disrnn = params['hk_dis_rnn']
+    latent_dim = params_disrnn['latent_sigmas_unsquashed'].shape[0]
+    update_mlp_dim = params_disrnn['update_mlp_sigmas_unsquashed'].shape[1]  # Assuming shape [latent, update_mlp_inputs]
+    obs_dim = params_disrnn['update_mlp_sigmas_unsquashed'].shape[0] - latent_dim
+
+    # Assign observation names if not provided
+    if obs_names is None:
+        if obs_dim == 2:
+            obs_names = ['Choice', 'Reward']
+        elif obs_dim == 5:
+            obs_names = ['A', 'B', 'C', 'D', 'Reward']
+        else: 
+            obs_names = [f'Obs_{i}' for i in range(1, obs_dim + 1)]
+
+    # Compute sigmas using sigmoid activation scaled by 2
+    latent_sigmas = 2 * jax.nn.sigmoid(
+        jnp.array(params_disrnn['latent_sigmas_unsquashed'])
+    )
+    update_sigmas = 2 * jax.nn.sigmoid(
+        np.transpose(
+            params_disrnn['update_mlp_sigmas_unsquashed']
+        )
+    )
+
+    # Optionally sort latents based on their sigmas for better visualization
+    if sort_latents:
+        latent_sigma_order = np.argsort(
+            params_disrnn['latent_sigmas_unsquashed']
+        )
+        latent_sigmas = latent_sigmas[latent_sigma_order]
+
+        update_sigma_order = np.concatenate(
+            (np.arange(0, obs_dim, 1), latent_sigma_order + obs_dim),
+            axis=0
+        )
+        update_sigmas = update_sigmas[latent_sigma_order, :]
+        update_sigmas = update_sigmas[:, update_sigma_order]
+
+    # Assign names to latent variables
+    latent_names = [f'Latent_{i + 1}' for i in range(latent_dim)]
+
+    # Plotting
+    fig, axes = plt.subplots(1, 2, figsize=(25, 12))
+
+    # Define a colormap where higher sigma corresponds to more intense (darker) colors
+    cmap = 'Oranges'
+
+    # Plot Latent Bottlenecks
+    ax1 = axes[0]
+    im1 = ax1.imshow(latent_sigmas.reshape(1, -1), cmap=cmap, aspect='auto', vmin=0, vmax=0.2)
+    ax1.set_yticks([0])
+    ax1.set_yticklabels(['Latent #'])
+    ax1.set_xticks(range(latent_dim))
+    ax1.set_xticklabels(latent_names, rotation=90)
+    ax1.set_title('Latent Bottlenecks (Sigma)')
+
+    # Annotate sigma values on the Latent Bottleneck grid
+    for i in range(latent_dim):
+        ax1.text(i, 0, f"{latent_sigmas[i]:.4f}", ha='center', va='center', color='black', fontsize=12, weight='bold')
+
+    cbar1 = fig.colorbar(im1, ax=ax1, fraction=0.046, pad=0.04)
+    cbar1.set_label('Sigma Value')
+
+    # Plot Update MLP Bottlenecks
+    ax2 = axes[1]
+    im2 = ax2.imshow(update_sigmas, cmap=cmap, aspect='auto', vmin=0, vmax=0.2)
+    ax2.set_yticks(range(latent_dim))
+    ax2.set_yticklabels(latent_names)
+    xlabels = obs_names + latent_names
+    ax2.set_xticks(range(len(xlabels)))
+    ax2.set_xticklabels(xlabels, rotation=90)
+    ax2.set_title('Update MLP Bottlenecks (Sigma)')
+
+    # Annotate sigma values on the Update MLP Bottleneck grid
+    for i in range(latent_dim):
+        for j in range(len(xlabels)):
+            ax2.text(j, i, f"{update_sigmas[i, j]:.4f}", ha='center', va='center', color='black', fontsize=10, weight='bold')
+
+    cbar2 = fig.colorbar(im2, ax=ax2, fraction=0.046, pad=0.04)
+    cbar2.set_label('Sigma Value')
+
+    # Add annotation to indicate that darker colors represent higher sigma
+    fig.text(0.5, 0.95, 'Darker Colors → Higher Sigma Values', ha='center', fontsize=14, color='black')
+
+    plt.tight_layout()
+    plt.savefig(plot_path)  # Save the plot
+    plt.close(fig)  # Close the figure to free memory
+
+    print(f"Bottleneck plot saved to {plot_path}")
+
+    # Print and save sigmas as before
+    print("\n=== Latent Bottleneck Sigmas ===")
+    for i, sigma in enumerate(latent_sigmas):
+        print(f"Latent {i + 1}: Sigma = {sigma:.4f}")
+
+    print("\n=== Update MLP Bottleneck Sigmas ===")
+    for i in range(update_sigmas.shape[0]):
+        print(f"Latent {i + 1} Update MLP Sigmas:")
+        for j, sigma in enumerate(update_sigmas[i]):
+            print(f"  Input {j + 1} ({xlabels[j]}): Sigma = {sigma:.4f}")
+
+    # Save sigmas to text files as before
+    latent_sigmas_path = os.path.join(save_dir, "latent_sigmas.txt")
+    update_sigmas_path = os.path.join(save_dir, "update_mlp_sigmas.txt")
+
+    with open(latent_sigmas_path, 'w') as f:
+        f.write("Latent Bottleneck Sigmas:\n")
+        for i, sigma in enumerate(latent_sigmas):
+            f.write(f"Latent {i + 1}: {sigma:.6f}\n")
+
+    with open(update_sigmas_path, 'w') as f:
+        f.write("Update MLP Bottleneck Sigmas:\n")
+        for i in range(update_sigmas.shape[0]):
+            f.write(f"Latent {i + 1} Update MLP Sigmas:\n")
+            for j, sigma in enumerate(update_sigmas[i]):
+                f.write(f"  Input {j + 1} ({xlabels[j]}): {sigma:.6f}\n")
+            f.write("\n")
+
+    print(f"\nSigma values have been saved to:\n- {latent_sigmas_path}\n- {update_sigmas_path}")
+    
+    return fig
+
 
 def create_dataframe_for_plotting(predictions, actions, bitResponseAIsCorr, P_A, xs):
     action_0 = actions == 0
@@ -424,140 +431,6 @@ def create_dataframe_for_plotting(predictions, actions, bitResponseAIsCorr, P_A,
 
     return df
 
-def plot_bottlenecks(params, save_folder_name, sort_latents=True, obs_names=None):
-    """Plot the bottleneck sigmas from an hk.CompartmentalizedRNN and save sigma values to text files.
-    
-    Additionally, the plot indicates whether darker colors correspond to higher sigma values.
-    """
-    import matplotlib.colors as mcolors  # Importing here to keep imports organized
-    
-    plot_dir = 'plots/bottlenecks'
-    save_dir = os.path.join(plot_dir, save_folder_name)
-    os.makedirs(save_dir, exist_ok=True)  # Ensure the directory exists
-    
-    # Extract the base name to use as the plot filename
-    base_name = os.path.basename(save_folder_name)
-    if not base_name:
-        # If save_folder_name ends with a slash, get the second last part
-        base_name = os.path.basename(os.path.dirname(save_folder_name))
-    
-    plot_path = os.path.join(save_dir, f"{base_name}.png")  # Path to save the plot
-    
-    # Extract parameters for DisRNN
-    params_disrnn = params['hk_dis_rnn']
-    latent_dim = params_disrnn['latent_sigmas_unsquashed'].shape[0]
-    update_mlp_dim = params_disrnn['update_mlp_sigmas_unsquashed'].shape[1]  # Assuming shape [latent, update_mlp_inputs]
-    obs_dim = params_disrnn['update_mlp_sigmas_unsquashed'].shape[0] - latent_dim
-    
-    # Assign observation names if not provided
-    if obs_names is None:
-        if obs_dim == 2:
-            obs_names = ['Choice', 'Reward']
-        elif obs_dim == 5:
-            obs_names = ['A', 'B', 'C', 'D', 'Reward']
-        else: 
-            obs_names = [f'Obs_{i}' for i in range(1, obs_dim+1)]
-    
-    # Compute sigmas using sigmoid activation scaled by 2
-    latent_sigmas = 2 * jax.nn.sigmoid(
-        jnp.array(params_disrnn['latent_sigmas_unsquashed'])
-    )
-    
-    update_sigmas = 2 * jax.nn.sigmoid(
-        np.transpose(
-            params_disrnn['update_mlp_sigmas_unsquashed']
-        )
-    )
-    
-    # Optionally sort latents based on their sigmas for better visualization
-    if sort_latents:
-        latent_sigma_order = np.argsort(
-            params_disrnn['latent_sigmas_unsquashed']
-        )
-        latent_sigmas = latent_sigmas[latent_sigma_order]
-    
-        update_sigma_order = np.concatenate(
-            (np.arange(0, obs_dim, 1), latent_sigma_order + obs_dim),
-            axis=0
-        )
-        update_sigmas = update_sigmas[latent_sigma_order, :]
-        update_sigmas = update_sigmas[:, update_sigma_order]
-    
-    # Assign names to latent variables
-    latent_names = [f'Latent_{i+1}' for i in range(latent_dim)]
-    
-    # Plotting
-    fig, axes = plt.subplots(1, 2, figsize=(25, 12))
-    
-    # Define a colormap where higher sigma corresponds to more intense (darker) colors
-    cmap='Oranges'
-    
-    # Plot Latent Bottlenecks
-    ax1 = axes[0]
-    im1 = ax1.imshow(latent_sigmas.reshape(1, -1), cmap=cmap, aspect='auto', vmin=0, vmax=1)
-    ax1.set_yticks([0])
-    ax1.set_yticklabels(['Latent #'])
-    ax1.set_xticks(range(latent_dim))
-    ax1.set_xticklabels(latent_names, rotation=90)
-    ax1.set_title('Latent Bottlenecks (Sigma)')
-    cbar1 = fig.colorbar(im1, ax=ax1, fraction=0.046, pad=0.04)
-    cbar1.set_label('Sigma Value')
-    
-    # Plot Update MLP Bottlenecks
-    ax2 = axes[1]
-    im2 = ax2.imshow(update_sigmas, cmap=cmap, aspect='auto', vmin=0, vmax=1)
-    ax2.set_yticks(range(latent_dim))
-    ax2.set_yticklabels(latent_names)
-    xlabels = obs_names + latent_names
-    ax2.set_xticks(range(len(xlabels)))
-    ax2.set_xticklabels(xlabels, rotation=90)
-    ax2.set_title('Update MLP Bottlenecks (Sigma)')
-    cbar2 = fig.colorbar(im2, ax=ax2, fraction=0.046, pad=0.04)
-    cbar2.set_label('Sigma Value')
-    
-    # Add annotation to indicate that darker colors represent higher sigma
-    fig.text(0.5, 0.95, 'Darker Colors → Higher Sigma Values', ha='center', fontsize=14, color='black')
-    
-    plt.tight_layout()
-    plt.savefig(plot_path)  # Save the plot
-    plt.close(fig)  # Close the figure to free memory
-    
-    # **Printing Sigmas**
-    print("\n=== Latent Bottleneck Sigmas ===")
-    for i, sigma in enumerate(latent_sigmas):
-        print(f"Latent {i+1}: Sigma = {sigma:.4f}")
-    
-    print("\n=== Update MLP Bottleneck Sigmas ===")
-    for i in range(update_sigmas.shape[0]):
-        print(f"Latent {i+1} Update MLP Sigmas:")
-        for j, sigma in enumerate(update_sigmas[i]):
-            print(f"  Input {j+1} ({xlabels[j]}): Sigma = {sigma:.4f}")
-    
-    # **Saving Sigmas to Text Files**
-    # Define file paths
-    latent_sigmas_path = os.path.join(save_dir, "latent_sigmas.txt")
-    update_sigmas_path = os.path.join(save_dir, "update_mlp_sigmas.txt")
-    
-    # Save Latent Sigmas
-    with open(latent_sigmas_path, 'w') as f:
-        f.write("Latent Bottleneck Sigmas:\n")
-        for i, sigma in enumerate(latent_sigmas):
-            f.write(f"Latent {i+1}: {sigma:.6f}\n")
-    
-    # Save Update MLP Sigmas
-    with open(update_sigmas_path, 'w') as f:
-        f.write("Update MLP Bottleneck Sigmas:\n")
-        for i in range(update_sigmas.shape[0]):
-            f.write(f"Latent {i+1} Update MLP Sigmas:\n")
-            for j, sigma in enumerate(update_sigmas[i]):
-                f.write(f"  Input {j+1} ({xlabels[j]}): {sigma:.6f}\n")
-            f.write("\n")
-    
-    print(f"\nSigma values have been saved to:\n- {latent_sigmas_path}\n- {update_sigmas_path}")
-    
-    return fig
-
-
 def main(seed, saved_checkpoint_pth):
     np.random.seed(seed)
 
@@ -587,20 +460,18 @@ def main(seed, saved_checkpoint_pth):
 
     xs_train, ys_train = next(dataset_train)
     xs_test, ys_test = next(dataset_test)
+    shuffled_dataset_test = copy.deepcopy(dataset_test)
+    shuffled_dataset_test._ys = np.random.permutation(shuffled_dataset_test._ys)
+    shuffled_xs_test, shuffled_ys_test = next(shuffled_dataset_test)
 
     # Compute log-likelihood and accuracy for training and test datasets
     print('Normalized Likelihoods and Accuracies for disRNN')
     print('Training Dataset')
-    compute_log_likelihood_and_accuracy(xs_train, ys_train, make_disrnn, disrnn_params)
+    train_norm_likelihood, _ = compute_log_likelihood_and_accuracy(xs_train, ys_train, make_disrnn, disrnn_params)
     print('Held-Out Dataset')
-    compute_log_likelihood_and_accuracy(xs_test, ys_test, make_disrnn, disrnn_params)
-    shuffled_dataset_test = copy.deepcopy(dataset_test)
-    shuffled_dataset_test._ys = np.random.permutation(shuffled_dataset_test._ys)
-    shuffled_xs_test, shuffled_ys_test = next(shuffled_dataset_test)
-    print(shuffled_ys_test.shape)
+    test_norm_likelihood, _ = compute_log_likelihood_and_accuracy(xs_test, ys_test, make_disrnn, disrnn_params)
     print('Held-Out Shuffled Dataset')
-    compute_log_likelihood_and_accuracy(shuffled_xs_test, shuffled_ys_test, make_disrnn, disrnn_params)
-
+    shuffled_norm_likelihood, _ = compute_log_likelihood_and_accuracy(shuffled_xs_test, shuffled_ys_test, make_disrnn, disrnn_params)
 
     pred_train, ys_train, xs_train = evaluate(xs_train, ys_train, make_disrnn, disrnn_params)
     pred_test, ys_test, xs_test = evaluate(xs_test, ys_test, make_disrnn, disrnn_params)
@@ -613,11 +484,22 @@ def main(seed, saved_checkpoint_pth):
     normalized_likelihood_upper_bound_test = np.exp(np.mean(log_probs_test))
     print("Model Normalized likelihood Upperbound for testing", normalized_likelihood_upper_bound_test)
 
-    # Plot results
-    save_folder_name = saved_checkpoint_pth.split('checkpoints/')[1].split('.pkl')[0]
-    plot_training_results(df_train, dataset_train)
-    print(df_train.tail(10))
+    # Store metrics in a dictionary
+    metrics = {
+        'train_norm_likelihood': train_norm_likelihood,
+        'test_norm_likelihood': test_norm_likelihood,
+        'shuffled_norm_likelihood': shuffled_norm_likelihood,
+        'train_upper_bound': normalized_likelihood_upper_bound_train,
+        'test_upper_bound': normalized_likelihood_upper_bound_test
+    }
 
+    # Plot results
+    save_folder_name = os.path.join('plots', saved_checkpoint_pth.split('checkpoints/')[1].split('.pkl')[0])
+    os.makedirs(save_folder_name, exist_ok=True)
+
+    plot_single_checkpoint_performance(metrics, save_folder_name, args_dict)
+    plot_training_results(df_train, dataset_train, save_folder_name)
+    print(df_train.tail(10))
     plot_bottlenecks(disrnn_params, save_folder_name)
     session_i = 0
     plot_latent_activations_for_session(sess_i = session_i,
