@@ -435,7 +435,7 @@ def main(seed, saved_checkpoint_pth):
     np.random.seed(seed)
 
     dataset_type = 'RealWorldKimmelfMRIDataset'  
-    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-1_nTrialsPerBlock-100_b-0.3_NaN_30_0.93_0.45_NaN_NaN_withOptimalChoice_20240718_fast.mat"
+    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-4_nTrialsPerBlock-50_b-0.11_NaN_10.5_0.93_0.45_NaN_NaN_20241008.mat"
     dataset_train, dataset_test, bitResponseAIsCorr_train, bitResponseAIsCorr_test, P_A_train, P_A_test = preprocess_data(dataset_type, dataset_path, 0.1)
 
     # Load the checkpoint parameters

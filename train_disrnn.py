@@ -215,9 +215,10 @@ def train_model(args_dict,
         'disrnn_params': disrnn_params
     }
 
-    filename = os.path.join(checkpoint_dir, f'disrnn_params_ls_{latent_size}_umlp_{update_mlp_shape}_cmlp_{choice_mlp_shape}_penalty_{penalty_scale}_beta_{beta_scale}_lr_1e-3.pkl')
-    with open(filename, 'wb') as file:
-        pickle.dump(checkpoint, file)
+    filename = os.path.join(
+        checkpoint_dir, 
+        f'disrnn_params_ls_{latent_size}_umlp_{"-".join(map(str, update_mlp_shape))}_cmlp_{"-".join(map(str, choice_mlp_shape))}_penalty_{penalty_scale}_beta_{beta_scale}_lr_1e-3.pkl'
+    )
 
     print(f'Saved disrnn_params to {filename}')
     
@@ -264,8 +265,8 @@ if __name__ == "__main__":
     parser.add_argument("--seed", nargs=1, type=int, default=42, help="Seed for reproducibility.")
     parser.add_argument("--validation_proportion", nargs=1, type=int, default=0.1, help="The percentage for validation dataset.")
     parser.add_argument("--latent_size", type=int, default=8, help="Number of latent units in the model")
-    parser.add_argument("--update_mlp_shape", nargs="+", type=int, default=[18, 18, 18], help="Number of hidden units in each of the two layers of the update MLP")
-    parser.add_argument("--choice_mlp_shape", nargs="+", type=int, default=[16, 16, 16], help="Number of hidden units in each of the two layers of the choice MLP")
+    parser.add_argument("--update_mlp_shape", nargs="+", type=int, default=[24, 24, 24], help="Number of hidden units in each of the two layers of the update MLP")
+    parser.add_argument("--choice_mlp_shape", nargs="+", type=int, default=[18, 18, 18], help="Number of hidden units in each of the two layers of the choice MLP")
     parser.add_argument("--beta_scale", type=float, required=True, help="Value for the beta scaling parameter")
     parser.add_argument("--penalty_scale", type=float, required=True, help="Value for the penalty scaling parameter")
     parser.add_argument("--n_step_max", type=int, default=15000, help="The maximum number of iterations to run, even if convergence is not reached")
