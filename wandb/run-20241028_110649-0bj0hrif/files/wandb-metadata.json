@@ -1,0 +1,213 @@
+{
+    "os": "Linux-6.8.0-47-generic-x86_64-with-glibc2.39",
+    "python": "3.9.19",
+    "heartbeatAt": "2024-10-28T15:06:49.837721",
+    "startedAt": "2024-10-28T15:06:49.521040",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--beta_scale",
+        "1e-5",
+        "--penalty_scale",
+        "1e-4"
+    ],
+    "state": "running",
+    "program": "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py",
+    "codePathLocal": "train_disrnn.py",
+    "codePath": "train_disrnn.py",
+    "git": {
+        "remote": "git@github.com:YolandaXinyueZhu/CogModRNN.git",
+        "commit": "7b16d3a4afdcd96c340d6252bd6bef85330604a9"
+    },
+    "email": "rw2967@columbia.edu",
+    "root": "/home/rsw0/Desktop/yolanda/temp/CogModRNN",
+    "host": "rsw0",
+    "username": "rsw0",
+    "executable": "/home/rsw0/miniforge3/envs/yolanda/bin/python3",
+    "cpu_count": 16,
+    "cpu_count_logical": 32,
+    "cpu_freq": {
+        "current": 2551.3691875000004,
+        "min": 400.0,
+        "max": 5881.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 5492.273,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 5486.977,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 5492.576,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 4081.927,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 3285.226,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 3425.563,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 5400.101,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 5400.079,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 4547.215,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 5518.691,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 4830.496,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 4706.875,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 4240.626,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 4658.711,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 3852.647,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 4494.272,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 3632.149,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 5881.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 915.3232879638672,
+            "used": 621.1513061523438
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 3090 Ti",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3090 Ti",
+            "memory_total": 25757220864
+        }
+    ],
+    "memory": {
+        "total": 61.955326080322266
+    }
+}

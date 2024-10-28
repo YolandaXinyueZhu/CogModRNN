@@ -1,0 +1,68 @@
+2024-10-28 12:35:22,027 INFO    StreamThr :341537 [internal.py:wandb_internal():85] W&B internal server running at pid: 341537, started at: 2024-10-28 12:35:22.026680
+2024-10-28 12:35:22,028 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: status
+2024-10-28 12:35:22,029 INFO    WriterThread:341537 [datastore.py:open_for_write():87] open: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/run-xcc0sy9s.wandb
+2024-10-28 12:35:22,030 DEBUG   SenderThread:341537 [sender.py:send():391] send: header
+2024-10-28 12:35:22,048 DEBUG   SenderThread:341537 [sender.py:send():391] send: run
+2024-10-28 12:35:22,215 INFO    SenderThread:341537 [dir_watcher.py:__init__():211] watching files in: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files
+2024-10-28 12:35:22,216 INFO    SenderThread:341537 [sender.py:_start_run_threads():1200] run started: xcc0sy9s with start time 1730133322.026533
+2024-10-28 12:35:22,221 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: run_start
+2024-10-28 12:35:22,227 DEBUG   HandlerThread:341537 [system_info.py:__init__():26] System info init
+2024-10-28 12:35:22,227 DEBUG   HandlerThread:341537 [system_info.py:__init__():41] System info init done
+2024-10-28 12:35:22,227 INFO    HandlerThread:341537 [system_monitor.py:start():194] Starting system monitor
+2024-10-28 12:35:22,227 INFO    SystemMonitor:341537 [system_monitor.py:_start():158] Starting system asset monitoring threads
+2024-10-28 12:35:22,227 INFO    HandlerThread:341537 [system_monitor.py:probe():214] Collecting system info
+2024-10-28 12:35:22,228 INFO    SystemMonitor:341537 [interfaces.py:start():188] Started cpu monitoring
+2024-10-28 12:35:22,228 INFO    SystemMonitor:341537 [interfaces.py:start():188] Started disk monitoring
+2024-10-28 12:35:22,229 INFO    SystemMonitor:341537 [interfaces.py:start():188] Started gpu monitoring
+2024-10-28 12:35:22,229 INFO    SystemMonitor:341537 [interfaces.py:start():188] Started memory monitoring
+2024-10-28 12:35:22,229 INFO    SystemMonitor:341537 [interfaces.py:start():188] Started network monitoring
+2024-10-28 12:35:22,237 DEBUG   HandlerThread:341537 [system_info.py:probe():152] Probing system
+2024-10-28 12:35:22,242 DEBUG   HandlerThread:341537 [system_info.py:_probe_git():137] Probing git
+2024-10-28 12:35:22,253 DEBUG   HandlerThread:341537 [system_info.py:_probe_git():145] Probing git done
+2024-10-28 12:35:22,253 DEBUG   HandlerThread:341537 [system_info.py:probe():200] Probing system done
+2024-10-28 12:35:22,253 DEBUG   HandlerThread:341537 [system_monitor.py:probe():223] {'os': 'Linux-6.8.0-47-generic-x86_64-with-glibc2.39', 'python': '3.9.19', 'heartbeatAt': '2024-10-28T16:35:22.237073', 'startedAt': '2024-10-28T16:35:22.023401', 'docker': None, 'cuda': None, 'args': ('--beta_scale', '1e-5', '--penalty_scale', '1e-5'), 'state': 'running', 'program': '/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py', 'codePathLocal': 'train_disrnn.py', 'codePath': 'train_disrnn.py', 'git': {'remote': 'git@github.com:YolandaXinyueZhu/CogModRNN.git', 'commit': '7b16d3a4afdcd96c340d6252bd6bef85330604a9'}, 'email': 'rw2967@columbia.edu', 'root': '/home/rsw0/Desktop/yolanda/temp/CogModRNN', 'host': 'rsw0', 'username': 'rsw0', 'executable': '/home/rsw0/miniforge3/envs/yolanda/bin/python3', 'cpu_count': 16, 'cpu_count_logical': 32, 'cpu_freq': {'current': 2425.92409375, 'min': 400.0, 'max': 5881.0}, 'cpu_freq_per_core': [{'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 3198.023, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 5498.648, 'min': 400.0, 'max': 5881.0}, {'current': 3588.389, 'min': 400.0, 'max': 5881.0}, {'current': 3600.101, 'min': 400.0, 'max': 5881.0}, {'current': 4318.297, 'min': 400.0, 'max': 5881.0}, {'current': 5400.144, 'min': 400.0, 'max': 5881.0}, {'current': 5428.624, 'min': 400.0, 'max': 5881.0}, {'current': 5243.119, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 4842.753, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 4295.115, 'min': 400.0, 'max': 5881.0}, {'current': 4819.943, 'min': 400.0, 'max': 5881.0}, {'current': 4635.878, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 5405.519, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 5426.812, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 5414.768, 'min': 400.0, 'max': 5881.0}], 'disk': {'/': {'total': 915.3232879638672, 'used': 621.1537933349609}}, 'gpu': 'NVIDIA GeForce RTX 3090 Ti', 'gpu_count': 1, 'gpu_devices': [{'name': 'NVIDIA GeForce RTX 3090 Ti', 'memory_total': 25757220864}], 'memory': {'total': 61.955326080322266}}
+2024-10-28 12:35:22,253 INFO    HandlerThread:341537 [system_monitor.py:probe():224] Finished collecting system info
+2024-10-28 12:35:22,253 INFO    HandlerThread:341537 [system_monitor.py:probe():227] Publishing system info
+2024-10-28 12:35:22,253 DEBUG   HandlerThread:341537 [system_info.py:_save_conda():209] Saving list of conda packages installed into the current environment
+2024-10-28 12:35:22,922 DEBUG   HandlerThread:341537 [system_info.py:_save_conda():224] Saving conda packages done
+2024-10-28 12:35:22,922 INFO    HandlerThread:341537 [system_monitor.py:probe():229] Finished publishing system info
+2024-10-28 12:35:22,924 DEBUG   SenderThread:341537 [sender.py:send():391] send: files
+2024-10-28 12:35:22,924 INFO    SenderThread:341537 [sender.py:_save_file():1466] saving file wandb-metadata.json with policy now
+2024-10-28 12:35:22,948 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: python_packages
+2024-10-28 12:35:22,948 DEBUG   SenderThread:341537 [sender.py:send_request():418] send_request: python_packages
+2024-10-28 12:35:22,949 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:35:22,949 DEBUG   SenderThread:341537 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:35:22,950 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:35:23,111 DEBUG   SenderThread:341537 [sender.py:send():391] send: telemetry
+2024-10-28 12:35:23,187 INFO    wandb-upload_0:341537 [upload_job.py:push():130] Uploaded file /tmp/tmpk7pm38w2wandb/tg4xckoc-wandb-metadata.json
+2024-10-28 12:35:23,216 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/requirements.txt
+2024-10-28 12:35:23,217 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/wandb-metadata.json
+2024-10-28 12:35:23,217 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/conda-environment.yaml
+2024-10-28 12:35:23,217 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/output.log
+2024-10-28 12:35:25,216 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/output.log
+2024-10-28 12:35:27,113 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:35:32,949 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:35:32,990 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:35:37,218 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/output.log
+2024-10-28 12:35:37,949 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:35:37,949 DEBUG   SenderThread:341537 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:35:38,038 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:35:41,219 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/output.log
+2024-10-28 12:35:42,949 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:35:43,332 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:35:45,220 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/output.log
+2024-10-28 12:35:48,991 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:35:49,221 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/output.log
+2024-10-28 12:35:52,949 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:35:52,949 DEBUG   SenderThread:341537 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:35:52,950 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:35:53,222 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/output.log
+2024-10-28 12:35:54,027 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:35:54,222 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/config.yaml
+2024-10-28 12:35:55,222 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/output.log
+2024-10-28 12:35:59,223 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/output.log
+2024-10-28 12:35:59,991 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:36:02,949 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:36:03,224 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/output.log
+2024-10-28 12:36:05,314 DEBUG   HandlerThread:341537 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:36:07,225 INFO    Thread-12 :341537 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_123522-xcc0sy9s/files/output.log

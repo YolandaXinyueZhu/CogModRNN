@@ -1,0 +1,175 @@
+
+Training with beta_scale: 0.001 and penalty_scale: 1e-10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 500 of 500; Loss: 1.5927e+05. Model Size: 8898 (Time: 153.1s)
+Model not yet converged - Running more steps of gradient descent. Time elapsed = 3e-05s.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 500 of 500; Loss: 1.5287e+05. Model Size: 8898 (Time: 158.2s)
+Model not yet converged (convergence_value = 0.04016271) - Running more steps of gradient descent. Time elapsed = 4e-05s.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 500 of 500; Loss: 1.5039e+05. Model Size: 8898 (Time: 163.8s)
+Model not yet converged (convergence_value = 0.01624055) - Running more steps of gradient descent. Time elapsed = 4e-05s.
+
+
+
+
+
+
+
+
+
+
+Step 110 of 500; Loss: 1.5008e+05. Model Size: 8898 (Time: 39.6s)
+Traceback (most recent call last):
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 288, in <module>
+    main(args_dict,
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 252, in main
+    disrnn_params = train_model(args_dict,
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 198, in train_model
+    disrnn_params, opt_state, losses = rnn_utils.fit_model(
+  File "/home/rsw0/Desktop/yolanda/temp/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 352, in fit_model
+    params, opt_state, losses = train_model(
+  File "/home/rsw0/Desktop/yolanda/temp/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 272, in train_model
+    loss, params, opt_state = train_step(params, opt_state, xs, ys, key_i)
+  File "<string>", line 1, in <lambda>
+KeyboardInterrupt

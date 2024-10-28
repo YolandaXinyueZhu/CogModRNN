@@ -1,0 +1,689 @@
+2024-10-28 12:19:59,292 INFO    StreamThr :337765 [internal.py:wandb_internal():85] W&B internal server running at pid: 337765, started at: 2024-10-28 12:19:59.291598
+2024-10-28 12:19:59,293 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status
+2024-10-28 12:19:59,295 INFO    WriterThread:337765 [datastore.py:open_for_write():87] open: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/run-4xknhk4w.wandb
+2024-10-28 12:19:59,296 DEBUG   SenderThread:337765 [sender.py:send():391] send: header
+2024-10-28 12:19:59,317 DEBUG   SenderThread:337765 [sender.py:send():391] send: run
+2024-10-28 12:19:59,646 INFO    SenderThread:337765 [dir_watcher.py:__init__():211] watching files in: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files
+2024-10-28 12:19:59,646 INFO    SenderThread:337765 [sender.py:_start_run_threads():1200] run started: 4xknhk4w with start time 1730132399.291355
+2024-10-28 12:19:59,651 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: run_start
+2024-10-28 12:19:59,658 DEBUG   HandlerThread:337765 [system_info.py:__init__():26] System info init
+2024-10-28 12:19:59,658 DEBUG   HandlerThread:337765 [system_info.py:__init__():41] System info init done
+2024-10-28 12:19:59,658 INFO    HandlerThread:337765 [system_monitor.py:start():194] Starting system monitor
+2024-10-28 12:19:59,658 INFO    SystemMonitor:337765 [system_monitor.py:_start():158] Starting system asset monitoring threads
+2024-10-28 12:19:59,658 INFO    HandlerThread:337765 [system_monitor.py:probe():214] Collecting system info
+2024-10-28 12:19:59,658 INFO    SystemMonitor:337765 [interfaces.py:start():188] Started cpu monitoring
+2024-10-28 12:19:59,658 INFO    SystemMonitor:337765 [interfaces.py:start():188] Started disk monitoring
+2024-10-28 12:19:59,659 INFO    SystemMonitor:337765 [interfaces.py:start():188] Started gpu monitoring
+2024-10-28 12:19:59,659 INFO    SystemMonitor:337765 [interfaces.py:start():188] Started memory monitoring
+2024-10-28 12:19:59,659 INFO    SystemMonitor:337765 [interfaces.py:start():188] Started network monitoring
+2024-10-28 12:19:59,667 DEBUG   HandlerThread:337765 [system_info.py:probe():152] Probing system
+2024-10-28 12:19:59,672 DEBUG   HandlerThread:337765 [system_info.py:_probe_git():137] Probing git
+2024-10-28 12:19:59,682 DEBUG   HandlerThread:337765 [system_info.py:_probe_git():145] Probing git done
+2024-10-28 12:19:59,683 DEBUG   HandlerThread:337765 [system_info.py:probe():200] Probing system done
+2024-10-28 12:19:59,683 DEBUG   HandlerThread:337765 [system_monitor.py:probe():223] {'os': 'Linux-6.8.0-47-generic-x86_64-with-glibc2.39', 'python': '3.9.19', 'heartbeatAt': '2024-10-28T16:19:59.667309', 'startedAt': '2024-10-28T16:19:59.288231', 'docker': None, 'cuda': None, 'args': ('--beta_scale', '1e-1', '--penalty_scale', '1e-5'), 'state': 'running', 'program': '/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py', 'codePathLocal': 'train_disrnn.py', 'codePath': 'train_disrnn.py', 'git': {'remote': 'git@github.com:YolandaXinyueZhu/CogModRNN.git', 'commit': '7b16d3a4afdcd96c340d6252bd6bef85330604a9'}, 'email': 'rw2967@columbia.edu', 'root': '/home/rsw0/Desktop/yolanda/temp/CogModRNN', 'host': 'rsw0', 'username': 'rsw0', 'executable': '/home/rsw0/miniforge3/envs/yolanda/bin/python3', 'cpu_count': 16, 'cpu_count_logical': 32, 'cpu_freq': {'current': 2731.1654375, 'min': 400.0, 'max': 5881.0}, 'cpu_freq_per_core': [{'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 5451.57, 'min': 400.0, 'max': 5881.0}, {'current': 5498.249, 'min': 400.0, 'max': 5881.0}, {'current': 4224.996, 'min': 400.0, 'max': 5881.0}, {'current': 3715.214, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 3594.402, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 5383.456, 'min': 400.0, 'max': 5881.0}, {'current': 5416.463, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 5364.944, 'min': 400.0, 'max': 5881.0}, {'current': 4423.374, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 4245.222, 'min': 400.0, 'max': 5881.0}, {'current': 4294.534, 'min': 400.0, 'max': 5881.0}, {'current': 5500.149, 'min': 400.0, 'max': 5881.0}, {'current': 5501.025, 'min': 400.0, 'max': 5881.0}, {'current': 4263.957, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 5350.097, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 400.0, 'min': 400.0, 'max': 5881.0}, {'current': 3906.116, 'min': 400.0, 'max': 5881.0}], 'disk': {'/': {'total': 915.3232879638672, 'used': 621.1534881591797}}, 'gpu': 'NVIDIA GeForce RTX 3090 Ti', 'gpu_count': 1, 'gpu_devices': [{'name': 'NVIDIA GeForce RTX 3090 Ti', 'memory_total': 25757220864}], 'memory': {'total': 61.955326080322266}}
+2024-10-28 12:19:59,683 INFO    HandlerThread:337765 [system_monitor.py:probe():224] Finished collecting system info
+2024-10-28 12:19:59,683 INFO    HandlerThread:337765 [system_monitor.py:probe():227] Publishing system info
+2024-10-28 12:19:59,683 DEBUG   HandlerThread:337765 [system_info.py:_save_conda():209] Saving list of conda packages installed into the current environment
+2024-10-28 12:20:00,351 DEBUG   HandlerThread:337765 [system_info.py:_save_conda():224] Saving conda packages done
+2024-10-28 12:20:00,351 INFO    HandlerThread:337765 [system_monitor.py:probe():229] Finished publishing system info
+2024-10-28 12:20:00,353 DEBUG   SenderThread:337765 [sender.py:send():391] send: files
+2024-10-28 12:20:00,353 INFO    SenderThread:337765 [sender.py:_save_file():1466] saving file wandb-metadata.json with policy now
+2024-10-28 12:20:00,376 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: python_packages
+2024-10-28 12:20:00,377 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: python_packages
+2024-10-28 12:20:00,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:20:00,377 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:20:00,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:20:00,503 DEBUG   SenderThread:337765 [sender.py:send():391] send: telemetry
+2024-10-28 12:20:00,647 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/requirements.txt
+2024-10-28 12:20:00,647 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/wandb-metadata.json
+2024-10-28 12:20:00,647 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/conda-environment.yaml
+2024-10-28 12:20:00,647 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:00,657 INFO    wandb-upload_0:337765 [upload_job.py:push():130] Uploaded file /tmp/tmp7h4qrw1uwandb/koicd4ih-wandb-metadata.json
+2024-10-28 12:20:02,646 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:04,504 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:20:10,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:20:10,382 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:20:14,649 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:15,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:20:15,377 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:20:15,465 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:20:18,650 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:20,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:20:20,790 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:20:22,650 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:24,651 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:26,383 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:20:28,652 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:30,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:20:30,377 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:20:30,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:20:31,495 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:20:31,652 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/config.yaml
+2024-10-28 12:20:32,652 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:36,653 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:37,526 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:20:40,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:20:40,654 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:42,831 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:20:44,655 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:45,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:20:45,377 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:20:46,655 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:48,501 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:20:50,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:20:50,656 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:53,845 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:20:54,657 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:58,657 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:20:59,551 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:20:59,659 DEBUG   SystemMonitor:337765 [system_monitor.py:_start():172] Starting system metrics aggregation loop
+2024-10-28 12:20:59,660 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:21:00,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:21:00,377 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:21:00,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:21:02,658 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:04,846 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:21:06,659 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:08,659 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:10,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:21:10,383 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:21:12,660 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:15,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:21:15,377 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:21:15,460 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:21:16,661 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:20,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:21:20,662 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:21,383 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:21:24,663 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:26,383 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:21:28,664 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:29,661 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:21:30,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:21:30,377 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:21:30,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:21:30,664 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:31,525 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:21:34,665 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:37,384 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:21:38,666 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:40,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:21:42,579 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:21:42,666 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:45,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:21:45,377 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:21:46,667 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:48,451 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:21:50,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:21:50,668 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:52,668 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:53,594 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:21:56,669 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:21:59,266 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:21:59,661 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:22:00,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:22:00,377 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:22:00,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:22:00,670 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:04,602 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:22:04,671 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:08,672 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:10,272 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:22:10,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:22:12,672 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:14,673 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:15,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:22:15,377 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:22:15,528 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:22:18,674 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:20,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:22:21,384 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:22:22,675 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:26,631 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:22:27,676 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:29,662 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:22:30,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:22:30,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:22:30,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:22:31,676 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:32,453 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:22:35,677 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:37,637 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:22:37,678 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:40,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:22:41,678 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:43,384 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:22:45,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:22:45,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:22:45,679 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:48,607 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:22:49,680 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:50,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:22:53,681 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:54,318 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:22:57,682 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:22:59,654 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:22:59,662 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:22:59,682 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:00,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:23:00,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:23:00,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:23:03,683 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:05,283 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:23:07,684 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:10,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:23:10,385 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:23:11,685 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:15,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:23:15,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:23:15,543 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:23:15,686 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:20,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:23:21,366 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:23:23,688 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:26,385 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:23:27,689 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:29,663 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:23:29,690 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:30,377 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:23:30,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:23:30,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:23:31,485 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:23:33,690 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:37,111 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:23:37,691 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:40,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:23:41,692 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:42,385 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:23:45,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:23:45,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:23:45,693 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:48,103 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:23:49,694 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:50,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:23:53,695 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:53,822 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:23:55,696 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:23:59,179 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:23:59,663 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:23:59,696 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:00,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:24:00,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:24:00,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:24:03,697 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:04,819 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:24:07,698 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:10,176 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:24:10,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:24:11,699 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:15,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:24:15,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:24:15,493 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:24:15,700 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:17,700 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:20,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:24:21,386 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:24:21,701 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:25,702 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:26,386 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:24:29,664 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:24:29,703 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:30,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:24:30,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:24:30,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:24:32,251 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:24:33,704 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:37,386 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:24:37,704 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:39,705 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:40,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:24:43,319 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:24:43,706 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:45,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:24:45,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:24:47,706 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:48,953 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:24:50,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:24:51,707 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:54,345 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:24:55,708 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:24:59,679 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:24:59,680 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:24:59,709 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:00,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:25:00,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:25:00,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:25:01,709 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:05,339 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:25:05,710 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:09,711 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:10,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:25:10,386 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:25:13,712 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:15,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:25:15,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:25:15,506 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:25:17,712 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:20,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:25:21,387 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:25:21,713 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:23,714 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:26,387 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:25:27,714 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:29,665 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:25:30,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:25:30,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:25:30,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:25:31,498 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:25:31,715 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:35,716 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:37,387 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:25:39,717 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:40,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:25:43,157 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:25:43,718 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:45,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:25:45,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:25:45,718 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:48,474 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:25:49,719 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:50,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:25:53,720 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:54,191 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:25:57,720 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:25:59,508 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:25:59,665 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:26:00,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:26:00,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:26:00,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:26:01,721 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:05,188 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:26:05,722 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:07,722 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:10,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:26:10,387 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:26:11,723 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:15,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:26:15,378 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:26:15,512 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:26:15,724 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:19,725 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:20,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:26:21,387 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:26:23,726 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:26,388 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:26:29,666 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:26:30,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:26:30,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:26:30,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:26:31,481 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:26:31,727 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:35,728 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:36,929 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:26:37,729 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:40,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:26:41,730 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:42,639 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:26:45,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:26:45,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:26:45,731 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:47,945 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:26:49,731 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:50,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:26:53,653 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:26:53,732 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:57,733 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:26:58,954 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:26:59,666 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:26:59,734 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:00,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:27:00,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:27:00,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:27:03,734 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:04,626 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:27:07,735 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:09,965 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:27:10,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:27:11,736 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:15,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:27:15,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:27:15,451 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:27:15,737 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:19,738 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:20,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:27:20,960 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:27:21,738 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:25,739 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:26,388 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:27:29,667 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:27:29,740 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:30,378 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:27:30,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:27:30,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:27:31,461 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:27:33,741 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:36,670 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:27:37,742 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:40,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:27:41,742 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:42,389 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:27:43,743 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:45,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:27:45,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:27:47,644 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:27:47,744 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:50,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:27:51,744 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:53,389 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:27:55,745 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:27:58,691 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:27:59,667 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:27:59,746 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:00,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:28:00,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:28:00,380 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:28:03,747 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:04,322 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:28:05,748 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:09,703 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:28:09,748 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:10,381 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:28:13,749 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:15,373 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:28:15,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:28:15,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:28:17,750 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:20,381 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:28:20,389 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:28:21,751 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:25,389 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:28:25,752 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:27,753 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:29,668 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:28:30,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:28:30,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:28:30,381 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:28:30,556 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:28:31,753 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:35,754 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:36,389 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:28:39,755 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:40,381 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:28:41,685 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:28:43,756 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:45,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:28:45,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:28:47,571 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:28:47,757 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:49,757 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:50,381 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:28:52,698 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:28:53,758 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:57,759 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:28:58,411 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:28:59,668 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:29:00,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:29:00,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:29:00,381 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:29:01,760 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:03,508 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:29:05,761 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:09,432 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:29:09,762 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:10,381 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:29:11,762 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:14,741 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:29:15,379 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:29:15,379 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:29:15,763 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:19,764 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:20,381 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:29:20,390 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:29:23,765 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:25,390 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:29:27,766 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:29,683 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:29:30,447 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:29:30,448 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:29:30,521 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:29:30,522 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:29:31,767 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:36,412 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:29:39,768 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:40,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:29:42,391 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:29:43,769 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:45,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:29:45,406 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:29:45,770 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:47,559 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:29:49,771 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:50,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:29:53,421 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:29:53,772 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:57,772 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:29:59,099 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:29:59,669 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:30:00,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:30:00,406 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:30:00,408 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:30:01,773 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:04,422 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:30:05,774 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:07,775 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:10,138 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:30:10,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:30:11,775 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:15,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:30:15,406 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:30:15,514 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:30:15,776 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:19,777 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:20,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:30:21,412 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:30:23,778 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:26,549 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:30:27,779 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:29,670 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:30:30,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:30:30,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:30:30,407 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:30:31,779 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:32,478 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:30:33,780 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:37,599 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:30:37,781 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:40,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:30:41,781 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:43,412 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:30:45,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:30:45,407 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:30:45,782 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:48,601 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:30:49,783 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:50,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:30:53,784 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:54,321 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:30:55,784 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:30:59,670 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:30:59,671 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:30:59,785 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:00,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:31:00,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:31:00,407 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:31:03,786 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:05,316 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:31:07,787 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:10,407 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:31:10,413 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:31:11,788 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:15,406 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:31:15,407 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:31:15,542 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:31:15,788 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:17,789 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:20,407 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:31:20,692 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:31:21,790 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:25,790 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:26,413 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:31:29,671 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:31:29,791 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:30,407 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:31:30,407 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:31:30,407 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:31:31,561 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:31:33,792 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:37,413 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:31:37,793 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:39,793 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:40,407 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:31:42,751 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:31:43,794 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:45,407 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-28 12:31:45,407 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: stop_status
+2024-10-28 12:31:47,795 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:48,424 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:31:50,407 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:31:51,796 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:51,986 DEBUG   SenderThread:337765 [sender.py:send():391] send: exit
+2024-10-28 12:31:51,986 INFO    SenderThread:337765 [sender.py:send_exit():598] handling exit code: 255
+2024-10-28 12:31:51,986 INFO    SenderThread:337765 [sender.py:send_exit():600] handling runtime: 712
+2024-10-28 12:31:51,986 INFO    SenderThread:337765 [sender.py:_save_file():1466] saving file wandb-summary.json with policy end
+2024-10-28 12:31:51,986 INFO    SenderThread:337765 [sender.py:send_exit():606] send defer
+2024-10-28 12:31:51,986 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:51,986 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 0
+2024-10-28 12:31:51,987 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:51,987 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 0
+2024-10-28 12:31:51,987 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 1
+2024-10-28 12:31:51,987 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:51,987 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 1
+2024-10-28 12:31:51,987 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:51,987 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 1
+2024-10-28 12:31:51,987 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 2
+2024-10-28 12:31:51,987 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:51,987 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 2
+2024-10-28 12:31:51,987 INFO    HandlerThread:337765 [system_monitor.py:finish():203] Stopping system monitor
+2024-10-28 12:31:51,987 INFO    HandlerThread:337765 [interfaces.py:finish():200] Joined cpu monitor
+2024-10-28 12:31:51,988 DEBUG   SystemMonitor:337765 [system_monitor.py:_start():179] Finished system metrics aggregation loop
+2024-10-28 12:31:51,988 DEBUG   SystemMonitor:337765 [system_monitor.py:_start():183] Publishing last batch of metrics
+2024-10-28 12:31:51,988 INFO    HandlerThread:337765 [interfaces.py:finish():200] Joined disk monitor
+2024-10-28 12:31:52,027 INFO    HandlerThread:337765 [interfaces.py:finish():200] Joined gpu monitor
+2024-10-28 12:31:52,027 INFO    HandlerThread:337765 [interfaces.py:finish():200] Joined memory monitor
+2024-10-28 12:31:52,027 INFO    HandlerThread:337765 [interfaces.py:finish():200] Joined network monitor
+2024-10-28 12:31:52,027 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:52,027 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 2
+2024-10-28 12:31:52,027 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 3
+2024-10-28 12:31:52,027 DEBUG   SenderThread:337765 [sender.py:send():391] send: stats
+2024-10-28 12:31:52,028 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:52,028 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 3
+2024-10-28 12:31:52,028 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:52,028 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 3
+2024-10-28 12:31:52,028 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 4
+2024-10-28 12:31:52,028 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:52,028 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 4
+2024-10-28 12:31:52,028 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:52,028 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 4
+2024-10-28 12:31:52,028 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 5
+2024-10-28 12:31:52,028 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:52,028 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 5
+2024-10-28 12:31:52,028 DEBUG   SenderThread:337765 [sender.py:send():391] send: summary
+2024-10-28 12:31:52,028 INFO    SenderThread:337765 [sender.py:_save_file():1466] saving file wandb-summary.json with policy end
+2024-10-28 12:31:52,029 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:52,029 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 5
+2024-10-28 12:31:52,029 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 6
+2024-10-28 12:31:52,029 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:52,029 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 6
+2024-10-28 12:31:52,029 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:52,029 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 6
+2024-10-28 12:31:52,029 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 7
+2024-10-28 12:31:52,029 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: status_report
+2024-10-28 12:31:52,029 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:52,029 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 7
+2024-10-28 12:31:52,029 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:52,029 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 7
+2024-10-28 12:31:52,796 INFO    Thread-12 :337765 [dir_watcher.py:_on_file_created():271] file/dir created: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/wandb-summary.json
+2024-10-28 12:31:52,986 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-28 12:31:53,948 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 8
+2024-10-28 12:31:53,948 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: poll_exit
+2024-10-28 12:31:53,948 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:53,948 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 8
+2024-10-28 12:31:53,948 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:53,948 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 8
+2024-10-28 12:31:53,948 INFO    SenderThread:337765 [job_builder.py:build():443] Attempting to build job artifact
+2024-10-28 12:31:53,949 INFO    SenderThread:337765 [job_builder.py:_get_source_type():572] is repo sourced job
+2024-10-28 12:31:53,962 INFO    SenderThread:337765 [job_builder.py:build():548] adding wandb-job metadata file
+2024-10-28 12:31:53,977 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 9
+2024-10-28 12:31:53,977 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:53,977 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 9
+2024-10-28 12:31:53,977 DEBUG   SenderThread:337765 [sender.py:send():391] send: artifact
+2024-10-28 12:31:53,986 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-28 12:31:54,390 INFO    SenderThread:337765 [sender.py:send_artifact():1549] sent artifact job-git_github.com_YolandaXinyueZhu_CogModRNN.git_train_disrnn.py - {'id': 'QXJ0aWZhY3Q6MTI5ODEyODM5OQ==', 'state': 'COMMITTED', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjQxOTA3NzYzNQ==', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6MTI5ODE4NTQ2NA==', 'versionIndex': 29}}}
+2024-10-28 12:31:54,390 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:54,390 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 9
+2024-10-28 12:31:54,390 INFO    SenderThread:337765 [dir_watcher.py:finish():358] shutting down directory watcher
+2024-10-28 12:31:54,797 INFO    SenderThread:337765 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:54,797 INFO    SenderThread:337765 [dir_watcher.py:finish():388] scan: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files
+2024-10-28 12:31:54,797 INFO    SenderThread:337765 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/wandb-summary.json wandb-summary.json
+2024-10-28 12:31:54,798 INFO    SenderThread:337765 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log output.log
+2024-10-28 12:31:54,798 INFO    SenderThread:337765 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/wandb-metadata.json wandb-metadata.json
+2024-10-28 12:31:54,798 INFO    SenderThread:337765 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/requirements.txt requirements.txt
+2024-10-28 12:31:54,798 INFO    SenderThread:337765 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/config.yaml config.yaml
+2024-10-28 12:31:54,799 INFO    SenderThread:337765 [dir_watcher.py:finish():402] scan save: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/conda-environment.yaml conda-environment.yaml
+2024-10-28 12:31:54,799 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 10
+2024-10-28 12:31:54,799 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: poll_exit
+2024-10-28 12:31:54,799 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:54,799 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 10
+2024-10-28 12:31:54,803 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:54,803 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 10
+2024-10-28 12:31:54,803 INFO    SenderThread:337765 [file_pusher.py:finish():169] shutting down file pusher
+2024-10-28 12:31:54,987 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-28 12:31:54,987 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: poll_exit
+2024-10-28 12:31:55,028 INFO    wandb-upload_0:337765 [upload_job.py:push():130] Uploaded file /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/wandb-summary.json
+2024-10-28 12:31:55,081 INFO    wandb-upload_3:337765 [upload_job.py:push():130] Uploaded file /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/config.yaml
+2024-10-28 12:31:55,085 INFO    wandb-upload_4:337765 [upload_job.py:push():130] Uploaded file /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/conda-environment.yaml
+2024-10-28 12:31:55,098 INFO    wandb-upload_2:337765 [upload_job.py:push():130] Uploaded file /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/requirements.txt
+2024-10-28 12:31:55,112 INFO    wandb-upload_1:337765 [upload_job.py:push():130] Uploaded file /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/files/output.log
+2024-10-28 12:31:55,312 INFO    Thread-11 :337765 [sender.py:transition_state():626] send defer: 11
+2024-10-28 12:31:55,312 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:55,312 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 11
+2024-10-28 12:31:55,312 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:55,312 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 11
+2024-10-28 12:31:55,312 INFO    SenderThread:337765 [file_pusher.py:join():175] waiting for file pusher
+2024-10-28 12:31:55,313 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 12
+2024-10-28 12:31:55,313 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:55,313 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 12
+2024-10-28 12:31:55,313 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:55,313 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 12
+2024-10-28 12:31:55,313 INFO    SenderThread:337765 [file_stream.py:finish():601] file stream finish called
+2024-10-28 12:31:55,676 INFO    SenderThread:337765 [file_stream.py:finish():605] file stream finish is done
+2024-10-28 12:31:55,677 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 13
+2024-10-28 12:31:55,677 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:55,677 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 13
+2024-10-28 12:31:55,677 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:55,677 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 13
+2024-10-28 12:31:55,677 INFO    SenderThread:337765 [sender.py:transition_state():626] send defer: 14
+2024-10-28 12:31:55,677 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: defer
+2024-10-28 12:31:55,677 INFO    HandlerThread:337765 [handler.py:handle_request_defer():184] handle defer: 14
+2024-10-28 12:31:55,677 DEBUG   SenderThread:337765 [sender.py:send():391] send: final
+2024-10-28 12:31:55,677 DEBUG   SenderThread:337765 [sender.py:send():391] send: footer
+2024-10-28 12:31:55,677 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: defer
+2024-10-28 12:31:55,677 INFO    SenderThread:337765 [sender.py:send_request_defer():622] handle sender defer: 14
+2024-10-28 12:31:55,678 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-28 12:31:55,678 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: server_info
+2024-10-28 12:31:55,678 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-28 12:31:55,678 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: poll_exit
+2024-10-28 12:31:55,678 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: server_info
+2024-10-28 12:31:55,679 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: get_summary
+2024-10-28 12:31:55,680 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: sampled_history
+2024-10-28 12:31:55,680 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-28 12:31:55,717 DEBUG   SenderThread:337765 [sender.py:send_request():418] send_request: poll_exit
+2024-10-28 12:31:55,717 INFO    MainThread:337765 [wandb_run.py:_footer_history_summary_info():4078] rendering history
+2024-10-28 12:31:55,718 INFO    MainThread:337765 [wandb_run.py:_footer_history_summary_info():4110] rendering summary
+2024-10-28 12:31:55,718 INFO    MainThread:337765 [wandb_run.py:_footer_sync_info():4037] logging synced files
+2024-10-28 12:31:55,718 DEBUG   HandlerThread:337765 [handler.py:handle_request():158] handle_request: shutdown
+2024-10-28 12:31:55,718 INFO    HandlerThread:337765 [handler.py:finish():884] shutting down handler
+2024-10-28 12:31:56,679 INFO    WriterThread:337765 [datastore.py:close():296] close: /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241028_121959-4xknhk4w/run-4xknhk4w.wandb
+2024-10-28 12:31:56,718 INFO    SenderThread:337765 [sender.py:finish():1631] shutting down sender
+2024-10-28 12:31:56,718 INFO    SenderThread:337765 [file_pusher.py:finish():169] shutting down file pusher
+2024-10-28 12:31:56,718 INFO    SenderThread:337765 [file_pusher.py:join():175] waiting for file pusher

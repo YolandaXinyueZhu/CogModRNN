@@ -1,0 +1,52 @@
+
+Training with beta_scale: 1e-05 and penalty_scale: 1e-10
+Traceback (most recent call last):
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/profiler.py", line 335, in wrapper
+    return func(*args, **kwargs)
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/compiler.py", line 238, in backend_compile
+    return backend.compile(built_c, compile_options=options)
+jaxlib.xla_extension.XlaRuntimeError: INTERNAL: ptxas exited with non-zero error code 2, output: ptxas warning : Registers are spilled to local memory in function 'input_add_multiply_negate_reduce_fusion_3', 4 bytes spill stores, 32 bytes spill loads
+: If the error message indicates that a file could not be written, please verify that sufficient filesystem space is provided.
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 289, in <module>
+    main(args_dict,
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 253, in main
+    disrnn_params = train_model(args_dict,
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 199, in train_model
+    disrnn_params, opt_state, losses = rnn_utils.fit_model(
+  File "/home/rsw0/Desktop/yolanda/temp/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 352, in fit_model
+    params, opt_state, losses = train_model(
+  File "/home/rsw0/Desktop/yolanda/temp/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 272, in train_model
+    loss, params, opt_state = train_step(params, opt_state, xs, ys, key_i)
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/traceback_util.py", line 179, in reraise_with_filtered_traceback
+    return fun(*args, **kwargs)
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/pjit.py", line 327, in cache_miss
+    outs, out_flat, out_tree, args_flat, jaxpr, attrs_tracked = _python_pjit_helper(
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/pjit.py", line 185, in _python_pjit_helper
+    out_flat = pjit_p.bind(*args_flat, **params)
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/core.py", line 2834, in bind
+    return self.bind_with_trace(top_trace, args, params)
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/core.py", line 420, in bind_with_trace
+    out = trace.process_primitive(self, map(trace.full_raise, args), params)
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/core.py", line 921, in process_primitive
+    return primitive.impl(*tracers, **params)
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/pjit.py", line 1635, in _pjit_call_impl
+    return xc._xla.pjit(
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/pjit.py", line 1614, in call_impl_cache_miss
+    out_flat, compiled = _pjit_call_impl_python(
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/pjit.py", line 1536, in _pjit_call_impl_python
+    compiled = _resolve_and_lower(
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/interpreters/pxla.py", line 2496, in compile
+    executable = UnloadedMeshExecutable.from_hlo(
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/interpreters/pxla.py", line 2995, in from_hlo
+    xla_executable = _cached_compilation(
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/interpreters/pxla.py", line 2810, in _cached_compilation
+    xla_executable = compiler.compile_or_get_cached(
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/compiler.py", line 378, in compile_or_get_cached
+    return _compile_and_write_cache(
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/compiler.py", line 608, in _compile_and_write_cache
+    executable = backend_compile(
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/profiler.py", line 335, in wrapper
+    return func(*args, **kwargs)
+KeyboardInterrupt

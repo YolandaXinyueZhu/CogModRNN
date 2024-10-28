@@ -1,0 +1,26 @@
+2024-10-14 17:29:47,645 INFO    MainThread:1112422 [wandb_setup.py:_flush():77] Current SDK version is 0.17.8
+2024-10-14 17:29:47,645 INFO    MainThread:1112422 [wandb_setup.py:_flush():77] Configure stats pid to 1112422
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_setup.py:_flush():77] Loading settings from /home/rsw0/.config/wandb/settings
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_setup.py:_flush():77] Loading settings from /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/settings
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_setup.py:_flush():77] Loading settings from environment variables: {}
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_setup.py:_flush():77] Applying setup settings: {'_disable_service': False}
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_setup.py:_flush():77] Inferring run settings from compute environment: {'program_relpath': 'train_disrnn.py', 'program_abspath': '/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py', 'program': '/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py'}
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_setup.py:_flush():77] Applying login settings: {}
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_init.py:_log_setup():524] Logging user logs to /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241014_172947-uwo8yl6a/logs/debug.log
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_init.py:_log_setup():525] Logging internal logs to /home/rsw0/Desktop/yolanda/temp/CogModRNN/wandb/run-20241014_172947-uwo8yl6a/logs/debug-internal.log
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_init.py:init():607] calling init triggers
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_init.py:init():614] wandb.init called with sweep_config: {}
+config: {'latent_size': 8, 'update_mlp_shape': [25, 25, 25], 'choice_mlp_shape': [18, 18, 18], 'beta_scale': 3.0, 'penalty_scale': 0.001}
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_init.py:init():657] starting backend
+2024-10-14 17:29:47,646 INFO    MainThread:1112422 [wandb_init.py:init():661] setting up manager
+2024-10-14 17:29:47,647 INFO    MainThread:1112422 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-10-14 17:29:47,648 INFO    MainThread:1112422 [wandb_init.py:init():669] backend started and connected
+2024-10-14 17:29:47,651 INFO    MainThread:1112422 [wandb_init.py:init():767] updated telemetry
+2024-10-14 17:29:47,669 INFO    MainThread:1112422 [wandb_init.py:init():800] communicating run to backend with 90.0 second timeout
+2024-10-14 17:29:47,847 INFO    MainThread:1112422 [wandb_init.py:init():851] starting run threads in backend
+2024-10-14 17:29:48,523 INFO    MainThread:1112422 [wandb_run.py:_console_start():2463] atexit reg
+2024-10-14 17:29:48,523 INFO    MainThread:1112422 [wandb_run.py:_redirect():2309] redirect: wrap_raw
+2024-10-14 17:29:48,523 INFO    MainThread:1112422 [wandb_run.py:_redirect():2374] Wrapping output streams.
+2024-10-14 17:29:48,523 INFO    MainThread:1112422 [wandb_run.py:_redirect():2399] Redirects installed.
+2024-10-14 17:29:48,524 INFO    MainThread:1112422 [wandb_init.py:init():894] run started, returning control to user process
+2024-10-14 18:05:01,063 WARNING MsgRouterThr:1112422 [router.py:message_loop():77] message_loop has been closed

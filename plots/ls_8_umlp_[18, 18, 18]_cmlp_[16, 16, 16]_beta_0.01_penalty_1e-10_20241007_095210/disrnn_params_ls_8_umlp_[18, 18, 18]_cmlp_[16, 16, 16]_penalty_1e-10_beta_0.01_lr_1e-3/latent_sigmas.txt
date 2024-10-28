@@ -1,0 +1,9 @@
+Latent Bottleneck Sigmas:
+Latent 1: 0.006251
+Latent 2: 0.006729
+Latent 3: 0.007565
+Latent 4: 0.008865
+Latent 5: 0.011356
+Latent 6: 0.011635
+Latent 7: 0.012803
+Latent 8: 0.013129

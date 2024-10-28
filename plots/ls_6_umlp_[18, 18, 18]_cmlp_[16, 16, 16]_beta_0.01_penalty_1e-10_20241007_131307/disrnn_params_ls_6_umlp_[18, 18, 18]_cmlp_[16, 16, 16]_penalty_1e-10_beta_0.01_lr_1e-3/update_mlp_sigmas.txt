@@ -1,0 +1,85 @@
+Update MLP Bottleneck Sigmas:
+Latent 1 Update MLP Sigmas:
+  Input 1 (Obs_1): 0.004423
+  Input 2 (Obs_2): 0.004714
+  Input 3 (Obs_3): 0.005131
+  Input 4 (Obs_4): 0.004346
+  Input 5 (Obs_5): 0.003746
+  Input 6 (Obs_6): 0.007802
+  Input 7 (Latent_1): 0.006013
+  Input 8 (Latent_2): 0.004998
+  Input 9 (Latent_3): 0.006966
+  Input 10 (Latent_4): 0.009069
+  Input 11 (Latent_5): 0.005952
+  Input 12 (Latent_6): 0.006054
+
+Latent 2 Update MLP Sigmas:
+  Input 1 (Obs_1): 0.001994
+  Input 2 (Obs_2): 0.002374
+  Input 3 (Obs_3): 0.002002
+  Input 4 (Obs_4): 0.001362
+  Input 5 (Obs_5): 0.002367
+  Input 6 (Obs_6): 0.001515
+  Input 7 (Latent_1): 0.003316
+  Input 8 (Latent_2): 0.003162
+  Input 9 (Latent_3): 0.007371
+  Input 10 (Latent_4): 0.002532
+  Input 11 (Latent_5): 0.003976
+  Input 12 (Latent_6): 0.004046
+
+Latent 3 Update MLP Sigmas:
+  Input 1 (Obs_1): 0.004736
+  Input 2 (Obs_2): 0.005448
+  Input 3 (Obs_3): 0.006961
+  Input 4 (Obs_4): 0.002107
+  Input 5 (Obs_5): 0.003438
+  Input 6 (Obs_6): 0.001916
+  Input 7 (Latent_1): 0.005287
+  Input 8 (Latent_2): 0.004971
+  Input 9 (Latent_3): 0.003804
+  Input 10 (Latent_4): 0.008659
+  Input 11 (Latent_5): 0.002906
+  Input 12 (Latent_6): 0.003535
+
+Latent 4 Update MLP Sigmas:
+  Input 1 (Obs_1): 0.009313
+  Input 2 (Obs_2): 0.009082
+  Input 3 (Obs_3): 0.013878
+  Input 4 (Obs_4): 0.016526
+  Input 5 (Obs_5): 0.020182
+  Input 6 (Obs_6): 0.010032
+  Input 7 (Latent_1): 0.015626
+  Input 8 (Latent_2): 0.010854
+  Input 9 (Latent_3): 0.016526
+  Input 10 (Latent_4): 0.006437
+  Input 11 (Latent_5): 0.010395
+  Input 12 (Latent_6): 0.017249
+
+Latent 5 Update MLP Sigmas:
+  Input 1 (Obs_1): 0.003168
+  Input 2 (Obs_2): 0.005305
+  Input 3 (Obs_3): 0.002750
+  Input 4 (Obs_4): 0.003450
+  Input 5 (Obs_5): 0.003212
+  Input 6 (Obs_6): 0.002321
+  Input 7 (Latent_1): 0.002959
+  Input 8 (Latent_2): 0.008217
+  Input 9 (Latent_3): 0.004368
+  Input 10 (Latent_4): 0.006602
+  Input 11 (Latent_5): 0.006872
+  Input 12 (Latent_6): 0.004717
+
+Latent 6 Update MLP Sigmas:
+  Input 1 (Obs_1): 0.005076
+  Input 2 (Obs_2): 0.004852
+  Input 3 (Obs_3): 0.002066
+  Input 4 (Obs_4): 0.002160
+  Input 5 (Obs_5): 0.003964
+  Input 6 (Obs_6): 0.003460
+  Input 7 (Latent_1): 0.007419
+  Input 8 (Latent_2): 0.004504
+  Input 9 (Latent_3): 0.007256
+  Input 10 (Latent_4): 0.004708
+  Input 11 (Latent_5): 0.003449
+  Input 12 (Latent_6): 0.004252
+

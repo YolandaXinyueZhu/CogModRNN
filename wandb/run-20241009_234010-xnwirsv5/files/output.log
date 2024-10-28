@@ -1,0 +1,47 @@
+
+Training with beta_scale: 1e-05 and penalty_scale: 1e-10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 410 of 500; Loss: 1.1419e+05. Model Size: 8898 (Time: 69.4s)
+Traceback (most recent call last):
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 293, in <module>
+    'penalty_scale': args.penalty_scale,
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 257, in main
+    dataset_type = 'RealWorldKimmelfMRIDataset'
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 203, in train_model
+    )
+  File "/home/rsw0/Desktop/yolanda/temp/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 352, in fit_model
+    params, opt_state, losses = train_model(
+  File "/home/rsw0/Desktop/yolanda/temp/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 272, in train_model
+    loss, params, opt_state = train_step(params, opt_state, xs, ys, key_i)
+  File "<string>", line 1, in <lambda>
+KeyboardInterrupt

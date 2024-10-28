@@ -1,0 +1,207 @@
+
+Training with beta_scale: 0.1 and penalty_scale: 1e-05
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 500 of 500; Loss: 1.5673e+05. Model Size: 14004 (Time: 189.0s)
+Model not yet converged - Running more steps of gradient descent. Time elapsed = 3e-05s.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 500 of 500; Loss: 1.5243e+05. Model Size: 14004 (Time: 188.3s)
+Model not yet converged (convergence_value = 0.02743018) - Running more steps of gradient descent. Time elapsed = 5e-05s.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 500 of 500; Loss: 1.5077e+05. Model Size: 14004 (Time: 187.8s)
+Model not yet converged (convergence_value = 0.01086387) - Running more steps of gradient descent. Time elapsed = 4e-05s.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 370 of 500; Loss: 1.4992e+05. Model Size: 14004 (Time: 140.6s)
+Traceback (most recent call last):
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 289, in <module>
+    main(args_dict,
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 253, in main
+    disrnn_params = train_model(args_dict,
+  File "/home/rsw0/Desktop/yolanda/temp/CogModRNN/train_disrnn.py", line 198, in train_model
+    disrnn_params, opt_state, losses = rnn_utils.fit_model(
+  File "/home/rsw0/Desktop/yolanda/temp/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 352, in fit_model
+    params, opt_state, losses = train_model(
+  File "/home/rsw0/Desktop/yolanda/temp/CogModelingRNNsTutorial/CogModelingRNNsTutorial/rnn_utils.py", line 275, in train_model
+    if step % 10 == 9:
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/array.py", line 260, in __bool__
+    return bool(self._value)
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/profiler.py", line 335, in wrapper
+    return func(*args, **kwargs)
+  File "/home/rsw0/miniforge3/envs/yolanda/lib/python3.9/site-packages/jax/_src/array.py", line 594, in _value
+    self._npy_value = self._single_device_array_to_np_array()
+KeyboardInterrupt
