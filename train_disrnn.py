@@ -18,11 +18,17 @@ import seaborn as sns
 import pandas as pd
 import wandb
 
+#sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+#from CogModelingRNNsTutorial.CogModelingRNNsTutorial import bandits, disrnn, hybrnn, plotting, rat_data, rnn_utils
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from CogModelingRNNsTutorial.CogModelingRNNsTutorial import bandits, disrnn, hybrnn, plotting, rat_data, rnn_utils
+from absl import app
+import optax
+from disentangled_rnns.library import disrnn
+from disentangled_rnns.library import rnn_utils
 
 warnings.filterwarnings("ignore")
 
+'''
 def load_data(fname, data_dir='./'):
     """Load data for one human subject from a MATLAB file and organize into features, labels, and state information.
     
@@ -93,6 +99,65 @@ def load_data(fname, data_dir='./'):
     P_A = np.transpose(P_A, (1, 0, 2))
 
     return xs, ys, zs_oh, fname, vars_for_state, bitResponseAIsCorr, P_A
+'''
+
+def load_data(fname, data_dir='./'):
+    """Load data for one human subject from a MATLAB file and organize into a dictionary.
+    
+    Parameters:
+    fname : str
+        File name of the MATLAB data.
+    data_dir : str, optional
+        Directory of the data file (default is './').
+    
+    Returns:
+    dict
+        Dictionary containing feature, label, and state information.
+    """
+    # Load the MATLAB file
+    mat_contents = sio.loadmat(os.path.join(data_dir, fname))
+    data = mat_contents['tensor']
+    var_names = [x.item() for x in mat_contents['vars_in_tensor'].ravel()]
+    vars_for_state = [x.item() for x in mat_contents['vars_for_state'].ravel()]
+    
+    # Create a dictionary to store the data
+    data_dict = {}
+    
+    # Extract data for each variable name
+    for var_name in var_names:
+        var_idx = (np.array(var_names) == var_name).flatten()
+        var_data = data[:, :, var_idx]
+        var_data = np.transpose(var_data, (1, 0, 2))  # Transpose to match the desired format
+        data_dict[var_name] = var_data
+
+    # Special processing for zs, ys, xs
+    if 'state' in data_dict:
+        zs = np.clip(data_dict['state'] - 1, a_min=-1, a_max=None)
+        data_dict['state'] = zs
+        data_dict['state_onehot'] = zs_to_onehot(zs)[..., :4]
+    if 'bitResponseA' in data_dict:
+        ys = data_dict['bitResponseA']
+        data_dict['ys'] = ys
+    if 'bitCorr_prev' in data_dict and 'bitResponseA_prev' in data_dict:
+        bitCorr_prev = data_dict['bitCorr_prev']
+        bitResponseA_prev = data_dict['bitResponseA_prev']
+        xs = np.concatenate([bitCorr_prev, bitResponseA_prev], axis=2)
+        data_dict['xs'] = xs
+
+
+    data_dict['inputs'] = np.concatenate([data_dict['xs'], data_dict['state_onehot']], axis=-1)
+
+    # Check assertions
+    assert data_dict['state'].shape[-1] == data_dict['ys'].shape[-1] == 1, "Mismatch in dimensions"
+    assert data_dict['state'].ndim == data_dict['ys'].ndim == data_dict['xs'].ndim == 3, "Data should be 3-dimensional"
+    assert data_dict['state'].max() < 16, "State values should be less than 16"
+    
+    # Add filename and vars_for_state to the dictionary
+    data_dict['fname'] = fname
+    data_dict['vars_for_state'] = vars_for_state
+
+    return data_dict
+
 
 def to_onehot(labels, n):
     labels = np.asarray(labels, dtype=int)  
@@ -112,21 +177,41 @@ def preprocess_data(dataset_type, LOCAL_PATH_TO_FILE, testing_set_proportion):
         if not os.path.exists(LOCAL_PATH_TO_FILE):
             raise ValueError('File not found.')
         
-        xs, ys, zs, _, _, bitResponseAIsCorr, P_A = load_data(LOCAL_PATH_TO_FILE)
-        inputs = np.concatenate([xs, zs], axis=-1)
-
-        dataset_train, dataset_test, bitResponseAIsCorr_train, bitResponseAIsCorr_test, P_A_train, P_A_test = create_train_test_datasets(
-            inputs, ys.copy(), bitResponseAIsCorr, P_A, rnn_utils.DatasetRNN, testing_set_proportion
-        )
+        data_dict = load_data(LOCAL_PATH_TO_FILE)
+        dataset_train, dataset_test, train_test_split_variables = create_train_test_datasets(data_dict, rnn_utils.DatasetRNN, testing_set_proportion)
 
         train_size, test_size = dataset_size(dataset_train._xs, dataset_test._xs)
         print(f'Training dataset size: {train_size} samples')
         print(f'Testing dataset size: {test_size} samples')
 
-        return dataset_train, dataset_test, bitResponseAIsCorr_train, bitResponseAIsCorr_test, P_A_train, P_A_test
+        return dataset_train, dataset_test, train_test_split_variables
     else:
         raise ValueError('Unsupported dataset type.')
+
+def create_train_test_datasets(data_dict, dataset_constructor, testing_prop=0.5):
+    inputs = data_dict['inputs']
+    ys = data_dict['ys']
+    num_trials = int(inputs.shape[1])
+    num_test_trials = int(math.ceil(float(num_trials) * testing_prop))
+    num_train_trials = int(num_trials - num_test_trials)
     
+    assert num_train_trials > 0 and num_test_trials > 0, "Invalid train/test split"
+    
+    idx = np.random.permutation(num_trials)
+    dataset_train = dataset_constructor(inputs[:, idx[:num_train_trials]], ys[:, idx[:num_train_trials]])
+    dataset_test = dataset_constructor(inputs[:, idx[num_train_trials:]], ys[:, idx[num_train_trials:]])
+    
+    # Split other variables in data_dict
+    train_test_split = {}
+    for key in data_dict:
+        if key not in ['xs', 'ys', 'zs', 'input', 'state_onehot', 'fname', 'vars_for_state']:
+            var_data = data_dict[key]
+            train_test_split[f'{key}_train'] = var_data[:, idx[:num_train_trials]]
+            train_test_split[f'{key}_test'] = var_data[:, idx[num_train_trials:]]
+    
+    return dataset_train, dataset_test, train_test_split
+
+'''
 def create_train_test_datasets(xs, ys, optimal_choice, P_A, dataset_constructor, testing_prop=0.5):
     num_trials = int(xs.shape[1])
     num_test_trials = int(math.ceil(float(num_trials) * testing_prop))
@@ -144,24 +229,39 @@ def create_train_test_datasets(xs, ys, optimal_choice, P_A, dataset_constructor,
     P_A_test = P_A[:, idx[num_train_trials:]]
     
     return dataset_train, dataset_test, optimal_choice_train, optimal_choice_test, P_A_train, P_A_test
+'''
 
 def dataset_size(xs, ys):
     """Calculate the size of the dataset in terms of number of samples."""
-    return xs.shape[0] * xs.shape[1], ys.shape[0] * ys.shape[1]  # (number of timesteps * number of episodes)
+    return xs.shape[1], ys.shape[1] # 1800
+
 
 def train_model(args_dict,
                 dataset_train, 
+                dataset_test,
                 latent_size, 
                 update_mlp_shape, 
                 choice_mlp_shape, 
                 beta_scale, 
                 penalty_scale,
-                n_step_max,
-                n_steps_per_call):
-    
+                n_training_steps,
+                n_warmup_steps,
+                n_steps_per_call,
+                saved_checkpoint_pth=None):
+
+    if saved_checkpoint_pth and os.path.exists(saved_checkpoint_pth):
+        print(f"Loading checkpoint from {saved_checkpoint_pth}...")
+        with open(saved_checkpoint_pth, 'rb') as f:
+            checkpoint = pickle.load(f)
+        args_dict = checkpoint['args_dict']
+        disrnn_params = checkpoint['disrnn_params']
+        print("Checkpoint loaded successfully.")
+    else:
+        disrnn_params = None
+
     x, y = next(dataset_train)
 
-    wandb.init(project="CogModRNN", entity="yolandaz",config={
+    wandb.init(project="CogModRNN", entity="yolandaz", config={
         "latent_size": latent_size,
         "update_mlp_shape": update_mlp_shape,
         "choice_mlp_shape": choice_mlp_shape,
@@ -187,44 +287,70 @@ def train_model(args_dict,
             latent_size=latent_size,
             update_mlp_shape=update_mlp_shape,
             choice_mlp_shape=choice_mlp_shape,
-            eval_mode=0.0,
-            beta_scale=beta_scale,
-            activation=jax.nn.relu
+            beta_scale=beta_scale
         )
         return model
 
-    optimizer = optax.adam(learning_rate=1e-3)
+    opt = optax.adam(learning_rate=1e-3)
 
-    disrnn_params, opt_state, losses = rnn_utils.fit_model(
-        model_fun=make_disrnn,
-        dataset=dataset_train,
-        optimizer=optimizer,
-        loss_fun='penalized_categorical',
-        convergence_thresh=1e-3,
-        n_steps_max=n_step_max,
-        n_steps_per_call=n_steps_per_call,
-        return_all_losses=True,
-        penalty_scale=penalty_scale
+    if saved_checkpoint_pth == None:
+        # Warmup training with no information penalty
+        disrnn_params, losses, _ = rnn_utils.train_network(
+            make_disrnn,
+            training_dataset=dataset_train,
+            validation_dataset=dataset_test,
+            loss="penalized_categorical",
+            params=disrnn_params,
+            opt_state=None,
+            opt=opt,
+            penalty_scale=0,
+            n_steps=n_warmup_steps,
+            do_plot=True,
+            checkpoint_dir=checkpoint_dir,
+            checkpoint_interval=1000,
+            args_dict=args_dict
+        )
+
+        for step, loss in enumerate(losses):
+            wandb.log({"loss": loss, "step": step})
+
+
+    # Additional training using information penalty
+    disrnn_params, losses, _ = rnn_utils.train_network(
+        make_disrnn,
+        training_dataset=dataset_train,
+        validation_dataset=dataset_test,
+        loss="penalized_categorical",
+        params=disrnn_params,
+        opt_state=None,
+        opt=opt,
+        penalty_scale=penalty_scale,
+        n_steps=n_training_steps,
+        do_plot=True,
+        checkpoint_dir=checkpoint_dir,
+        checkpoint_interval=1000,
+        args_dict=args_dict
     )
 
     for step, loss in enumerate(losses):
         wandb.log({"loss": loss, "step": step})
 
-    checkpoint = {
-    'args_dict': args_dict,
-    'disrnn_params': disrnn_params
+
+    final_checkpoint = {
+        'args_dict': args_dict,
+        'disrnn_params': disrnn_params
     }
 
-    filename = os.path.join(
+    final_filename = os.path.join(
         checkpoint_dir, 
-        f'disrnn_params_ls_{latent_size}_umlp_{"-".join(map(str, update_mlp_shape))}_cmlp_{"-".join(map(str, choice_mlp_shape))}_penalty_{penalty_scale}_beta_{beta_scale}_lr_1e-3.pkl'
+        f'final_disrnn_params_ls_{latent_size}_umlp_{"-".join(map(str, update_mlp_shape))}_cmlp_{"-".join(map(str, choice_mlp_shape))}_penalty_{penalty_scale}_beta_{beta_scale}_lr_1e-3.pkl'
     )
 
     # Save the checkpoint using pickle
-    with open(filename, 'wb') as f:
-        pickle.dump(checkpoint, f)
+    with open(final_filename, 'wb') as f:
+        pickle.dump(final_checkpoint, f)
 
-    print(f'Saved disrnn_params to {filename}')
+    print(f'Saved disrnn_params to {final_filename}')
 
 
 def main(args_dict,
@@ -235,9 +361,11 @@ def main(args_dict,
          choice_mlp_shape, 
          beta_scale, 
          penalty_scale,
-         n_step_max,
-         n_steps_per_call):
-    
+         n_training_steps,
+         n_warmup_steps,
+         n_steps_per_call,
+         saved_checkpoint_pth=None):
+
     gpu_devices = jax.devices("gpu")
 
     if gpu_devices:
@@ -249,31 +377,36 @@ def main(args_dict,
 
     # Preprocess Data
     dataset_type = 'RealWorldKimmelfMRIDataset'
-    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-4_nTrialsPerBlock-50_b-0.11_NaN_10.5_0.93_0.45_NaN_NaN_20241008.mat"
+    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-7_nTrialsPerBlock-50_b-0.11_NaN_10.5_0.93_0.45_NaN_NaN_20241104.mat"
     dataset_train, dataset_test, *_ = preprocess_data(dataset_type, dataset_path, validation_proportion)
 
     # Train model
-    disrnn_params = train_model(args_dict,
-                                dataset_train, 
-                                latent_size, 
-                                update_mlp_shape, 
-                                choice_mlp_shape, 
-                                beta_scale, 
-                                penalty_scale, 
-                                n_step_max,
-                                n_steps_per_call)
+    train_model(args_dict,
+                dataset_train, 
+                dataset_test,
+                latent_size, 
+                update_mlp_shape, 
+                choice_mlp_shape, 
+                beta_scale, 
+                penalty_scale, 
+                n_training_steps,
+                n_warmup_steps,
+                n_steps_per_call,
+                saved_checkpoint_pth=saved_checkpoint_pth)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--seed", nargs=1, type=int, default=42, help="Seed for reproducibility.")
-    parser.add_argument("--validation_proportion", nargs=1, type=int, default=0.1, help="The percentage for validation dataset.")
-    parser.add_argument("--latent_size", type=int, default=8, help="Number of latent units in the model")
-    parser.add_argument("--update_mlp_shape", nargs="+", type=int, default=[20, 20, 20], help="Number of hidden units in each of the two layers of the update MLP")
-    parser.add_argument("--choice_mlp_shape", nargs="+", type=int, default=[18, 18, 18], help="Number of hidden units in each of the two layers of the choice MLP")
+    parser.add_argument("--seed", type=int, default=42, help="Seed for reproducibility.")
+    parser.add_argument("--validation_proportion", type=float, default=0.1, help="The percentage for validation dataset.")
+    parser.add_argument("--latent_size", type=int, default=6, help="Number of latent units in the model")
+    parser.add_argument("--update_mlp_shape", nargs="+", type=int, default=[5, 5, 5], help="Number of hidden units in each of the two layers of the update MLP")
+    parser.add_argument("--choice_mlp_shape", nargs="+", type=int, default=[5, 5, 5], help="Number of hidden units in each of the two layers of the choice MLP")
     parser.add_argument("--beta_scale", type=float, required=True, help="Value for the beta scaling parameter")
     parser.add_argument("--penalty_scale", type=float, required=True, help="Value for the penalty scaling parameter")
-    parser.add_argument("--n_step_max", type=int, default=15000, help="The maximum number of iterations to run, even if convergence is not reached")
-    parser.add_argument("--n_steps_per_call", type=float, default=500, help="The number of steps to give to train_model")
+    parser.add_argument("--n_training_steps", type=int, default=30000, help="The maximum number of iterations to run, even if convergence is not reached")
+    parser.add_argument("--n_warmup_steps", type=int, default=1000, help="The maximum number of iterations to run, even if convergence is not reached")
+    parser.add_argument("--n_steps_per_call", type=int, default=500, help="The number of steps to give to train_model")
+    parser.add_argument("--saved_checkpoint_pth", type=str, default=None, help="Path to the checkpoint for additional training")
 
     args = parser.parse_args()
 
@@ -285,8 +418,9 @@ if __name__ == "__main__":
         'choice_mlp_shape': args.choice_mlp_shape,
         'beta_scale': args.beta_scale,
         'penalty_scale': args.penalty_scale,
-        'n_step_max': args.n_step_max,
-        'n_steps_per_call': args.n_steps_per_call
+        'n_training_steps': args.n_training_steps,
+        'n_warmup_steps': args.n_warmup_steps,
+        'n_steps_per_call': args.n_steps_per_call,
     }
 
     main(args_dict,
@@ -297,5 +431,7 @@ if __name__ == "__main__":
          args.choice_mlp_shape, 
          args.beta_scale, 
          args.penalty_scale,
-         args.n_step_max,
-         args.n_steps_per_call)
+         args.n_training_steps,
+         args.n_warmup_steps,
+         args.n_steps_per_call,
+         saved_checkpoint_pth=args.saved_checkpoint_pth)
