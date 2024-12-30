@@ -228,7 +228,7 @@ def train_model(args_dict,
             opt=opt,
             penalty_scale=0,
             n_steps=n_warmup_steps,
-            do_plot=True,
+            do_plot=False,
             checkpoint_dir=checkpoint_dir,
             checkpoint_interval=1000,
             args_dict=args_dict
