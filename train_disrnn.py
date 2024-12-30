@@ -28,79 +28,6 @@ from disentangled_rnns.library import rnn_utils
 
 warnings.filterwarnings("ignore")
 
-'''
-def load_data(fname, data_dir='./'):
-    """Load data for one human subject from a MATLAB file and organize into features, labels, and state information.
-    
-    mat_contents contains the following keys:
-    dict_keys(['__header__', '__version__', '__globals__', 'tensor', 'vars_in_tensor', 'col_names', 'vars_for_state'])
-    'tensor': A 3D NumPy array containing all the data. The shape is typically (samples, time_steps, features).
-    'vars_in_tensor': A nested list of arrays, where each inner array contains a single string representing a variable name.
-    For example:
-    [[array(['state'], dtype='<U5')],
-    [array(['bitResponseAIsCorr'], dtype='<U18')],
-    [array(['P_A'], dtype='<U3')],
-    [array(['context'], dtype='<U7')],
-    [array(['blockN'], dtype='<U6')],
-    [array(['trialNInBlock'], dtype='<U13')],
-    [array(['bitCorr_prev'], dtype='<U12')],
-    [array(['bitResponseA_prev'], dtype='<U17')],
-    [array(['bitResponseA'], dtype='<U12')]]
-    array(['trialNInBlock'], dtype='<U13')
-    
-    'vars_for_state': A nested list of arrays, where each inner array contains a single string representing a variable name related to state information.
-    For example:
-    [[array(['sessionN'], dtype='<U8')],
-    [array(['stimulusSlotID'], dtype='<U14')]] 
-    
-    """
-    mat_contents = sio.loadmat(os.path.join(data_dir, fname))
-    data = mat_contents['tensor']
-    var_names = mat_contents['vars_in_tensor']
-    print("feature_names", var_names)
-    vars_for_state = [x.item() for x in mat_contents['vars_for_state'].ravel()]
-    
-    is_state_page = (var_names == 'state').flatten()
-    zs = data[:, :, is_state_page]
-    zs = np.clip(zs - 1, a_min=-1, a_max=None)
-    # Extract ys, corresponding to the choice on the present trial, "bitResponseA"
-    ys = data[:, :, (var_names == 'bitResponseA').flatten()]
-    # Extract the previous choice "bitResponseA_prev"
-    bitResponseA_prev = data[:, :, (var_names == 'bitResponseA_prev').flatten()]
-    # Extract whether the previous choice was correct "bitCorr_prev"
-    bitCorr_prev = data[:, :, (var_names == 'bitCorr_prev').flatten()]
-    # Concatenate the vars for the inputs xs
-    xs = np.concatenate([bitCorr_prev,bitResponseA_prev], axis=2)
-
-    assert zs.shape[-1] == ys.shape[-1] == 1, "Mismatch in dimensions"
-    assert zs.ndim == ys.ndim == xs.ndim == 3, "Data should be 3-dimensional"
-    assert zs.max() < 16, "State values should be less than 16"
-
-    xs = np.transpose(xs, (1, 0, 2))
-    ys = np.transpose(ys, (1, 0, 2))
-    zs = np.transpose(zs, (1, 0, 2))
-
-    zs_oh = zs_to_onehot(zs)
-
-    if '_nBlocks-1_' in fname:
-        zs_oh = zs_oh[...,:4]
-    elif '_nBlocks-2_' in fname:
-        zs_oh = zs_oh[...,:4]
-    elif '_nBlocks-4_' in fname:
-        zs_oh = zs_oh[...,:4]
-    else:
-        raise Exception("Dataset format is incorrect or contains more than two blocks of data.")
-
-    # Extract optimal choice indicator and probability of choosing A
-    bitResponseAIsCorr = data[:, :, (var_names == 'bitResponseAIsCorr').flatten()]
-    P_A = data[:, :, (var_names == 'P_A').flatten()]
-
-    bitResponseAIsCorr = np.transpose(bitResponseAIsCorr, (1, 0, 2))
-    P_A = np.transpose(P_A, (1, 0, 2))
-
-    return xs, ys, zs_oh, fname, vars_for_state, bitResponseAIsCorr, P_A
-'''
-
 def load_data(fname, data_dir='./'):
     """Load data for one human subject from a MATLAB file and organize into a dictionary.
     
@@ -211,25 +138,6 @@ def create_train_test_datasets(data_dict, dataset_constructor, testing_prop=0.5)
     
     return dataset_train, dataset_test, train_test_split
 
-'''
-def create_train_test_datasets(xs, ys, optimal_choice, P_A, dataset_constructor, testing_prop=0.5):
-    num_trials = int(xs.shape[1])
-    num_test_trials = int(math.ceil(float(num_trials) * testing_prop))
-    num_train_trials = int(num_trials - num_test_trials)
-    
-    assert num_train_trials > 0 and num_test_trials > 0, "Invalid train/test split"
-    
-    idx = np.random.permutation(num_trials)
-    dataset_train = dataset_constructor(xs[:, idx[:num_train_trials]], ys[:, idx[:num_train_trials]])
-    dataset_test = dataset_constructor(xs[:, idx[num_train_trials:]], ys[:, idx[num_train_trials:]])
-    
-    optimal_choice_train = optimal_choice[:, idx[:num_train_trials]]
-    optimal_choice_test = optimal_choice[:, idx[num_train_trials:]]
-    P_A_train = P_A[:, idx[:num_train_trials]]
-    P_A_test = P_A[:, idx[num_train_trials:]]
-    
-    return dataset_train, dataset_test, optimal_choice_train, optimal_choice_test, P_A_train, P_A_test
-'''
 
 def dataset_size(xs, ys):
     """Calculate the size of the dataset in terms of number of samples."""
@@ -260,20 +168,33 @@ def train_model(args_dict,
         disrnn_params = None
 
     x, y = next(dataset_train)
-
-    wandb.init(project="CogModRNN", entity="yolandaz", config={
-        "latent_size": latent_size,
-        "update_mlp_shape": update_mlp_shape,
-        "choice_mlp_shape": choice_mlp_shape,
-        "beta_scale": beta_scale,
-        "penalty_scale": penalty_scale,
-    })
-
+    
+    # -------------------------------------------------------------
+    # Give your run a more meaningful name:
+    # -------------------------------------------------------------
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    subdir = f'ls_{latent_size}_umlp_{update_mlp_shape}_cmlp_{choice_mlp_shape}_beta_{beta_scale}_penalty_{penalty_scale}_{timestamp}'
-    plot_dir = os.path.join('plots', subdir)
-    checkpoint_dir = os.path.join('checkpoints', subdir)
-    loss_dir = os.path.join('loss', subdir)
+    run_name = (f"ls_{latent_size}_umlp_{'-'.join(map(str, update_mlp_shape))}"
+                f"_cmlp_{'-'.join(map(str, choice_mlp_shape))}"
+                f"_beta_{beta_scale}_penalty_{penalty_scale}_{timestamp}")
+    
+    # Initialize wandb with that name:
+    wandb.init(
+        project="CogModRNN",
+        entity="yolandaz",
+        config={
+            "latent_size": latent_size,
+            "update_mlp_shape": update_mlp_shape,
+            "choice_mlp_shape": choice_mlp_shape,
+            "beta_scale": beta_scale,
+            "penalty_scale": penalty_scale,
+        },
+        name=run_name,  # <--- more meaningful run name
+    )
+    
+    # Create directories for outputs
+    plot_dir = os.path.join('plots_2025', run_name)
+    checkpoint_dir = os.path.join('checkpoints_2025', run_name)
+    loss_dir = os.path.join('loss', run_name)
     os.makedirs(plot_dir, exist_ok=True)
     os.makedirs(checkpoint_dir, exist_ok=True)
     os.makedirs(loss_dir, exist_ok=True)
@@ -293,8 +214,10 @@ def train_model(args_dict,
 
     opt = optax.adam(learning_rate=1e-3)
 
-    if saved_checkpoint_pth == None:
-        # Warmup training with no information penalty
+    # -------------------------------------------------------------
+    # 1) Optional warmup (penalty_scale=0)
+    # -------------------------------------------------------------
+    if saved_checkpoint_pth is None:
         disrnn_params, losses, _ = rnn_utils.train_network(
             make_disrnn,
             training_dataset=dataset_train,
@@ -311,11 +234,25 @@ def train_model(args_dict,
             args_dict=args_dict
         )
 
-        for step, loss in enumerate(losses):
-            wandb.log({"loss": loss, "step": step})
+        # -------------------------------------------------------------
+        # If *not* doing real-time logging in train_network, you could
+        # log warmup losses here. But we *are* logging real-time now,
+        # so we can comment this out to avoid duplication:
+        # -------------------------------------------------------------
+        """
+        num_steps_logged = len(losses.get("training_total_loss", []))
+        for step_idx in range(num_steps_logged):
+            wandb.log({
+                "warmup_categorical_loss": losses["training_cat_loss"][step_idx],
+                "warmup_penalty_term": losses["training_penalty"][step_idx],
+                "warmup_total_loss": losses["training_total_loss"][step_idx],
+                "warmup_step": step_idx
+            })
+        """
 
-
-    # Additional training using information penalty
+    # -------------------------------------------------------------
+    # 2) Main training (penalty_scale=user specified)
+    # -------------------------------------------------------------
     disrnn_params, losses, _ = rnn_utils.train_network(
         make_disrnn,
         training_dataset=dataset_train,
@@ -332,21 +269,35 @@ def train_model(args_dict,
         args_dict=args_dict
     )
 
-    for step, loss in enumerate(losses):
-        wandb.log({"loss": loss, "step": step})
+    # -------------------------------------------------------------
+    # Real-time logs are *already* being done inside train_network.
+    # So you do NOT need the post-hoc loop below. You can comment it
+    # out if you want to avoid duplication:
+    # -------------------------------------------------------------
+    """
+    num_steps_logged = len(losses["training_total_loss"])
+    for step_idx in range(num_steps_logged):
+        wandb.log({
+            "categorical_loss": losses["training_cat_loss"][step_idx],
+            "penalty_term":     losses["training_penalty"][step_idx],
+            "loss":             losses["training_total_loss"][step_idx],
+            "step": step_idx
+        })
+    """
 
-
+    # -------------------------------------------------------------
+    # Save final checkpoint
+    # -------------------------------------------------------------
     final_checkpoint = {
         'args_dict': args_dict,
         'disrnn_params': disrnn_params
     }
-
     final_filename = os.path.join(
         checkpoint_dir, 
-        f'final_disrnn_params_ls_{latent_size}_umlp_{"-".join(map(str, update_mlp_shape))}_cmlp_{"-".join(map(str, choice_mlp_shape))}_penalty_{penalty_scale}_beta_{beta_scale}_lr_1e-3.pkl'
+        f'final_disrnn_params_ls_{latent_size}_umlp_{"-".join(map(str, update_mlp_shape))}'
+        f'_cmlp_{"-".join(map(str, choice_mlp_shape))}_penalty_{penalty_scale}'
+        f'_beta_{beta_scale}_lr_1e-3.pkl'
     )
-
-    # Save the checkpoint using pickle
     with open(final_filename, 'wb') as f:
         pickle.dump(final_checkpoint, f)
 
@@ -400,10 +351,10 @@ if __name__ == "__main__":
     parser.add_argument("--validation_proportion", type=float, default=0.1, help="The percentage for validation dataset.")
     parser.add_argument("--latent_size", type=int, default=6, help="Number of latent units in the model")
     parser.add_argument("--update_mlp_shape", nargs="+", type=int, default=[5, 5, 5], help="Number of hidden units in each of the two layers of the update MLP")
-    parser.add_argument("--choice_mlp_shape", nargs="+", type=int, default=[5, 5, 5], help="Number of hidden units in each of the two layers of the choice MLP")
+    parser.add_argument("--choice_mlp_shape", nargs="+", type=int, default=[2, 2], help="Number of hidden units in each of the two layers of the choice MLP")
     parser.add_argument("--beta_scale", type=float, required=True, help="Value for the beta scaling parameter")
     parser.add_argument("--penalty_scale", type=float, required=True, help="Value for the penalty scaling parameter")
-    parser.add_argument("--n_training_steps", type=int, default=30000, help="The maximum number of iterations to run, even if convergence is not reached")
+    parser.add_argument("--n_training_steps", type=int, default=50000, help="The maximum number of iterations to run, even if convergence is not reached")
     parser.add_argument("--n_warmup_steps", type=int, default=1000, help="The maximum number of iterations to run, even if convergence is not reached")
     parser.add_argument("--n_steps_per_call", type=int, default=500, help="The number of steps to give to train_model")
     parser.add_argument("--saved_checkpoint_pth", type=str, default=None, help="Path to the checkpoint for additional training")
