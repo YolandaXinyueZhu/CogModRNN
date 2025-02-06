@@ -27,6 +27,7 @@ from train_disrnn import load_data, to_onehot, zs_to_onehot, dataset_size, creat
 
 warnings.filterwarnings("ignore")
 
+
 def compute_log_likelihood_and_accuracy(xs, ys, model_fun, params):
     n_trials_per_session, n_sessions = ys.shape[:2]
     model_outputs, _ = rnn_utils.eval_network(model_fun, params, xs)
@@ -181,6 +182,225 @@ def plot_session(choices: np.ndarray,
         print(f"Session plot saved to {plot_path}")
 
 
+
+################################################################
+### 1) NEW: Side-by-side inference performance (Human vs. Model)
+###          (First encounters, excluding the very first)
+################################################################
+def plot_inference_performance_human_vs_model_side_by_side(df: pd.DataFrame, save_folder: str):
+    """
+    Side-by-side subplots for 'first encounters' (excluding the first introduced stimulusSlotN=1),
+    comparing Human vs. Model performance by block.
+
+    LEFT SUBPLOT: Human's mean rwd
+    RIGHT SUBPLOT: Model's mean model_est_optimal_prob
+    """
+    # Exclude invalid trials
+    valid_mask = (df['act'] != -1) & (df['bitResponseAIsCorr'] != -1)
+    df = df[valid_mask].copy()
+
+    # Filter to first encounters (except the very first stimulus in a block)
+    inference_df = df[
+        (df['stimulusSlotID_encounterNInBlock'] == 1) &
+        (df['stimulusSlotN'] > 1)
+    ].copy()
+
+    # Group for Human
+    grouped_human = (
+        inference_df
+        .groupby('blockN')['rwd']
+        .mean()
+        .reset_index()
+    )
+    # Group for Model
+    grouped_model = (
+        inference_df
+        .groupby('blockN')['model_est_optimal_prob']
+        .mean()
+        .reset_index()
+    )
+
+    unique_blocks = sorted(inference_df['blockN'].unique())
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
+
+    # LEFT SUBPLOT: Human
+    axes[0].plot(grouped_human['blockN'], grouped_human['rwd'], marker='o', label='Human rwd')
+    axes[0].set_title("Inference Perf (First Encounters, Excl. 1st Stim)\nHuman")
+    axes[0].set_xlabel("Block Number")
+    axes[0].set_ylabel("Mean rwd (Accuracy)")
+    axes[0].set_ylim(0, 1.0)
+    axes[0].set_xticks(unique_blocks)
+    axes[0].legend()
+
+    # RIGHT SUBPLOT: Model
+    axes[1].plot(grouped_model['blockN'], grouped_model['model_est_optimal_prob'], marker='o', color='orange', label='Model prob')
+    axes[1].set_title("Inference Perf (First Encounters, Excl. 1st Stim)\nModel")
+    axes[1].set_xlabel("Block Number")
+    axes[1].set_ylabel("Mean model_est_optimal_prob")
+    axes[1].set_ylim(0, 1.0)
+    axes[1].set_xticks(unique_blocks)
+    axes[1].legend()
+
+    plt.tight_layout()
+    os.makedirs(save_folder, exist_ok=True)
+    sidebyside_path = os.path.join(save_folder, "inference_performance_human_vs_model_side_by_side.png")
+    plt.savefig(sidebyside_path)
+    plt.close()
+    print(f"Side-by-side inference performance (human vs. model) saved to {sidebyside_path}")
+
+###############################################
+### Human & Model First-Encounter Plot
+###############################################
+def plot_inference_curve_by_block_and_encounter_human_vs_model_side_by_side(df: pd.DataFrame, save_folder: str):
+    """
+    Plots, side by side, the performance (Human = 'rwd', Model = 'model_est_optimal_prob')
+    as a function of encounter number within each block. One separate line per blockN.
+
+    Specifically:
+      - On the x-axis: stimulusSlotID_encounterNInBlock (the 'encounter number')
+      - On the left y-axis: mean rwd (Human)
+      - On the right y-axis: mean model_est_optimal_prob (Model)
+    """
+
+    # 1) Exclude invalid trials
+    valid_mask = (df['act'] != -1) & (df['bitResponseAIsCorr'] != -1)
+    df = df[valid_mask].copy()
+
+    # 2) Group by blockN AND by the encounter index within that block
+    grouped_human = (
+        df
+        .groupby(['blockN', 'stimulusSlotID_encounterNInBlock'])['rwd']
+        .mean()
+        .reset_index()
+    )
+    grouped_model = (
+        df
+        .groupby(['blockN', 'stimulusSlotID_encounterNInBlock'])['model_est_optimal_prob']
+        .mean()
+        .reset_index()
+    )
+
+    # 3) Plot side-by-side subplots, share y-axis
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
+
+    # -- LEFT SUBPLOT: Human (rwd) --
+    unique_blocks = sorted(grouped_human['blockN'].unique())
+    for blk in unique_blocks:
+        df_blk = grouped_human[grouped_human['blockN'] == blk].copy()
+        df_blk = df_blk.sort_values('stimulusSlotID_encounterNInBlock')
+        axes[0].plot(
+            df_blk['stimulusSlotID_encounterNInBlock'],
+            df_blk['rwd'],
+            marker='o',
+            label=f'Block {blk}'
+        )
+    axes[0].set_title("Human (rwd): Encounter # in Each Block")
+    axes[0].set_xlabel("Encounter Number (stimulusSlotID_encounterNInBlock)")
+    axes[0].set_ylabel("Mean rwd (Accuracy)")
+    axes[0].set_ylim(0, 1)
+    axes[0].legend(title="BlockN")
+
+    # -- RIGHT SUBPLOT: Model (model_est_optimal_prob) --
+    unique_blocks_model = sorted(grouped_model['blockN'].unique())
+    for blk in unique_blocks_model:
+        df_blk_m = grouped_model[grouped_model['blockN'] == blk].copy()
+        df_blk_m = df_blk_m.sort_values('stimulusSlotID_encounterNInBlock')
+        axes[1].plot(
+            df_blk_m['stimulusSlotID_encounterNInBlock'],
+            df_blk_m['model_est_optimal_prob'],
+            marker='o',
+            label=f'Block {blk}'
+        )
+    axes[1].set_title("Model (model_est_optimal_prob): Encounter # in Each Block")
+    axes[1].set_xlabel("Encounter Number (stimulusSlotID_encounterNInBlock)")
+    axes[1].set_ylabel("Mean model_est_optimal_prob")
+    axes[1].set_ylim(0, 1)
+    axes[1].legend(title="BlockN")
+
+    plt.tight_layout()
+    os.makedirs(save_folder, exist_ok=True)
+    out_path = os.path.join(save_folder, "inference_curve_by_block_and_encounter_human_vs_model_side_by_side.png")
+    plt.savefig(out_path)
+    plt.close(fig)
+    print(f"Plot saved to {out_path}")
+
+
+
+################################################################
+### 2) NEW: Side-by-side first-encounter comparison (Human vs. Model)
+################################################################
+def plot_inference_curve_by_block_and_order_human_vs_model_side_by_side(df: pd.DataFrame, save_folder: str):
+    """
+    Side-by-side subplots for the *first encounter* in each block,
+    comparing Human (rwd) vs. Model (model_est_optimal_prob) by stimulusSlotN (1..4).
+    """
+    # Exclude invalid
+    valid_mask = (df['act'] != -1) & (df['bitResponseAIsCorr'] != -1)
+    df = df[valid_mask].copy()
+
+    # Filter to only first-encounter trials
+    df_first_enc = df[df['stimulusSlotID_encounterNInBlock'] == 1].copy()
+
+    # Group for human
+    grouped_human = (
+        df_first_enc
+        .groupby(['blockN', 'stimulusSlotN'])['rwd']
+        .mean()
+        .reset_index()
+    )
+    # Group for model
+    grouped_model = (
+        df_first_enc
+        .groupby(['blockN', 'stimulusSlotN'])['model_est_optimal_prob']
+        .mean()
+        .reset_index()
+    )
+
+    blocks = sorted(df_first_enc['blockN'].unique())
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
+
+    # LEFT SUBPLOT: Human
+    for blk in blocks:
+        df_blk = grouped_human[grouped_human['blockN'] == blk].copy().sort_values('stimulusSlotN')
+        axes[0].plot(
+            df_blk['stimulusSlotN'],
+            df_blk['rwd'],
+            marker='o',
+            label=f'Block {blk}'
+        )
+    axes[0].set_title("Human (rwd): 1st Encounter by StimulusSlotN")
+    axes[0].set_xlabel("StimulusSlotN")
+    axes[0].set_ylabel("Mean rwd")
+    axes[0].set_ylim(0, 1)
+    axes[0].set_xlim(1, 4)
+    axes[0].legend(title="BlockN")
+
+    # RIGHT SUBPLOT: Model
+    for blk in blocks:
+        df_blk = grouped_model[grouped_model['blockN'] == blk].copy().sort_values('stimulusSlotN')
+        axes[1].plot(
+            df_blk['stimulusSlotN'],
+            df_blk['model_est_optimal_prob'],
+            marker='o',
+            label=f'Block {blk}'
+        )
+    axes[1].set_title("Model (model_est_optimal_prob): 1st Encounter by StimulusSlotN")
+    axes[1].set_xlabel("StimulusSlotN")
+    axes[1].set_ylabel("Mean model_est_optimal_prob")
+    axes[1].set_ylim(0, 1)
+    axes[1].set_xlim(1, 4)
+    axes[1].legend(title="BlockN")
+
+    plt.tight_layout()
+    out_path = os.path.join(save_folder, "inference_curve_by_block_and_order_human_vs_model_side_by_side.png")
+    plt.savefig(out_path)
+    plt.close()
+    print(f"Side-by-side first-encounter (Human vs. Model) plot saved to {out_path}")
+
+
+
 def plot_latent_activations_for_session(sess_i, xs_train, pred_train, act_train, bitResponseAIsCorr_train, P_A_train, disrnn_params, make_disrnn, save_folder_name,
                                         train_test_split_variables):
     trials, _, features = xs_train.shape
@@ -203,7 +423,6 @@ def plot_latent_activations_for_session(sess_i, xs_train, pred_train, act_train,
     bitResponseAIsCorr_session = bitResponseAIsCorr_train[:, sess_i, :][:trial_end].squeeze()
     P_A_session = P_A_train[:, sess_i, :][:trial_end].squeeze()
 
-    # Now we use the unified create_dataframe_for_plotting without train_test_split_variables for session only
     df_session = create_dataframe_for_plotting(
         predictions=pred_session,
         actions=act_session,
@@ -225,8 +444,14 @@ def plot_latent_activations_for_session(sess_i, xs_train, pred_train, act_train,
     labels_with_sigmas = [f"{name} (σ={sigma:.4f})" for name, sigma in zip(latent_names, latent_sigmas)]
     disrnn_activations_sorted = disrnn_activations[:, :, latent_sigma_order]
 
-    plot_session(choices, rewards, timeseries=disrnn_activations_sorted, timeseries_name='Network Activations', labels=labels_with_sigmas,
-                 save_folder_name=save_folder_name)
+    plot_session(
+        choices,
+        rewards,
+        timeseries=disrnn_activations_sorted,
+        timeseries_name='Network Activations',
+        labels=labels_with_sigmas,
+        save_folder_name=save_folder_name
+    )
 
 
 def plot_single_checkpoint_performance(metrics, save_folder, args_dict):
@@ -573,42 +798,36 @@ def create_dataframe_for_plotting(predictions,
     """
     Unified function to create a DataFrame for plotting.
 
-    If train_test_split_variables is provided, it uses those to build a full dataframe (as originally in create_dataframe_for_plotting).
-    If train_test_split_variables is None, it assumes session-level plotting (similar to create_dataframe_for_plotting_session) and requires bitResponseAIsCorr and P_A.
-    """
+    If train_test_split_variables is provided, it uses those to build a full dataframe 
+    (as originally in create_dataframe_for_plotting). 
 
+    If train_test_split_variables is None, it assumes session-level plotting 
+    and requires bitResponseAIsCorr and P_A.
+    """
     action_0 = actions == 0
     action_1 = actions == 1
     action_others = ~np.isin(actions, [0, 1])
     action_oh = np.concatenate([action_0, action_1, action_others], axis=2)
+
     nan = np.empty([*predictions.shape[:2], 1])
     nan.fill(np.nan)
     predictions_expanded = np.concatenate([predictions, nan], axis=2)
+
     prediction_prob = predictions_expanded[action_oh]
     prediction_prob = prediction_prob.reshape(actions.shape)
 
     if train_test_split_variables is not None:
-        # Full data scenario
         context = train_test_split_variables["context_train"][:, :, 0].ravel()
         blockN = train_test_split_variables["blockN_train"][:, :, 0].ravel()
         trialNInBlock = train_test_split_variables["trialNInBlock_train"][:, :, 0].ravel()
         bitResponseAIsCorr_full = train_test_split_variables["bitResponseAIsCorr_train"][:, :, 0].ravel()
         P_A_full = train_test_split_variables["P_A_train"][:, :, 0].ravel()
 
-        # Include stimulusSlotID and stimulusSlotID_encounterNInBlock if available
-        if "stimulusSlotID_train" in train_test_split_variables:
-            stimulusSlotID = train_test_split_variables["stimulusSlotID_train"][:, :, 0].ravel()
-        else:
-            stimulusSlotID = np.zeros_like(context)  # Placeholder if not present
+        stimulusSlotN = train_test_split_variables["stimulusSlotN_train"][:, :, 0].ravel()
+        stimulusSlotID = train_test_split_variables["stimulusSlotID_train"][:, :, 0].ravel()
+        stimulusSlotID_encounterNInBlock = train_test_split_variables["stimulusSlotID_encounterNInBlock_train"][:, :, 0].ravel()
 
-        if "stimulusSlotID_encounterNInBlock_train" in train_test_split_variables:
-            stimulusSlotID_encounterNInBlock = train_test_split_variables["stimulusSlotID_encounterNInBlock_train"][:, :, 0].ravel()
-        else:
-            stimulusSlotID_encounterNInBlock = np.zeros_like(context)  # Placeholder if not present
-
-        # Note: The original create_dataframe_for_plotting uses rwd from xs with a bottom stack of zeros
-        # 'rwd': np.vstack((xs[1:, :, 0], np.zeros((1, xs.shape[1])))).ravel(),
-        # Let's keep this consistent.
+        # "rwd" logic
         rwd = np.vstack((xs[1:, :, 0], np.zeros((1, xs.shape[1])))).ravel()
 
         df = pd.DataFrame({
@@ -621,26 +840,20 @@ def create_dataframe_for_plotting(predictions,
             'bitResponseAIsCorr': bitResponseAIsCorr_full,
             'P_A': P_A_full,
             'rwd': rwd,
+            'stimulusSlotN': stimulusSlotN,
             'stimulusSlotID': stimulusSlotID,
             'stimulusSlotID_encounterNInBlock': stimulusSlotID_encounterNInBlock
         })
 
-        df.to_csv("./test_df.csv", index=False)
-
         df['model_est_optimal_prob'] = np.where(df['bitResponseAIsCorr'] == 1, df['pred'], 1 - df['pred'])
         df['human_chosen_action_prob'] = np.where(df['act'] == 1, df['P_A'], 1 - df['P_A'])
         df['rwd_manual'] = np.where(df['act'] == df['bitResponseAIsCorr'], 1, 0)
+        df["pred_action"] = (df["pred"] > 0.5).astype(int)
 
-        return df
     else:
-        # Session-level scenario (previously create_dataframe_for_plotting_session)
-        # Requires bitResponseAIsCorr and P_A
         if bitResponseAIsCorr is None or P_A is None:
             raise ValueError("bitResponseAIsCorr and P_A must be provided if train_test_split_variables is None.")
 
-        # Use the session logic:
-        # 'rwd': np.vstack((np.zeros((1, xs.shape[1])), xs[1:, :, 0])).ravel()
-        # This was the original indexing in create_dataframe_for_plotting_session
         rwd = np.vstack((np.zeros((1, xs.shape[1])), xs[1:, :, 0])).ravel()
 
         df = pd.DataFrame({
@@ -656,30 +869,22 @@ def create_dataframe_for_plotting(predictions,
         df['human_chosen_action_prob'] = np.where(df['act'] == 1, df['P_A'], 1 - df['P_A'])
         df['rwd_manual'] = np.where(df['act'] == df['bitResponseAIsCorr'], 1, 0)
 
-        return df
+    return df
 
 
-### New Plotting Function ###
 def plot_average_block_3_model_probability(df, save_folder):
     os.makedirs(save_folder, exist_ok=True)
     
-    # Filter to block 3 and first encounters
     df_block3 = df[(df['blockN'] == 3) & (df['stimulusSlotID_encounterNInBlock'] == 1)].copy()
     
-    # Sort by trial number to get the order of first-encountered stimuli
     df_block3 = df_block3.sort_values('trialNInBlock')
     print(df_block3)
     
-    # Check that the number of rows is a multiple of 4
     n = len(df_block3)
-    
-    # Assign encounter_order 1 through 4 repeatedly
     df_block3['encounter_order'] = np.tile([1,2,3,4], n // 4)
     
-    # Now average model probability by encounter_order
     df_mean = df_block3.groupby('encounter_order', as_index=False)['model_est_optimal_prob'].mean()
     
-    # Plot these 4 averaged values
     plt.figure(figsize=(6,4))
     sns.lineplot(
         data=df_mean,
@@ -689,9 +894,7 @@ def plot_average_block_3_model_probability(df, save_folder):
         color='blue'
     )
 
-    # Label the x-axis ticks as A, B, C, D
     plt.xticks([1, 2, 3, 4], ['A', 'B', 'C', 'D'])
-
     plt.xlabel('Stimulus')
     plt.ylabel('Average Model Probability of Optimal Action')
     plt.title('Average Model Probability for First-Encounter Stimuli in Block 3')
@@ -708,20 +911,20 @@ def main(seed, saved_checkpoint_pth):
     np.random.seed(seed)
 
     dataset_type = 'RealWorldKimmelfMRIDataset'  
-    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-7_nTrialsPerBlock-50_b-0.11_NaN_10.5_0.93_0.45_NaN_NaN_20241104.mat"
+    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-2_nBlocks-7_nTrialsPerBlock-25_b-multiple_20250131.mat"
     dataset_train, dataset_test, train_test_split_variables = preprocess_data(dataset_type, dataset_path, 0.1)
 
-    # Load the checkpoint parameters
     with open(saved_checkpoint_pth, 'rb') as file:
         checkpoint = pickle.load(file)
     
     args_dict = checkpoint['args_dict']
+    print(args_dict)
     disrnn_params = checkpoint['disrnn_params']
     print(f'Loaded disrnn_params from {saved_checkpoint_pth}')
 
     def make_disrnn():
       model = disrnn.HkDisRNN(
-          obs_size=6,
+          obs_size=10,
           target_size=2,
           latent_size=args_dict['latent_size'],
           update_mlp_shape=args_dict['update_mlp_shape'],
@@ -738,7 +941,6 @@ def main(seed, saved_checkpoint_pth):
     shuffled_dataset_test._ys = np.random.permutation(shuffled_dataset_test._ys)
     shuffled_xs_test, shuffled_ys_test = next(shuffled_dataset_test)
 
-    # Compute log-likelihood and accuracy for training and test datasets
     print('Normalized Likelihoods and Accuracies for disRNN')
     print('Training Dataset')
     train_norm_likelihood, _ = compute_log_likelihood_and_accuracy(xs_train, ys_train, make_disrnn, disrnn_params)
@@ -746,31 +948,58 @@ def main(seed, saved_checkpoint_pth):
     pred_train, ys_train, xs_train = evaluate(xs_train, ys_train, make_disrnn, disrnn_params)
     pred_test, ys_test, xs_test = evaluate(xs_test, ys_test, make_disrnn, disrnn_params)
     df_train = create_dataframe_for_plotting(pred_train, ys_train, xs_train, train_test_split_variables=train_test_split_variables)
+    log_probs_train = np.log(df_train['human_chosen_action_prob'])
+    normalized_likelihood_upper_bound_train = np.exp(np.mean(log_probs_train))
+    print("Model Normalized likelihood Upperbound for training", normalized_likelihood_upper_bound_train)
 
-    save_folder_name = os.path.join('plots', saved_checkpoint_pth.split('checkpoints/')[1].split('.pkl')[0])
+    save_folder_name = os.path.join('plots', saved_checkpoint_pth.split('checkpoints_0128/')[1].split('.pkl')[0])
     os.makedirs(save_folder_name, exist_ok=True)
 
-    # plot_training_results_one_session(df_train, save_folder_name)
+    plot_training_results_one_session(df_train, save_folder_name)
     plot_training_results(df_train, dataset_train, save_folder_name)
-    # plot_training_results_per_block(df_train, save_folder_name)
-    
+    plot_training_results_per_block(df_train, save_folder_name)
     plot_bottlenecks(disrnn_params, save_folder_name)
+
+    ####################################################
+    # 1) Inference performance side-by-side (Human vs. Model),
+    #    first encounters, excluding the 1st introduced stimulus
+    ####################################################
+    plot_inference_performance_human_vs_model_side_by_side(df_train, save_folder_name)
+
+    ####################################################
+    # 2) Side-by-side first-encounter comparison
+    ####################################################
+    plot_inference_curve_by_block_and_order_human_vs_model_side_by_side(df_train, save_folder_name)
+
+    ####################################################
+    # 3) Side-by-side all-encounters comparison
+    ####################################################
+    plot_inference_curve_by_block_and_encounter_human_vs_model_side_by_side(df_train, save_folder_name)
+
+    ####################################################
+    # Original single-line plots
+    ####################################################
+    #plot_inference_performance(df_train, save_folder_name)
+    #plot_inference_curve_by_block_and_order(df_train, save_folder_name)
+    #plot_inference_curve_by_block_and_order_human(df_train, save_folder_name)
+
     session_i = 0
-    
-    plot_latent_activations_for_session(sess_i = session_i,
-                                        xs_train=xs_train, 
-                                        pred_train=pred_train, 
-                                        act_train=ys_test, 
-                                        bitResponseAIsCorr_train=train_test_split_variables["bitResponseAIsCorr_train"], 
-                                        P_A_train=train_test_split_variables['P_A_train'], 
-                                        disrnn_params=disrnn_params, 
-                                        make_disrnn=make_disrnn,
-                                        save_folder_name = save_folder_name,
-                                        train_test_split_variables = train_test_split_variables
-                                        )
-    
-    # New plot:
+    plot_latent_activations_for_session(
+        sess_i=session_i,
+        xs_train=xs_train, 
+        pred_train=pred_train, 
+        act_train=ys_test, 
+        bitResponseAIsCorr_train=train_test_split_variables["bitResponseAIsCorr_train"], 
+        P_A_train=train_test_split_variables['P_A_train'], 
+        disrnn_params=disrnn_params, 
+        make_disrnn=make_disrnn,
+        save_folder_name=save_folder_name,
+        train_test_split_variables=train_test_split_variables
+    )
+
+    # Optional
     # plot_average_block_3_model_probability(df_train, save_folder_name)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

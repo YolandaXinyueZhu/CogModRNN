@@ -61,7 +61,8 @@ def load_data(fname, data_dir='./'):
     if 'state' in data_dict:
         zs = np.clip(data_dict['state'] - 1, a_min=-1, a_max=None)
         data_dict['state'] = zs
-        data_dict['state_onehot'] = zs_to_onehot(zs)[..., :4]
+        # Need to make this an argument
+        data_dict['state_onehot'] = zs_to_onehot(zs)[..., :8]
     if 'bitResponseA' in data_dict:
         ys = data_dict['bitResponseA']
         data_dict['ys'] = ys
@@ -157,13 +158,17 @@ def train_model(args_dict,
                 n_steps_per_call,
                 saved_checkpoint_pth=None):
 
-    if saved_checkpoint_pth and os.path.exists(saved_checkpoint_pth):
-        print(f"Loading checkpoint from {saved_checkpoint_pth}...")
-        with open(saved_checkpoint_pth, 'rb') as f:
-            checkpoint = pickle.load(f)
-        args_dict = checkpoint['args_dict']
-        disrnn_params = checkpoint['disrnn_params']
-        print("Checkpoint loaded successfully.")
+    if saved_checkpoint_pth:
+        if os.path.exists(saved_checkpoint_pth):
+            print(f"Loading checkpoint from {saved_checkpoint_pth}...")
+            with open(saved_checkpoint_pth, 'rb') as f:
+                checkpoint = pickle.load(f)
+            args_dict = checkpoint['args_dict']
+            disrnn_params = checkpoint['disrnn_params']
+            print("Checkpoint loaded successfully.")
+        else: 
+            print("Checkpoint Invalid. Exiting...")
+            exit()
     else:
         disrnn_params = None
 
@@ -193,7 +198,7 @@ def train_model(args_dict,
     
     # Create directories for outputs
     plot_dir = os.path.join('plots_2025', run_name)
-    checkpoint_dir = os.path.join('checkpoints_2025', run_name)
+    checkpoint_dir = os.path.join('checkpoints_0128', run_name)
     loss_dir = os.path.join('loss', run_name)
     os.makedirs(plot_dir, exist_ok=True)
     os.makedirs(checkpoint_dir, exist_ok=True)
@@ -218,6 +223,7 @@ def train_model(args_dict,
     # 1) Optional warmup (penalty_scale=0)
     # -------------------------------------------------------------
     if saved_checkpoint_pth is None:
+        print("Warmup starts!")
         disrnn_params, losses, _ = rnn_utils.train_network(
             make_disrnn,
             training_dataset=dataset_train,
@@ -230,10 +236,10 @@ def train_model(args_dict,
             n_steps=n_warmup_steps,
             do_plot=False,
             checkpoint_dir=checkpoint_dir,
-            checkpoint_interval=1000,
+            checkpoint_interval=100,
             args_dict=args_dict
         )
-
+    
         # -------------------------------------------------------------
         # If *not* doing real-time logging in train_network, you could
         # log warmup losses here. But we *are* logging real-time now,
@@ -265,7 +271,7 @@ def train_model(args_dict,
         n_steps=n_training_steps,
         do_plot=True,
         checkpoint_dir=checkpoint_dir,
-        checkpoint_interval=1000,
+        checkpoint_interval=100,
         args_dict=args_dict
     )
 
@@ -328,7 +334,7 @@ def main(args_dict,
 
     # Preprocess Data
     dataset_type = 'RealWorldKimmelfMRIDataset'
-    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-1_nBlocks-7_nTrialsPerBlock-50_b-0.11_NaN_10.5_0.93_0.45_NaN_NaN_20241104.mat"
+    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-2_nBlocks-7_nTrialsPerBlock-25_b-multiple_20250131.mat"
     dataset_train, dataset_test, *_ = preprocess_data(dataset_type, dataset_path, validation_proportion)
 
     # Train model
@@ -349,13 +355,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=42, help="Seed for reproducibility.")
     parser.add_argument("--validation_proportion", type=float, default=0.1, help="The percentage for validation dataset.")
-    parser.add_argument("--latent_size", type=int, default=6, help="Number of latent units in the model")
-    parser.add_argument("--update_mlp_shape", nargs="+", type=int, default=[5, 5, 5], help="Number of hidden units in each of the two layers of the update MLP")
-    parser.add_argument("--choice_mlp_shape", nargs="+", type=int, default=[2, 2], help="Number of hidden units in each of the two layers of the choice MLP")
+    parser.add_argument("--latent_size", type=int, default=8, help="Number of latent units in the model")
+    parser.add_argument("--update_mlp_shape", nargs="+", type=int, default=[8, 8, 8], help="Number of hidden units in each of the two layers of the update MLP")
+    parser.add_argument("--choice_mlp_shape", nargs="+", type=int, default=[3, 3, 3], help="Number of hidden units in each of the two layers of the choice MLP")
     parser.add_argument("--beta_scale", type=float, required=True, help="Value for the beta scaling parameter")
     parser.add_argument("--penalty_scale", type=float, required=True, help="Value for the penalty scaling parameter")
-    parser.add_argument("--n_training_steps", type=int, default=50000, help="The maximum number of iterations to run, even if convergence is not reached")
-    parser.add_argument("--n_warmup_steps", type=int, default=1000, help="The maximum number of iterations to run, even if convergence is not reached")
+    parser.add_argument("--n_training_steps", type=int, default=1, help="The maximum number of iterations to run, even if convergence is not reached")
+    parser.add_argument("--n_warmup_steps", type=int, default=50000, help="The maximum number of iterations to run, even if convergence is not reached")
     parser.add_argument("--n_steps_per_call", type=int, default=500, help="The number of steps to give to train_model")
     parser.add_argument("--saved_checkpoint_pth", type=str, default=None, help="Path to the checkpoint for additional training")
 
