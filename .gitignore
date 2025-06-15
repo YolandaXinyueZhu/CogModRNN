@@ -1,0 +1,18 @@
+# ─── DisRNN code ─────────────────────────
+disentangled_rnns_new/          # whole folder
+
+# ─── Checkpoints ─────────────────────────────────
+wandb
+checkpoints*/                   # checkpoints, checkpoints_06, etc.
+*.ckpt                          # Lightning checkpoints
+*.pt                            # PyTorch saves
+
+# ─── Common Python cruft ─────────────────────────
+__pycache__/
+*.pkl
+*.csv
+*.npy
+*.log
+
+# virtual-env (if it ever ends up inside the repo)
+disrnn_venv/
