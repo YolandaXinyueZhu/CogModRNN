@@ -20,7 +20,6 @@ import wandb
 
 #sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 #from CogModelingRNNsTutorial.CogModelingRNNsTutorial import bandits, disrnn, hybrnn, plotting, rat_data, rnn_utils
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from absl import app
 import optax
 from disentangled_rnns.library import disrnn
@@ -63,6 +62,13 @@ def load_data(fname, data_dir='./'):
         data_dict['state'] = zs
         # Need to make this an argument
         data_dict['state_onehot'] = zs_to_onehot(zs)[..., :8]
+
+    flat_states = data_dict['state'].ravel()
+    # only keep the valid clues (>= 0)
+    valid_states = flat_states[flat_states >= 0]
+    unique_states = np.unique(valid_states)
+    print(f"Dataset contains {len(unique_states)} distinct clues: {unique_states}")
+
     if 'bitResponseA' in data_dict:
         ys = data_dict['bitResponseA']
         data_dict['ys'] = ys
@@ -155,6 +161,7 @@ def train_model(args_dict,
                 n_training_steps,
                 n_warmup_steps,
                 n_steps_per_call,
+                corr_strength,
                 saved_checkpoint_pth=None):
 
     if saved_checkpoint_pth:
@@ -179,7 +186,7 @@ def train_model(args_dict,
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_name = (f"ls_{latent_size}_umlp_{'-'.join(map(str, update_mlp_shape))}"
                 f"_cmlp_{'-'.join(map(str, choice_mlp_shape))}"
-                f"_beta_{beta_scale}_penalty_{penalty_scale}_{timestamp}")
+                f"_beta_{beta_scale}_penalty_{penalty_scale}_corr_{corr_strength}_{timestamp}")
     
     # Initialize wandb with that name:
     wandb.init(
@@ -191,6 +198,7 @@ def train_model(args_dict,
             "choice_mlp_shape": choice_mlp_shape,
             "beta_scale": beta_scale,
             "penalty_scale": penalty_scale,
+            "corr_strength": corr_strength
         },
         name=run_name,  # <--- more meaningful run name
     )
@@ -212,7 +220,8 @@ def train_model(args_dict,
             latent_size=latent_size,
             update_mlp_shape=update_mlp_shape,
             choice_mlp_shape=choice_mlp_shape,
-            beta_scale=beta_scale
+            beta_scale=beta_scale,
+            #corr_strength=corr_strength
         )
         return model
 
@@ -221,22 +230,23 @@ def train_model(args_dict,
     # -------------------------------------------------------------
     # 1) Optional warmup (penalty_scale=0)
     # -------------------------------------------------------------
-    print("Warmup starts!")
-    disrnn_params, losses, _ = rnn_utils.train_network(
-        make_disrnn,
-        training_dataset=dataset_train,
-        validation_dataset=dataset_test,
-        loss="penalized_categorical",
-        params=disrnn_params,
-        opt_state=None,
-        opt=opt,
-        penalty_scale=0,
-        n_steps=n_warmup_steps,
-        do_plot=False,
-        checkpoint_dir=checkpoint_dir,
-        checkpoint_interval=100,
-        args_dict=args_dict
-    )
+    if n_warmup_steps!= 0:
+        print("Warmup starts!")
+        disrnn_params, losses, _ = rnn_utils.train_network(
+            make_disrnn,
+            training_dataset=dataset_train,
+            validation_dataset=dataset_test,
+            loss="penalized_categorical",
+            params=disrnn_params,
+            opt_state=None,
+            opt=opt,
+            penalty_scale=0,
+            n_steps=n_warmup_steps,
+            do_plot=False,
+            checkpoint_dir=checkpoint_dir,
+            checkpoint_interval=50,
+            args_dict=args_dict
+        )
 
     # -------------------------------------------------------------
     # If *not* doing real-time logging in train_network, you could
@@ -257,6 +267,7 @@ def train_model(args_dict,
     # -------------------------------------------------------------
     # 2) Main training (penalty_scale=user specified)
     # -------------------------------------------------------------
+    print("Training starts!")
     disrnn_params, losses, _ = rnn_utils.train_network(
         make_disrnn,
         training_dataset=dataset_train,
@@ -319,6 +330,7 @@ def main(args_dict,
          n_training_steps,
          n_warmup_steps,
          n_steps_per_call,
+         corr_strength,
          saved_checkpoint_pth=None):
 
     gpu_devices = jax.devices("gpu")
@@ -347,20 +359,22 @@ def main(args_dict,
                 n_training_steps,
                 n_warmup_steps,
                 n_steps_per_call,
+                corr_strength,
                 saved_checkpoint_pth=saved_checkpoint_pth)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=42, help="Seed for reproducibility.")
     parser.add_argument("--validation_proportion", type=float, default=0.1, help="The percentage for validation dataset.")
-    parser.add_argument("--latent_size", type=int, default=12, help="Number of latent units in the model")
+    parser.add_argument("--latent_size", type=int, default=8, help="Number of latent units in the model")
     parser.add_argument("--update_mlp_shape", nargs="+", type=int, default=[8, 8, 8], help="Number of hidden units in each of the two layers of the update MLP")
     parser.add_argument("--choice_mlp_shape", nargs="+", type=int, default=[5, 5, 5], help="Number of hidden units in each of the two layers of the choice MLP")
     parser.add_argument("--beta_scale", type=float, required=True, help="Value for the beta scaling parameter")
     parser.add_argument("--penalty_scale", type=float, required=True, help="Value for the penalty scaling parameter")
-    parser.add_argument("--n_training_steps", type=int, default=0, help="The maximum number of iterations to run, even if convergence is not reached")
-    parser.add_argument("--n_warmup_steps", type=int, default=50000, help="The maximum number of iterations to run, even if convergence is not reached")
+    parser.add_argument("--n_training_steps", type=int, default=50000, help="The maximum number of iterations to run, even if convergence is not reached")
+    parser.add_argument("--n_warmup_steps", type=int, default=500, help="The maximum number of iterations to run, even if convergence is not reached")
     parser.add_argument("--n_steps_per_call", type=int, default=500, help="The number of steps to give to train_model")
+    parser.add_argument("--corr_strength", type=float, required=True, help="Correlation strength")
     parser.add_argument("--saved_checkpoint_pth", type=str, default=None, help="Path to the checkpoint for additional training")
 
     args = parser.parse_args()
@@ -377,6 +391,7 @@ if __name__ == "__main__":
         'n_training_steps': args.n_training_steps,
         'n_warmup_steps': args.n_warmup_steps,
         'n_steps_per_call': args.n_steps_per_call,
+        'corr_strength': args.corr_strength,
         'command_line': " ".join(sys.argv)  # Save the entire command line as a string
     }
 
@@ -391,4 +406,5 @@ if __name__ == "__main__":
          args.n_training_steps,
          args.n_warmup_steps,
          args.n_steps_per_call,
+         args.corr_strength,
          saved_checkpoint_pth=args.saved_checkpoint_pth)

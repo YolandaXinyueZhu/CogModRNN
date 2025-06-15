@@ -1,5 +1,5 @@
-import argparse
 import os
+import sys
 import pickle
 import jax
 import jax.numpy as jnp
@@ -8,25 +8,46 @@ import matplotlib.pyplot as plt
 import numpy as np
 import optax
 import pandas as pd
-pd.set_option('display.max_rows', 100)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.precision', 5)
-pd.set_option('expand_frame_repr', False)
 import seaborn as sns
 import warnings
 import scipy.io as sio
 import copy
 from datetime import datetime
 from typing import Optional, List
-import sys
 import math
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import argparse
+import matplotlib.colors as mcolors
+from matplotlib.patches import Patch
 
-from disentangled_rnns.library import disrnn, rnn_utils
-from train_disrnn import load_data, to_onehot, zs_to_onehot, dataset_size, create_train_test_datasets, preprocess_data
 
+# Import custom libraries
+from disentangled_rnns_new.disentangled_rnns.library import disrnn  # 2025 version
+from disentangled_rnns_new.disentangled_rnns.library import rnn_utils
+from disentangled_rnns_new.disentangled_rnns.library import multisubject_disrnn
+from train_disrnn_new import (
+    load_data, 
+    to_onehot, 
+    zs_to_onehot,
+    create_train_test_datasets, 
+    preprocess_data
+)
+from train_disrnn_new import build_disrnn_config
+
+# Suppress warnings
 warnings.filterwarnings("ignore")
 
+import matplotlib as mpl
+# Fontsizes and formatting for plots.
+small = 15
+medium = 18
+large = 20
+mpl.rcParams['grid.color'] = 'none'
+mpl.rcParams['axes.facecolor'] = 'white'
+plt.rcParams['svg.fonttype'] = 'none'
+
+def dataset_size(xs, ys):
+    """Calculate the size of the dataset in terms of number of samples."""
+    return xs.shape[1], ys.shape[1] # 1800
 
 def compute_log_likelihood_and_accuracy(xs, ys, model_fun, params):
     """Compute the normalized likelihood and accuracy of the model on (xs, ys)."""
@@ -156,9 +177,6 @@ def plot_inference_performance(df: pd.DataFrame, save_folder: str):
     print(f"Overlaid inference performance (human vs. model) across all sessions saved to {out_path}")
 
 
-################################################################
-### 2) NEW: Side-by-side first-encounter comparison (Human vs. Model)
-################################################################
 def plot_inference_curve_by_block_and_order_human_vs_model_side_by_side(df: pd.DataFrame, save_folder: str):
     """
     Side-by-side subplots for the *first encounter* in each block,
@@ -518,42 +536,6 @@ def create_dataframe_for_plotting(predictions,
     return df
 
 
-def plot_single_checkpoint_performance(metrics, save_folder, args_dict):
-    """A simple bar plot of train/test performance for demonstration."""
-    fig, ax = plt.subplots(1, 1, figsize=(10, 7))
-    labels = ['Training', 'Test', 'Shuffled']
-    likelihoods = [
-        metrics['train_norm_likelihood'], 
-        metrics['test_norm_likelihood'], 
-        metrics['shuffled_norm_likelihood']
-    ]
-    upper_bounds = [metrics['train_upper_bound'], metrics['test_upper_bound']]
-
-    bar_positions = np.arange(len(labels))
-    bar_width = 0.35
-    bars = ax.bar(bar_positions, likelihoods, bar_width, label='Normalized Likelihood')
-    ax.axhline(y=upper_bounds[0], color='orange', linestyle='--', label='Training Upper Bound')
-    ax.axhline(y=upper_bounds[1], color='gray', linestyle='-.', label='Test Upper Bound')
-
-    ax.set_xlabel('Dataset Type')
-    ax.set_ylabel('Normalized Likelihood')
-    ax.set_title('Model Performance Metrics')
-    ax.set_xticks(bar_positions)
-    ax.set_xticklabels(labels)
-    ax.legend(fontsize='small')
-
-    hyperparams_text = "\n".join([f"{key}: {value}" for key, value in args_dict.items()])
-    plt.text(1.05, 0.5, hyperparams_text, transform=ax.transAxes, fontsize=10, va='center',
-             bbox=dict(boxstyle="round,pad=0.3", edgecolor="black", facecolor="lightgray", alpha=0.5))
-
-    save_path = os.path.join(save_folder, 'checkpoint_performance.png')
-    plt.tight_layout()
-    plt.savefig(save_path)
-    plt.show()
-    plt.close(fig)
-    print(f"Performance plot saved to {save_path}")
-
-
 def plot_training_results_one_session(df_train, save_folder):
     """Example: Plotting per-session results from a data frame."""
     os.makedirs(save_folder, exist_ok=True)
@@ -748,11 +730,6 @@ def plot_training_results(df_train, dataset_train, save_folder):
     print(f"Training result plots saved to {save_folder}")
 
 
-
-
-import os
-import numpy as np
-import matplotlib.pyplot as plt
 
 def plot_model_probs_by_block_and_session(df_train, save_folder):
     """
@@ -1002,380 +979,263 @@ def plot_avg_probs_by_block_and_session(df_train, save_folder):
     plt.close(fig)
     print(f"Saved avg‐prob plot to {out}")
 
+def plot_bottlenecks(
+    params: hk.Params,
+    disrnn_config: disrnn.DisRnnConfig,
+    save_folder_name,
+    sort_latents: bool = True,
+) -> plt.Figure:
+  """Plot the bottleneck sigmas from an hk.DisentangledRNN."""
 
-def plot_bottlenecks(params, save_folder_name, sort_latents=True, obs_names=None):
-    """
-    Plot a heatmap of the latent sigmas and update MLP sigmas for interpretability,
-    labeling each input by its true name from training.
-    """
-    import matplotlib.colors as mcolors
-    save_dir = save_folder_name
-    os.makedirs(save_dir, exist_ok=True)
-    plot_path = os.path.join(save_dir, "bottleneck.png")
+  save_dir = save_folder_name
+  os.makedirs(save_dir, exist_ok=True)
+  plot_path = os.path.join(save_dir, "bottleneck.png")
 
-    params_disrnn = params['hk_dis_rnn']
-    latent_dim = params_disrnn['latent_sigmas_unsquashed'].shape[0]
-    obs_dim = params_disrnn['update_mlp_sigmas_unsquashed'].shape[0] - latent_dim
+  if True:
+    params_disrnn = params['hk_disentangled_rnn']
+    subject_embedding_size = 0
+    update_input_names = disrnn_config.x_names
+    # For update_sigmas: concatenate transposed reparameterized sigmas
+    # Order of inputs to update nets: observations, latents
+    update_obs_sigmas_t = np.transpose(
+        disrnn.reparameterize_sigma(
+            params_disrnn['update_net_obs_sigma_params']
+        )
+    )
+    update_latent_sigmas_t = np.transpose(
+        disrnn.reparameterize_sigma(
+            params_disrnn['update_net_latent_sigma_params']
+        )
+    )
+    update_sigmas = np.concatenate(
+        (update_obs_sigmas_t, update_latent_sigmas_t), axis=1)
+    choice_sigmas = np.array(
+        disrnn.reparameterize_sigma(
+            np.transpose(params_disrnn['choice_net_sigma_params'])
+        )
+    )
+  else:
+    raise ValueError(
+        'plot_bottlenecks only supports DisRnnConfig and'
+        ' MultisubjectDisRnnConfig.'
+    )
 
-    if obs_names is None:
-        # Use the actual input names from training:
-        #  - bitCorr_prev
-        #  - bitResponseA_prev
-        #  - state_onehot channels for Context 0–7
-        obs_names = [
-            'bitCorr_prev',
-            'bitResponseA_prev',
-            'state_onehot_0', 'state_onehot_1',
-            'state_onehot_2', 'state_onehot_3',
-            'state_onehot_4', 'state_onehot_5',
-            'state_onehot_6', 'state_onehot_7'
-        ]
-        if len(obs_names) != obs_dim:
-            raise ValueError(f"Expected {obs_dim} obs_names, but got {len(obs_names)}")
+  latent_sigmas = np.array(
+      disrnn.reparameterize_sigma(params_disrnn['latent_sigma_params'])
+  )
 
-    # Compute sigmas
-    latent_sigmas = 2 * jax.nn.sigmoid(jnp.array(params_disrnn['latent_sigmas_unsquashed']))
-    update_sigmas = 2 * jax.nn.sigmoid(np.transpose(params_disrnn['update_mlp_sigmas_unsquashed']))
+  if sort_latents:
+    latent_sigma_order = np.argsort(latent_sigmas)
+    latent_sigmas = latent_sigmas[latent_sigma_order]
 
-    # Optionally sort latents by magnitude
-    if sort_latents:
-        latent_sigma_order = np.argsort(params_disrnn['latent_sigmas_unsquashed'])
-        latent_sigmas = latent_sigmas[latent_sigma_order]
-        update_sigmas = update_sigmas[latent_sigma_order, :]
-        # reorder columns to match latents last
-        input_order = list(range(obs_dim)) + list(latent_sigma_order + obs_dim)
-        update_sigmas = update_sigmas[:, input_order]
+    # Sort choice sigmas based on the order of latents, keeping subject
+    # embedding dimensions first if they exist.
+    choice_sigma_order = np.concatenate(
+        (
+            np.arange(0, subject_embedding_size),
+            subject_embedding_size + latent_sigma_order,
+        ),
+        axis=0,
+    )
+    choice_sigmas = choice_sigmas[choice_sigma_order]
 
-    latent_names = [f'Latent_{i + 1}' for i in range(latent_dim)]
-    xlabels = obs_names + latent_names
+    # Sort update sigmas based on the order of latents, keeping subject
+    # embedding dimensions first if they exist, then observations, then latents.
+    non_latent_input_size = subject_embedding_size + disrnn_config.obs_size
+    update_sigma_order = np.concatenate(
+        (
+            np.arange(0, non_latent_input_size, 1),
+            non_latent_input_size + latent_sigma_order,
+        ),
+        axis=0,
+    )
+    update_sigmas = update_sigmas[latent_sigma_order, :]
+    update_sigmas = update_sigmas[:, update_sigma_order]
 
-    # Plot
-    fig, axes = plt.subplots(1, 2, figsize=(25, 12))
-    cmap = 'Oranges'
+  latent_names = np.arange(1, disrnn_config.latent_size + 1)
+  fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 
-    # Latent sigmas
-    ax1 = axes[0]
-    im1 = ax1.imshow(latent_sigmas.reshape(1, -1), cmap=cmap, aspect='auto', vmin=0, vmax=1)
-    ax1.set_yticks([0])
-    ax1.set_yticklabels(['Latent #'])
-    ax1.set_xticks(range(latent_dim))
-    ax1.set_xticklabels(latent_names, rotation=90)
-    ax1.set_title('Latent Bottlenecks (Sigma)')
-    for i in range(latent_dim):
-        ax1.text(i, 0, f"{latent_sigmas[i]:.4f}", ha='center', va='center',
-                 color='black', fontsize=12, weight='bold')
-    cbar1 = fig.colorbar(im1, ax=ax1, fraction=0.046, pad=0.04)
-    cbar1.set_label('Sigma Value')
+  # Plot Latent Bottlenecks on axes[0]
+  im1 = axes[0].imshow(np.swapaxes([1 - latent_sigmas], 0, 1), cmap='Oranges')
+  im1.set_clim(vmin=0, vmax=1)
+  axes[0].set_yticks(
+      ticks=range(disrnn_config.latent_size),
+      labels=latent_names,
+      fontsize=small,
+  )
+  axes[0].set_xticks(ticks=[])
+  axes[0].set_ylabel('Latent #', fontsize=medium)
+  axes[0].set_title('Latent Bottlenecks', fontsize=large)
 
-    # Update-MLP sigmas
-    ax2 = axes[1]
-    im2 = ax2.imshow(update_sigmas, cmap=cmap, aspect='auto', vmin=0, vmax=1)
-    ax2.set_yticks(range(latent_dim))
-    ax2.set_yticklabels(latent_names)
-    ax2.set_xticks(range(len(xlabels)))
-    ax2.set_xticklabels(xlabels, rotation=90)
-    ax2.set_title('Update MLP Bottlenecks (Sigma)')
-    for i in range(latent_dim):
-        for j in range(len(xlabels)):
-            ax2.text(j, i, f"{update_sigmas[i, j]:.4f}", ha='center', va='center',
-                     color='black', fontsize=10, weight='bold')
-    cbar2 = fig.colorbar(im2, ax=ax2, fraction=0.046, pad=0.04)
-    cbar2.set_label('Sigma Value')
+  # Plot Choice Bottlenecks on axes[1]
+  # These bottlenecks apply to the inputs of the choice network:
+  # [subject embeddings, latents]
+  choice_input_dim = subject_embedding_size + disrnn_config.latent_size
+  choice_input_names = np.concatenate((
+      [f'SubjEmb {i+1}' for i in range(subject_embedding_size)],
+      [f'Latent {i}' for i in latent_names]
+  ))
+  im2 = axes[1].imshow(np.swapaxes([1 - choice_sigmas], 0, 1), cmap='Oranges')
+  im2.set_clim(vmin=0, vmax=1)
+  axes[1].set_yticks(
+      ticks=range(choice_input_dim), labels=choice_input_names, fontsize=small
+  )
+  axes[1].set_xticks(ticks=[])
+  axes[1].set_ylabel('Choice Network Input', fontsize=medium)
+  axes[1].set_title('Choice Network Bottlenecks', fontsize=large)
 
-    fig.text(0.5, 0.95, 'Darker Colors → Higher Sigma Values', ha='center',
-             fontsize=14, color='black')
+  # Plot Update Bottlenecks on axes[2]
+  im3 = axes[2].imshow(1 - update_sigmas, cmap='Oranges')
+  im3.set_clim(vmin=0, vmax=1)
+  cbar = fig.colorbar(im3, ax=axes[2])
+  # Y-axis corresponds to the target latent (sorted if sort_latents=True)
+  cbar.ax.tick_params(labelsize=small)
+  axes[2].set_yticks(
+      ticks=range(disrnn_config.latent_size),
+      labels=latent_names,
+      fontsize=small,
+  )
+  # X-axis corresponds to the inputs to the update network:
+  # [subject embeddings, observations, latents]
+  xlabels = update_input_names + [f'Latent {i}' for i in latent_names]
+  axes[2].set_xticks(
+      ticks=range(len(xlabels)),
+      labels=xlabels,
+      rotation='vertical',
+      fontsize=small,
+  )
+  axes[2].set_ylabel('Latent #', fontsize=medium)
+  axes[2].set_xlabel('Update Network Inputs', fontsize=medium)
+  axes[2].set_title('Update Network Bottlenecks', fontsize=large)
+  fig.tight_layout()  # Adjust layout to prevent overlap
+  plt.savefig(plot_path)
+  plt.close(fig)
+  print(f"Bottleneck plot saved to {plot_path}")
+  return fig
 
-    plt.tight_layout()
-    plt.savefig(plot_path)
-    plt.close(fig)
-    print(f"Bottleneck plot saved to {plot_path}")
+def plot_update_rules(
+    params: hk.Params,
+    disrnn_config: disrnn.DisRnnConfig,
+    subj_ind: Optional[int] = None,
+    axis_lim: float = 2.1,
+) -> list[plt.Figure]:
+  """Generates visualizations of the update rules of a HkDisentangledRNN."""
 
-    # Also print out values
-    print("\n=== Latent Bottleneck Sigmas ===")
-    for i, sigma in enumerate(latent_sigmas):
-        print(f"Latent {i + 1}: Sigma = {sigma:.4f}")
+  # Work on a copy so we can disable noise for plotting
+  disrnn_config = copy.deepcopy(disrnn_config)
+  disrnn_config.noiseless_mode = True
 
-    print("\n=== Update MLP Bottleneck Sigmas ===")
-    for i in range(update_sigmas.shape[0]):
-        print(f"Latent {i + 1} Update MLP Sigmas:")
-        for j, sigma in enumerate(update_sigmas[i]):
-            print(f"  Input {j + 1} ({xlabels[j]}): Sigma = {sigma:.4f}")
+  # Handle multisubject vs single-subject
+  if True:
+    if subj_ind is not None:
+      print('subj_ind provided, but not in multisubject mode. Ignoring it')
+    subj_ind = None
 
-    # Save text versions
-    latent_sigmas_path = os.path.join(save_dir, "latent_sigmas.txt")
-    update_sigmas_path = os.path.join(save_dir, "update_mlp_sigmas.txt")
-    with open(latent_sigmas_path, 'w') as f:
-        f.write("Latent Bottleneck Sigmas:\n")
-        for i, sigma in enumerate(latent_sigmas):
-            f.write(f"Latent {i + 1}: {sigma:.6f}\n")
-    with open(update_sigmas_path, 'w') as f:
-        f.write("Update MLP Bottleneck Sigmas:\n")
-        for i in range(update_sigmas.shape[0]):
-            f.write(f"Latent {i + 1} Update MLP Sigmas:\n")
-            for j, sigma in enumerate(update_sigmas[i]):
-                f.write(f"  Input {j + 1} ({xlabels[j]}): {sigma:.6f}\n")
-            f.write("\n")
-    print(f"\nSigma values have been saved to:\n- {latent_sigmas_path}\n- {update_sigmas_path}")
+  # Extract update-bottleneck sigmas for each input type
+  if True:
+    param_prefix = 'hk_disentangled_rnn'
+    subj_embedding_size = 0
+    obs_names = disrnn_config.x_names
+    update_obs_s_t = np.transpose(
+        disrnn.reparameterize_sigma(
+            params[param_prefix]['update_net_obs_sigma_params']
+        )
+    )
+    update_latent_s_t = np.transpose(
+        disrnn.reparameterize_sigma(
+            params[param_prefix]['update_net_latent_sigma_params']
+        ))
+    update_sigmas = np.concatenate((update_obs_s_t, update_latent_s_t), axis=1)
+
+  # Build a single-step version of the network
+  def step(xs, state):
+    core = (disrnn.HkDisentangledRNN)(disrnn_config)
+    output, new_state = core(jnp.expand_dims(jnp.array(xs), axis=0), state)
+    return output, new_state
+
+  _, step_hk = hk.transform(step)
+  key = jax.random.PRNGKey(0)
+  step_hk = jax.jit(step_hk)
+
+  # Initial state for perturbations
+  reference_state = np.zeros_like(
+        rnn_utils.get_initial_state(lambda: disrnn.HkDisentangledRNN(disrnn_config))
+    )
+
+
+  # Helper for 1D plots
+  def plot_update_1d(params, unit_i, observations, titles):
+    state_bins = np.linspace(-axis_lim, axis_lim, 20)
+    colormap = mpl.colormaps['viridis'].resampled(3)
+    color = colormap.colors[1]
+
+    fig, axes = plt.subplots(
+        1, len(observations), figsize=(len(observations) * 4, 5.5), sharey=True
+    )
+    if len(observations) == 1:
+      axes = [axes]
+    axes[0].set_ylabel('Δ Activity')
+
+    for obs_i, (obs, title) in enumerate(zip(observations, titles)):
+      ax = axes[obs_i]
+      delta_states = np.zeros((len(state_bins), 1))
+      for si, val in enumerate(state_bins):
+        state = reference_state.copy()
+        state[0, unit_i] = val
+        if subj_ind is not None:
+          xs = [subj_ind] + obs
+        else:
+          xs = obs
+        _, next_state = step_hk(params, key, xs, state)
+        delta_states[si] = next_state[0, unit_i] - val
+      ax.plot((-axis_lim, axis_lim), (0, 0), color='black')
+      ax.plot(state_bins, delta_states, color=color)
+      ax.set_title(title, fontsize=large)
+      ax.set_xlim(-axis_lim, axis_lim)
+      ax.set_xlabel(f'Latent {unit_i+1} Activity', fontsize=medium)
+      ax.set_aspect('equal')
+      ax.tick_params(axis='both', labelsize=small)
     return fig
 
-def plot_bar_charts_for_session(df_session: pd.DataFrame,
-                                session_number: int,
-                                save_folder_name: str):
-    """
-    Create bar charts to summarize the average of each latent activation,
-    conditioned on different trial variables (previous reward, previous choice,
-    current reward, current choice, block, context, input_state).
+  # Determine latent bottleneck openness
+  latent_sigmas = np.array(
+      disrnn.reparameterize_sigma(
+          params[param_prefix]['latent_sigma_params']
+      )
+  )
 
-    We assume that df_session already has:
-      - 'prev_reward', 'prev_choice', 'rwd', 'human_chosen_action',
-        'blockN', 'context', and 'input_state' (if available),
-      - as well as 'latent_dim' (e.g. "Latent_1", "Latent_2", etc.)
-      - and 'activation' column (the actual activation value for that latent).
-    """
-    # Define the conditions of interest:
-    possible_conditions = [
-        'human_chosen_action', 
-        'rwd', 'context', 'blockN', 'input_state', 'previous_choice_correct', 'previous_choice'
-    ]
-    # Filter for only those that actually exist in df_session columns
-    conditions = [cond for cond in possible_conditions if cond in df_session.columns]
+  # Sort latents by openness
+  latent_order = np.argsort(latent_sigmas)
+  figs = []
 
-    n_conditions = len(conditions)
-    if n_conditions == 0:
-        print("No known conditions found in df_session to plot bar charts.")
-        return
+  # Main loop over each latent
+  for latent_i in latent_order:
+    if latent_sigmas[latent_i] < 0.5:
+      # Identify which obs dims are open inputs
+      obs_start = subj_embedding_size
+      sensitive = [idx - obs_start for idx in np.where(
+          update_sigmas[latent_i, obs_start:obs_start + disrnn_config.obs_size] < 0.5)[0]]
 
-    # We'll create subplots with up to 4 columns in each row
-    ncols = 4
-    nrows = int(np.ceil(n_conditions / ncols))
+      # Build baseline and test observations
+      baseline = [0]*disrnn_config.obs_size
+      observations, titles = [], []
+      # Always plot the all-zero case
+      observations.append(baseline)
+      titles.append('All Trials')
+      # Then one curve per sensitive dim
+      for j in sensitive:
+        obs_vec = baseline.copy()
+        obs_vec[j] = 1
+        observations.append(obs_vec)
+        titles.append(f'{obs_names[j]}: 1')
 
-    fig, axes = plt.subplots(nrows, ncols, figsize=(6*ncols, 5*nrows))
-    axes = axes.flatten() if n_conditions > 1 else [axes]
+      # Choose 1D plotting (no multi-latent interactions here)
+      fig = plot_update_1d(params, latent_i, observations, titles)
+      figs.append(fig)
+      fig.tight_layout()
 
-    for i, cond in enumerate(conditions):
-        ax = axes[i]
-        # Group by (cond, 'latent_dim') => compute the mean activation
-        grouped = df_session.groupby([cond, 'latent_dim'])['activation'].mean().reset_index()
+  return figs
 
-        # Make a barplot: x=cond, y=activation, hue=latent_dim
-        sns.barplot(
-            data=grouped, 
-            x=cond, y='activation', hue='latent_dim', 
-            ax=ax, 
-            palette='viridis'
-        )
-        ax.set_title(f'Session {session_number}: mean latent by {cond}')
-        ax.set_xlabel(cond)
-        ax.set_ylabel('Mean Activation')
-        ax.legend(fontsize='small', title='Latent Dim', bbox_to_anchor=(1.0, 1.0))
-    
-    # Hide any unused subplots
-    for j in range(i+1, len(axes)):
-        axes[j].set_visible(False)
-
-    plt.tight_layout()
-    out_path = os.path.join(save_folder_name, f"bar_charts_by_condition_session_{session_number}.png")
-    plt.savefig(out_path)
-    plt.close(fig)
-    print(f"Bar charts by condition saved to {out_path}")
-
-import os
-import numpy as np
-import jax
-import jax.numpy as jnp
-import matplotlib.pyplot as plt
-from matplotlib.patches import Patch
-import matplotlib.colors as mcolors
-from disentangled_rnns.library import rnn_utils
-
-def plot_latent_activations(
-        seq_list: list,
-        xs_train: np.ndarray,
-        disrnn_params: dict,
-        make_disrnn,
-        save_folder_name: str,
-        train_test_split_variables: dict,
-        df_train: pd.DataFrame
-    ):
-    """
-    For exactly four sequences (seq_list), run DisRNN once per sequence. Then for each latent:
-      • plot the activation over trials
-      • draw block-boundary lines
-      • draw a thick black line at sequence end
-      • draw RED vertical bars (bottom quarter) whenever previous model choice was correct
-      • draw YELLOW vertical bars (next quarter) whenever current model choice is correct
-      • draw GREEN vertical bars (third quarter) whenever previous choice was correct
-      • draw BLUE vertical bars (top quarter) whenever previous choice == 1
-      • draw a thin 4-color “slot bar” beneath the latent curve indicating slot position
-      • draw a thin 8-color “clue bar” beneath the latent curve indicating which of 8 clues
-      • draw a thin 2-color “context bar” beneath the latent/clue bars indicating which context
-    """
-    if len(seq_list) != 4:
-        raise ValueError("seq_list must contain exactly four sequence indices.")
-
-    # --- extract data arrays ---
-    n_trials, n_sequences, _ = xs_train.shape
-    prev_choice  = train_test_split_variables['bitResponseA_prev_train'][..., 0]
-    prev_correct = train_test_split_variables['bitCorr_prev_train'][..., 0]
-    slot_ids     = train_test_split_variables['stimulusSlotID_train'][..., 0] - 1
-    clue_ids     = train_test_split_variables['state_train'][..., 0]
-    context_ids  = train_test_split_variables['context_train'][..., 0]
-
-    # --- get model predictions to compute model-correct flags ---
-    model_logits, _ = rnn_utils.eval_network(make_disrnn, disrnn_params, xs_train)
-    model_logits = np.array(model_logits)
-    pred_probs = jax.nn.softmax(model_logits[..., :2], axis=-1)
-    pred_choices = np.argmax(np.array(pred_probs), axis=-1)
-    opt_choices = train_test_split_variables['bitResponseAIsCorr_train'][..., 0]
-    curr_model_correct = (pred_choices == opt_choices)
-    prev_model_correct = np.vstack([
-        np.zeros((1, curr_model_correct.shape[1]), dtype=bool),
-        curr_model_correct[:-1]
-    ])
-
-    # --- forward-pass to get activations ---
-    activations_by_sequence = []
-    for seq_idx in seq_list:
-        seq_xs = xs_train[:, seq_idx, :][:, None, :]
-        _, states = rnn_utils.eval_network(make_disrnn, disrnn_params, seq_xs)
-        activations_by_sequence.append(np.array(states))
-
-    # --- sort latents by σ ---
-    latent_sigmas = 2 * jax.nn.sigmoid(
-        jnp.array(disrnn_params['hk_dis_rnn']['latent_sigmas_unsquashed'])
-    )
-    order = np.argsort(disrnn_params['hk_dis_rnn']['latent_sigmas_unsquashed'])
-    sorted_sigmas = latent_sigmas[order]
-    activations_sorted = [a[:, :, order] for a in activations_by_sequence]
-    latent_dim = activations_sorted[0].shape[2]
-
-    # --- build color maps ---
-    slot_cmap   = mcolors.ListedColormap(plt.cm.tab10(np.arange(4)))
-    slot_norm   = mcolors.BoundaryNorm(boundaries=np.arange(5), ncolors=4)
-    clue_cmap   = mcolors.ListedColormap(plt.cm.tab10(np.arange(8)))
-    clue_norm   = mcolors.BoundaryNorm(boundaries=np.arange(9), ncolors=8)
-    context_cmap = mcolors.ListedColormap(plt.cm.tab10(np.arange(2)))
-    context_norm = mcolors.BoundaryNorm(boundaries=np.arange(3), ncolors=2)
-
-    os.makedirs(save_folder_name, exist_ok=True)
-    seq_colors = ['C0','C1','C2','C3']
-
-    for i in range(latent_dim):
-        fig = plt.figure(figsize=(25, 16))
-        outer = fig.add_gridspec(nrows=4, ncols=1, hspace=0.4)
-
-        # legend patches for spans and bars
-        red_patch     = Patch(facecolor="red",    alpha=0.3, label="prev_model_correct = 1")
-        yellow_patch  = Patch(facecolor="yellow", alpha=0.3, label="curr_model_correct = 1")
-        green_patch   = Patch(facecolor="green",  alpha=0.3, label="prev_correct = 1")
-        blue_patch    = Patch(facecolor="blue",   alpha=0.3, label="prev_choice = 1")
-        slot_patches  = [Patch(facecolor=slot_cmap(j),    label=f"Slot {j+1}") for j in range(4)]
-        clue_patches  = [Patch(facecolor=clue_cmap(j),    label=f"Clue {j+1}") for j in range(8)]
-        context_patches = [Patch(facecolor=context_cmap(j),label=f"Context {j+1}") for j in range(2)]
-        bar_handles = [red_patch, yellow_patch, green_patch, blue_patch] + slot_patches + clue_patches + context_patches
-
-        for row_idx, seq_idx in enumerate(seq_list):
-            inner = outer[row_idx].subgridspec(
-                nrows=4, ncols=1,
-                height_ratios=[5, 2, 2, 2],
-                hspace=0.1
-            )
-
-            # --- activation plot ---
-            ax_act = fig.add_subplot(inner[0])
-            vals = activations_sorted[row_idx][:,0,i]
-            y_max, y_min = vals.max(), vals.min()
-            Δ = 0.05*(y_max-y_min) if y_max!=y_min else 0.1
-            ax_act.set_ylim((y_min-4*Δ, y_max+Δ))
-
-            # plot line
-            lh, = ax_act.plot(vals, color=seq_colors[row_idx], lw=1.5, label=f"Sequence {seq_idx}", zorder=4)
-
-            # block boundaries
-            blocks = train_test_split_variables['blockN_train'][:,seq_idx,0]
-            changes = np.where(np.diff(blocks)!=0)[0]+1
-            for c in changes:
-                ax_act.axvline(c, color=seq_colors[row_idx], ls="--", lw=1, alpha=0.6, zorder=3)
-                ax_act.text(c, y_max+0.5*Δ, f"Block {int(blocks[c])}", rotation=90,
-                            va="bottom", ha="center", fontsize=8,
-                            color=seq_colors[row_idx], alpha=0.7, zorder=3)
-
-            # sequence end
-            end = n_trials-1
-            ax_act.axvline(end, color="black", lw=2, alpha=0.8, zorder=3)
-            ax_act.text(end, y_max+0.8*Δ, "Sequence End", rotation=90,
-                        va="top", ha="right", fontsize=9, color="black", zorder=3)
-
-            # --- quarter-height event bars ---
-            # red = prev_model_correct, yellow = curr_model_correct,
-            # green = prev_correct, blue = prev_choice
-            for t in np.where(prev_model_correct[:,seq_idx])[0]:
-                ax_act.axvspan(t, t+1, ymin=0.00, ymax=0.25, facecolor="red",    alpha=0.3, zorder=2)
-            for t in np.where(curr_model_correct[:,seq_idx])[0]:
-                ax_act.axvspan(t, t+1, ymin=0.25, ymax=0.50, facecolor="yellow", alpha=0.3, zorder=2)
-            for t in np.where(prev_correct[:,seq_idx]==1)[0]:
-                ax_act.axvspan(t, t+1, ymin=0.50, ymax=0.75, facecolor="green",  alpha=0.3, zorder=2)
-            for t in np.where(prev_choice[:,seq_idx]==1)[0]:
-                ax_act.axvspan(t, t+1, ymin=0.75, ymax=1.00, facecolor="blue",   alpha=0.3, zorder=2)
-
-            ax_act.set_ylabel(f"Latent {i+1}")
-            ax_act.set_title(f"Sequence {seq_idx}")
-            ax_act.grid(alpha=0.2)
-
-            # --- slot bar ---
-            ax_slot = fig.add_subplot(inner[1], sharex=ax_act)
-            ax_slot.imshow(slot_ids[:,seq_idx].reshape(1,n_trials), aspect="auto",
-                            cmap=slot_cmap, norm=slot_norm, origin="lower",
-                            extent=(0,n_trials,0,1), interpolation="nearest", zorder=1)
-            ax_slot.set_yticks([])
-            ax_slot.set_ylabel("Slot", labelpad=10)
-
-            # --- clue bar ---
-            ax_clue = fig.add_subplot(inner[2], sharex=ax_act)
-            ax_clue.imshow(clue_ids[:,seq_idx].reshape(1,n_trials), aspect="auto",
-                            cmap=clue_cmap, norm=clue_norm, origin="lower",
-                            extent=(0,n_trials,0,1), interpolation="nearest", zorder=1)
-            ax_clue.set_yticks([])
-            ax_clue.set_ylabel("Clue", labelpad=10)
-
-            # --- context bar ---
-            ax_ctx = fig.add_subplot(inner[3], sharex=ax_act)
-            ax_ctx.imshow(context_ids[:,seq_idx].reshape(1,n_trials), aspect="auto",
-                            cmap=context_cmap, norm=context_norm, origin="lower",
-                            extent=(0,n_trials,0,1), interpolation="nearest", zorder=1)
-            ax_ctx.set_yticks([])
-            ax_ctx.set_ylabel("Context", labelpad=10)
-
-            # reduce x‐tick density to avoid overlap
-            step = max(n_trials // 10, 1)
-            ax_ctx.set_xticks(np.arange(0, n_trials, step))
-            ax_ctx.set_xlabel("Trial Index")
-
-            if row_idx == 0:
-                ax_act.legend(handles=[lh], loc="upper right", fontsize="small")
-
-        # --- global legend for bars ---
-        fig.legend(
-            handles=bar_handles,
-            labels=[h.get_label() for h in bar_handles],
-            loc="lower center",
-            ncol=12,
-            bbox_to_anchor=(0.5, 0.02)
-        )
-
-        # supertitle & layout
-        fig.suptitle(
-            f"Latent {i+1} (σ = {sorted_sigmas[i]:.4f}) — Four Sequences",
-            fontsize=14
-        )
-        plt.tight_layout(rect=[0, 0.06, 1, 0.96])
-
-        # save and close
-        fname = f"latent_{i+1}_four_sequences_separate_bars.png"
-        path = os.path.join(save_folder_name, fname)
-        plt.savefig(path)
-        plt.close(fig)
-        print(f"Saved: {path}")
 
 def plot_latent_activations_overlayed(
         sess_list: list,
@@ -1412,10 +1272,10 @@ def plot_latent_activations_overlayed(
 
     # 3) Compute and sort latent σ’s
     latent_sigmas = 2 * jax.nn.sigmoid(
-        jnp.array(disrnn_params['hk_dis_rnn']['latent_sigmas_unsquashed'])
+        jnp.array(disrnn_params['hk_disentangled_rnn']['latent_sigmas_unsquashed'])
     )  # shape = (latent_dim,)
     latent_sigma_order = np.argsort(
-        disrnn_params['hk_dis_rnn']['latent_sigmas_unsquashed']
+        disrnn_params['hk_disentangled_rnn']['latent_sigmas_unsquashed']
     )
     sorted_sigmas = latent_sigmas[latent_sigma_order]
 
@@ -1630,183 +1490,294 @@ def plot_first_encounter_heatmap(df_human: pd.DataFrame,
     print(f"Saved first-encounter heatmap to {out}")
 
 
+def plot_latent_activations(
+        seq_list: list,
+        xs_train: np.ndarray,
+        disrnn_params: dict,
+        make_disrnn,
+        save_folder_name: str,
+        train_test_split_variables: dict,
+        df_train: pd.DataFrame
+    ):
+    """
+    For exactly four sequences (seq_list), run DisRNN once per sequence. Then for each latent:
+      • plot the activation over trials
+      • draw block-boundary lines
+      • draw a thick black line at sequence end
+      • draw RED vertical bars (bottom quarter) whenever previous model choice was correct
+      • draw YELLOW vertical bars (next quarter) whenever current model choice is correct
+      • draw GREEN vertical bars (third quarter) whenever previous choice was correct
+      • draw BLUE vertical bars (top quarter) whenever previous choice == 1
+      • draw a thin 4-color “slot bar” beneath the latent curve indicating slot position
+      • draw a thin 8-color “clue bar” beneath the latent curve indicating which of 8 clues
+      • draw a thin 2-color “context bar” beneath the latent/clue bars indicating which context
+    """
+    if len(seq_list) != 4:
+        raise ValueError("seq_list must contain exactly four sequence indices.")
+
+    # --- extract data arrays ---
+    n_trials, n_sequences, _ = xs_train.shape
+    prev_choice  = train_test_split_variables['bitResponseA_prev_train'][..., 0]
+    prev_correct = train_test_split_variables['bitCorr_prev_train'][..., 0]
+    slot_ids     = train_test_split_variables['stimulusSlotID_train'][..., 0] - 1
+    clue_ids     = train_test_split_variables['state_train'][..., 0]
+    context_ids  = train_test_split_variables['context_train'][..., 0]
+
+    # --- get model predictions to compute model-correct flags ---
+    model_logits, _ = rnn_utils.eval_network(make_disrnn, disrnn_params, xs_train)
+    model_logits = np.array(model_logits)
+    pred_probs = jax.nn.softmax(model_logits[..., :2], axis=-1)
+    pred_choices = np.argmax(np.array(pred_probs), axis=-1)
+    opt_choices = train_test_split_variables['bitResponseAIsCorr_train'][..., 0]
+    curr_model_correct = (pred_choices == opt_choices)
+    prev_model_correct = np.vstack([
+        np.zeros((1, curr_model_correct.shape[1]), dtype=bool),
+        curr_model_correct[:-1]
+    ])
+
+    # --- forward-pass to get activations ---
+    activations_by_sequence = []
+    for seq_idx in seq_list:
+        seq_xs = xs_train[:, seq_idx, :][:, None, :]
+        _, states = rnn_utils.eval_network(make_disrnn, disrnn_params, seq_xs)
+        activations_by_sequence.append(np.array(states))
+
+    # --- sort latents by σ ---
+    latent_sigmas = 2 * jax.nn.sigmoid(
+        jnp.array(disrnn_params['hk_disentangled_rnn']['latent_sigma_params'])
+    )
+    order = np.argsort(disrnn_params['hk_disentangled_rnn']['latent_sigma_params'])
+    sorted_sigmas = latent_sigmas[order]
+    activations_sorted = [a[:, :, order] for a in activations_by_sequence]
+    latent_dim = activations_sorted[0].shape[2]
+
+    # --- build color maps ---
+    slot_cmap   = mcolors.ListedColormap(plt.cm.tab10(np.arange(4)))
+    slot_norm   = mcolors.BoundaryNorm(boundaries=np.arange(5), ncolors=4)
+    clue_cmap   = mcolors.ListedColormap(plt.cm.tab10(np.arange(8)))
+    clue_norm   = mcolors.BoundaryNorm(boundaries=np.arange(9), ncolors=8)
+    context_cmap = mcolors.ListedColormap(plt.cm.tab10(np.arange(2)))
+    context_norm = mcolors.BoundaryNorm(boundaries=np.arange(3), ncolors=2)
+
+    os.makedirs(save_folder_name, exist_ok=True)
+    seq_colors = ['C0','C1','C2','C3']
+
+    for i in range(latent_dim):
+        fig = plt.figure(figsize=(25, 16))
+        outer = fig.add_gridspec(nrows=4, ncols=1, hspace=0.4)
+
+        # legend patches for spans and bars
+        red_patch     = Patch(facecolor="red",    alpha=0.3, label="prev_model_correct = 1")
+        yellow_patch  = Patch(facecolor="yellow", alpha=0.3, label="curr_model_correct = 1")
+        green_patch   = Patch(facecolor="green",  alpha=0.3, label="prev_correct = 1")
+        blue_patch    = Patch(facecolor="blue",   alpha=0.3, label="prev_choice = 1")
+        slot_patches  = [Patch(facecolor=slot_cmap(j),    label=f"Slot {j+1}") for j in range(4)]
+        clue_patches  = [Patch(facecolor=clue_cmap(j),    label=f"Clue {j+1}") for j in range(8)]
+        context_patches = [Patch(facecolor=context_cmap(j),label=f"Context {j+1}") for j in range(2)]
+        bar_handles = [red_patch, yellow_patch, green_patch, blue_patch] + slot_patches + clue_patches + context_patches
+
+        for row_idx, seq_idx in enumerate(seq_list):
+            inner = outer[row_idx].subgridspec(
+                nrows=4, ncols=1,
+                height_ratios=[5, 2, 2, 2],
+                hspace=0.1
+            )
+
+            # --- activation plot ---
+            ax_act = fig.add_subplot(inner[0])
+            vals = activations_sorted[row_idx][:,0,i]
+            y_max, y_min = vals.max(), vals.min()
+            Δ = 0.05*(y_max-y_min) if y_max!=y_min else 0.1
+            ax_act.set_ylim((y_min-4*Δ, y_max+Δ))
+
+            # plot line
+            lh, = ax_act.plot(vals, color=seq_colors[row_idx], lw=1.5, label=f"Sequence {seq_idx}", zorder=4)
+
+            # block boundaries
+            blocks = train_test_split_variables['blockN_train'][:,seq_idx,0]
+            changes = np.where(np.diff(blocks)!=0)[0]+1
+            for c in changes:
+                ax_act.axvline(c, color=seq_colors[row_idx], ls="--", lw=1, alpha=0.6, zorder=3)
+                ax_act.text(c, y_max+0.5*Δ, f"Block {int(blocks[c])}", rotation=90,
+                            va="bottom", ha="center", fontsize=8,
+                            color=seq_colors[row_idx], alpha=0.7, zorder=3)
+
+            # sequence end
+            end = n_trials-1
+            ax_act.axvline(end, color="black", lw=2, alpha=0.8, zorder=3)
+            ax_act.text(end, y_max+0.8*Δ, "Sequence End", rotation=90,
+                        va="top", ha="right", fontsize=9, color="black", zorder=3)
+
+            # --- quarter-height event bars ---
+            # red = prev_model_correct, yellow = curr_model_correct,
+            # green = prev_correct, blue = prev_choice
+            for t in np.where(prev_model_correct[:,seq_idx])[0]:
+                ax_act.axvspan(t, t+1, ymin=0.00, ymax=0.25, facecolor="red",    alpha=0.3, zorder=2)
+            for t in np.where(curr_model_correct[:,seq_idx])[0]:
+                ax_act.axvspan(t, t+1, ymin=0.25, ymax=0.50, facecolor="yellow", alpha=0.3, zorder=2)
+            for t in np.where(prev_correct[:,seq_idx]==1)[0]:
+                ax_act.axvspan(t, t+1, ymin=0.50, ymax=0.75, facecolor="green",  alpha=0.3, zorder=2)
+            for t in np.where(prev_choice[:,seq_idx]==1)[0]:
+                ax_act.axvspan(t, t+1, ymin=0.75, ymax=1.00, facecolor="blue",   alpha=0.3, zorder=2)
+
+            ax_act.set_ylabel(f"Latent {i+1}")
+            ax_act.set_title(f"Sequence {seq_idx}")
+            ax_act.grid(alpha=0.2)
+
+            # --- slot bar ---
+            ax_slot = fig.add_subplot(inner[1], sharex=ax_act)
+            ax_slot.imshow(slot_ids[:,seq_idx].reshape(1,n_trials), aspect="auto",
+                            cmap=slot_cmap, norm=slot_norm, origin="lower",
+                            extent=(0,n_trials,0,1), interpolation="nearest", zorder=1)
+            ax_slot.set_yticks([])
+            ax_slot.set_ylabel("Slot", labelpad=10)
+
+            # --- clue bar ---
+            ax_clue = fig.add_subplot(inner[2], sharex=ax_act)
+            ax_clue.imshow(clue_ids[:,seq_idx].reshape(1,n_trials), aspect="auto",
+                            cmap=clue_cmap, norm=clue_norm, origin="lower",
+                            extent=(0,n_trials,0,1), interpolation="nearest", zorder=1)
+            ax_clue.set_yticks([])
+            ax_clue.set_ylabel("Clue", labelpad=10)
+
+            # --- context bar ---
+            ax_ctx = fig.add_subplot(inner[3], sharex=ax_act)
+            ax_ctx.imshow(context_ids[:,seq_idx].reshape(1,n_trials), aspect="auto",
+                            cmap=context_cmap, norm=context_norm, origin="lower",
+                            extent=(0,n_trials,0,1), interpolation="nearest", zorder=1)
+            ax_ctx.set_yticks([])
+            ax_ctx.set_ylabel("Context", labelpad=10)
+
+            # reduce x‐tick density to avoid overlap
+            step = max(n_trials // 10, 1)
+            ax_ctx.set_xticks(np.arange(0, n_trials, step))
+            ax_ctx.set_xlabel("Trial Index")
+
+            if row_idx == 0:
+                ax_act.legend(handles=[lh], loc="upper right", fontsize="small")
+
+        # --- global legend for bars ---
+        fig.legend(
+            handles=bar_handles,
+            labels=[h.get_label() for h in bar_handles],
+            loc="lower center",
+            ncol=12,
+            bbox_to_anchor=(0.5, 0.02)
+        )
+
+        # supertitle & layout
+        fig.suptitle(
+            f"Latent {i+1} (σ = {sorted_sigmas[i]:.4f}) — Four Sequences",
+            fontsize=14
+        )
+        plt.tight_layout(rect=[0, 0.06, 1, 0.96])
+
+        # save and close
+        fname = f"latent_{i+1}_four_sequences_separate_bars.png"
+        path = os.path.join(save_folder_name, fname)
+        plt.savefig(path)
+        plt.close(fig)
+        print(f"Saved: {path}")
+
 def main(seed, saved_checkpoint_pth):
+    # Set the seed for reproducibility
     np.random.seed(seed)
 
-    dataset_type = 'RealWorldKimmelfMRIDataset'  
+    # Dataset setup
+    dataset_type = 'RealWorldKimmelfMRIDataset'
     dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-2_nBlocks-7_nTrialsPerBlock-25_b-multiple_20250131.mat"
     dataset_train, dataset_test, train_test_split_variables = preprocess_data(dataset_type, dataset_path, 0.1)
 
-
-    # ----------------------
-    # DATASET ANALYSIS
-    # ----------------------
-    actions       = train_test_split_variables['bitResponseA_train'][..., 0]
-    correct_opt   = train_test_split_variables['bitResponseAIsCorr_train'][..., 0]
-    trial_in_block= train_test_split_variables['trialNInBlock_train'][..., 0]
-    blockN        = train_test_split_variables['blockN_train'][..., 0]
-    slotN         = train_test_split_variables['stimulusSlotN_train'][..., 0]
-
-    # Build DataFrame
-    df_ds = pd.DataFrame({
-        'blockN':         blockN.ravel(),
-        'trial_in_block': trial_in_block.ravel(),
-        'slotN':          slotN.ravel(),
-        'human_correct':  (actions == correct_opt).ravel(),
-        'correct_optimal': correct_opt.ravel()
-    })
-
-    # Q1a: overall accuracy by trial within block
-    acc_by_trial = df_ds.groupby('trial_in_block')['human_correct'].mean()
-    print("Overall human accuracy by trial within block:")
-    print(acc_by_trial)
-
-    # Q1b: accuracy by trial *for each block*
-    acc_by_block_trial = df_ds.groupby(['blockN','trial_in_block'])['human_correct']\
-                             .mean()\
-                             .unstack(level=0)\
-                             .sort_index()
-    print("\nHuman accuracy by trial within each block (rows=trial, cols=block):")
-    print(acc_by_block_trial)
-
-    # Q2: Slot 1 & 3 vs 2 & 4 mapping
-    opt_by_slot = df_ds.groupby('slotN')['correct_optimal'].mean()
-    print("Probability correct optimal choice = A by stimulus slot (1..4):")
-    print(opt_by_slot)
-
-    # Q3: Overall fraction correct optimal = A
-    frac_A = df_ds['correct_optimal'].mean()
-    print(f"Overall fraction of trials where correct optimal choice = A: {frac_A:.3f}")
-    print("--- End of dataset analysis ---\n")
-
-    save_folder_name = os.path.join('plots', saved_checkpoint_pth.split('checkpoints_0128/')[1].split('.pkl')[0])
+    # Save folder setup
+    save_folder_name = os.path.join('plots', saved_checkpoint_pth.split('checkpoints/')[1].split('.pkl')[0])
     os.makedirs(save_folder_name, exist_ok=True)
 
+    # Load checkpoint data
     with open(saved_checkpoint_pth, 'rb') as file:
         checkpoint = pickle.load(file)
-    
+
     args_dict = checkpoint['args_dict']
     print(args_dict)
-    disrnn_params = checkpoint['disrnn_params']
+    disrnn_params = checkpoint['params']
     print(f'Loaded disrnn_params from {saved_checkpoint_pth}')
 
-    def make_disrnn():
-        model = disrnn.HkDisRNN(
-            obs_size=10,
-            target_size=2,
-            latent_size=args_dict['latent_size'],
-            update_mlp_shape=args_dict['update_mlp_shape'],
-            choice_mlp_shape=args_dict['choice_mlp_shape'],
-            eval_mode=0.0,
-            beta_scale=args_dict['beta_scale'],
-            activation=jax.nn.relu
+    # ----------------------
+    # Model Initialization
+    # ----------------------
+    cfg = build_disrnn_config(
+            obs_size = 10,
+            output_size = 2,
+            latent_size = args_dict['latent_size'],
+            update_mlp_shape = args_dict['update_mlp_shape'],
+            choice_mlp_shape = args_dict['choice_mlp_shape'],
+            noiseless = True,   # deterministic
+            latent_penalty            = 0.0,
+            update_net_obs_penalty    = 0.0,
+            update_net_latent_penalty = 0.0,
+            choice_net_latent_penalty = 0.0,
+            l2_scale = 0.0,      # ← no weight-decay in warm-up
         )
-        return model
-
+    def make_disrnn():
+        return disrnn.HkDisentangledRNN(cfg)
+   
+    # Training and evaluation
     xs_train, ys_train = next(dataset_train)
 
     print('Normalized Likelihoods and Accuracies for disRNN')
     print('Training Dataset')
+
     train_norm_likelihood, _ = compute_log_likelihood_and_accuracy(xs_train, ys_train, make_disrnn, disrnn_params)
 
     pred_train, ys_train, xs_train = evaluate(xs_train, ys_train, make_disrnn, disrnn_params)
+    
+    # Create DataFrame for plotting
     df_train = create_dataframe_for_plotting(
-        pred_train, ys_train, xs_train, 
-        train_test_split_variables=train_test_split_variables
+        pred_train, ys_train, xs_train, train_test_split_variables=train_test_split_variables
     )
 
-    # In main dataset analysis, after df_ds is built and df_train is built:
-    # 1) Compute inference-trial count for a single sequence (session 0)
-    enc = train_test_split_variables['stimulusSlotID_encounterNInBlock_train'][:,0,0]
-    slot = train_test_split_variables['stimulusSlotN_train'][:,0,0]
-    n_inf = int(((enc == 1) & (slot > 1)).sum())
-    n_tot = trial_in_block.shape[0]
-    print(f"Inference (first encounter w/o first stimulus) trials per sequence: {n_inf} / {n_tot} ({100 * n_inf / n_tot:.1f}%)")
 
-    # In main dataset analysis, after df_ds is built and df_train is built:
-    # 1) Compute inference-trial count for a single sequence (session 0)
-    enc = train_test_split_variables['stimulusSlotID_encounterNInBlock_train'][:,0,0]
-    slot = train_test_split_variables['stimulusSlotN_train'][:,0,0]
-    n_inf = int(((enc == 1) & (slot > 1)).sum())
-    n_tot = trial_in_block.shape[0]
-    print(f"Inference (first encounter w/o first stimulus) trials per sequence: {n_inf} / {n_tot} ({100 * n_inf / n_tot:.1f}%)")
-
-    # make sure these columns exist:
+    # Ensure these columns exist for plotting
     df_train['human_optimal'] = (df_train['human_chosen_action'] == df_train['correct_optimal_choice']).astype(int)
     df_train['model_optimal'] = (df_train['model_est_optimal_prob'] >= 0.5).astype(int)
 
-    # define your “first‐encounter” mask
+    # First encounter trials analysis
     first_mask = df_train['stimulusSlotID_encounterNInBlock'] == 1
-
-    # continuous (not thresholded) averages:
-    human_first_cont  = df_train.loc[first_mask,  'rwd_manual'].mean()
-    model_first_cont  = df_train.loc[first_mask,  'model_est_optimal_prob'].mean()
+    human_first_cont = df_train.loc[first_mask, 'rwd_manual'].mean()
+    model_first_cont = df_train.loc[first_mask, 'model_est_optimal_prob'].mean()
     human_repeat_cont = df_train.loc[~first_mask, 'rwd_manual'].mean()
     model_repeat_cont = df_train.loc[~first_mask, 'model_est_optimal_prob'].mean()
 
-    print(f"First‐encounter trials:   Human  = {100*human_first_cont:.2f}%   Model  = {100*model_first_cont:.2f}%")
-    print(f"Repeat‐encounter trials:  Human  = {100*human_repeat_cont:.2f}%   Model  = {100*model_repeat_cont:.2f}%")
+    print(f"First‐encounter trials:   Human  = {100 * human_first_cont:.2f}%   Model  = {100 * model_first_cont:.2f}%")
+    print(f"Repeat‐encounter trials:  Human  = {100 * human_repeat_cont:.2f}%   Model  = {100 * model_repeat_cont:.2f}%")
 
-
+    # ----------------------
+    # Plotting and Saving
+    # ----------------------
+    plot_bottlenecks(disrnn_params, cfg, save_folder_name)
     plot_comparison_heatmap(
-        df_human = df_train[['blockN','trialNInBlock','human_optimal']]
-                        .rename(columns={'trialNInBlock':'trial_in_block',
-                                        'human_optimal':'human_correct'}),
-        df_model = df_train[['blockN','trialNInBlock','model_est_optimal_prob']]
-                        .rename(columns={'trialNInBlock':'trial_in_block',
-                                        'model_est_optimal_prob':'model_est_optimal_prob'}),
-        save_folder= save_folder_name
-        )
-
-
-    # …and again *just* on first encounters:s
-    plot_comparison_heatmap(
-        df_human = df_train[first_mask][['blockN','trialNInBlock','human_optimal']] \
-                    .rename(columns={
-                        'trialNInBlock':'trial_in_block',
-                        'human_optimal':'human_correct'
-                    }),
-        df_model = df_train[first_mask][['blockN','trialNInBlock','model_est_optimal_prob']] \
-                    .rename(columns={
-                        'trialNInBlock':'trial_in_block',
-                        'model_est_optimal_prob':'model_est_optimal_prob'
-                    }),
-        save_folder = os.path.join(save_folder_name, 'first_encounter_continuous')
+        df_human=df_train[['blockN', 'trialNInBlock', 'human_optimal']].rename(columns={'trialNInBlock': 'trial_in_block', 'human_optimal': 'human_correct'}),
+        df_model=df_train[['blockN', 'trialNInBlock', 'model_est_optimal_prob']].rename(columns={'trialNInBlock': 'trial_in_block', 'model_est_optimal_prob': 'model_est_optimal_prob'}),
+        save_folder=save_folder_name
     )
 
-
-
-
-
-    # Check model upper bound on training data
-    log_probs_train = np.log(df_train['human_chosen_action_prob'])
-    normalized_likelihood_upper_bound_train = np.exp(np.mean(log_probs_train))
-    print("Model Normalized likelihood Upperbound for training", normalized_likelihood_upper_bound_train)
-
-    csv_outpath = os.path.join(save_folder_name, "df_train.csv")
-    df_train.to_csv(csv_outpath, index=False)
-    print(f"df_train has been saved to CSV at: {csv_outpath}")
-
-    # Some example plots
-    plot_avg_probs_by_block_and_session(df_train, save_folder_name)
-    plot_model_probs_by_block_and_session(df_train, save_folder_name)
-    plot_human_probs_by_block_and_session(df_train, save_folder_name)
-    plot_training_results_one_session(df_train, save_folder_name)
-    plot_training_results(df_train, dataset_train, save_folder_name)
-    plot_training_results_per_block(df_train, save_folder_name)
-    plot_bottlenecks(disrnn_params, save_folder_name)
-
-    # Inference performance side-by-side (Human vs. Model)
+    # Inference performance plot
     plot_inference_performance(df_train, save_folder_name)
 
-    # Side-by-side first-encounter comparison
-    #plot_inference_curve_by_block_and_order_human_vs_model_side_by_side(df_train, save_folder_name)
+    figs = plot_update_rules(
+        params=disrnn_params,
+        disrnn_config=cfg,
+        axis_lim=2.1
+    )
 
-    # Side-by-side all-encounters comparison
-    #plot_inference_curve_by_block_and_encounter_human_vs_model_side_by_side(df_train, save_folder_name)
+    # If multisubject and you want to plot for subject #2:
+    # figs = plot_update_rules(params, config, subj_ind=2, axis_lim=2.1)
 
-    # Plot latents for session 0 (as an example), including bar charts by condition
-    # Suppose you want to compare sessions 0, 5, 10, and 15:
+    # 4) Save or display all the figures
+    for i, fig in enumerate(figs):
+        fig.savefig(f"update_rule_latent_{i+1}.png")
+        plt.close(fig)
+
+    # Latent activations plot
     plot_latent_activations(
         seq_list=[1, 2, 10, 15],
         xs_train=xs_train,
@@ -1817,24 +1788,18 @@ def main(seed, saved_checkpoint_pth):
         df_train=df_train
     )
 
-    plot_latent_activations_overlayed(
-        sess_list=[1, 2, 10, 15],
-        xs_train=xs_train,
-        disrnn_params=disrnn_params,
-        make_disrnn=make_disrnn,
-        save_folder_name=save_folder_name,
-        train_test_split_variables=train_test_split_variables,
-        df_train=df_train
-    )
-
-    # Optional example usage
-    # plot_average_block_3_model_probability(df_train, save_folder_name)
+    # Save results
+    csv_outpath = os.path.join(save_folder_name, "df_train.csv")
+    df_train.to_csv(csv_outpath, index=False)
+    print(f"df_train has been saved to CSV at: {csv_outpath}")
 
 
 if __name__ == "__main__":
+    # Argument parsing
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", nargs='?', type=int, default=42, help="Seed for reproducibility.")
     parser.add_argument("--saved_checkpoint_pth", type=str, required=True, help="Saved checkpoint path for evaluation.")
     args = parser.parse_args()
 
+    # Run main function
     main(args.seed, args.saved_checkpoint_pth)
