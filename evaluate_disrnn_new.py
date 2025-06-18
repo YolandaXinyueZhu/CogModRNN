@@ -425,113 +425,76 @@ def plot_session(choices: np.ndarray,
 
 
 def create_dataframe_for_plotting(predictions, 
-                                  actions, 
+                                  ys_train, 
                                   xs,
                                   train_test_split_variables=None,
                                   bitResponseAIsCorr=None,
                                   P_A=None):
-    """
-    Unified function to create a DataFrame for plotting.
 
-    If train_test_split_variables is provided, it uses those to build a full dataframe 
-    (including sessionN, blockN, trialNInBlock, etc.). 
-    Otherwise, if train_test_split_variables is None, it assumes session-level usage 
-    and requires bitResponseAIsCorr and P_A to build minimal data.
-    """
-    action_0 = actions == 0
-    action_1 = actions == 1
-    action_others = ~np.isin(actions, [0, 1])
-    action_oh = np.concatenate([action_0, action_1, action_others], axis=2)
+    action_codes = ys_train[:, :, 0].copy()
+    other_choices = (action_codes != 0) & (action_codes != 1)
+    action_codes[other_choices] = 2
+    action_codes = action_codes.astype(int)  
 
-    # Expand predictions so there's a "slot" for 3rd action if it doesn't exist
-    nan = np.empty([*predictions.shape[:2], 1])
-    nan.fill(np.nan)
-    predictions_expanded = np.concatenate([predictions, nan], axis=2)
+    nan_column = np.full(predictions.shape[:2] + (1,), np.nan)
+    predictions_padded = np.concatenate((predictions, nan_column), axis=2)
 
-    # Pick out the predicted probability that matches the human-chosen action
-    prediction_prob = predictions_expanded[action_oh]
-    prediction_prob = prediction_prob.reshape(actions.shape)
+    trial, sequence = action_codes.shape
+    prediction_prob = np.empty((trial, sequence))
+    for t in range(trial):
+        for s in range(sequence):
+            code = action_codes[t, s]
+            prediction_prob[t, s] = predictions_padded[t, s, code]
 
-    if train_test_split_variables is not None:
-        context = train_test_split_variables["context_train"][:, :, 0].ravel()
-        blockN = train_test_split_variables["blockN_train"][:, :, 0].ravel()
-        sessionN = train_test_split_variables["sessionN_train"][:, :, 0].ravel()
-        trialNInBlock = train_test_split_variables["trialNInBlock_train"][:, :, 0].ravel()
-        correct_optimal_choice_full = train_test_split_variables["bitResponseAIsCorr_train"][:, :, 0].ravel()
-        probability_of_choosing_action_0_full = train_test_split_variables["P_A_train"][:, :, 0].ravel()
+    prediction_prob = prediction_prob.reshape(ys_train.shape)
 
-        stimulusSlotN = train_test_split_variables["stimulusSlotN_train"][:, :, 0].ravel()
-        stimulusSlotID = train_test_split_variables["stimulusSlotID_train"][:, :, 0].ravel()
-        stimulusSlotID_encounterNInBlock = train_test_split_variables["stimulusSlotID_encounterNInBlock_train"][:, :, 0].ravel()
+    context = train_test_split_variables["context_train"][:, :, 0].ravel()
+    blockN = train_test_split_variables["blockN_train"][:, :, 0].ravel()
+    sessionN = train_test_split_variables["sessionN_train"][:, :, 0].ravel()
+    trialNInBlock = train_test_split_variables["trialNInBlock_train"][:, :, 0].ravel()
+    correct_optimal_choice_full = train_test_split_variables["bitResponseAIsCorr_train"][:, :, 0].ravel()
+    prob_choosing_act_1_A_full = train_test_split_variables["P_A_train"][:, :, 0].ravel()
 
-        # "rwd" logic: reward at trial t is the outcome from the next time-step's xs (column 0).
-        # This often depends on how your dataset is structured, but here's a typical approach:
-        rwd = np.vstack((xs[1:, :, 0], np.zeros((1, xs.shape[1])))).ravel()
-        
-        df = pd.DataFrame({
-            'context': context,
-            'blockN': blockN,
-            'sessionN': sessionN,
-            'trialNInBlock': trialNInBlock,
-            'human_chosen_action': actions[:, :, 0].ravel(),  # human-chosen action
-            'model_predicted_action': np.exp(predictions[:, :, 1].ravel()),  # the prob of "action=1" from model
-            'model_predicted_probability_of_the_human_chosen_action': np.exp(prediction_prob.ravel()), 
-            'correct_optimal_choice': correct_optimal_choice_full,
-            'probability_of_choosing_action_0': probability_of_choosing_action_0_full,
-            'rwd': rwd,
-            'stimulusSlotN': stimulusSlotN,
-            'stimulusSlotID': stimulusSlotID,
-            'stimulusSlotID_encounterNInBlock': stimulusSlotID_encounterNInBlock
-        })
+    stimulusSlotN = train_test_split_variables["stimulusSlotN_train"][:, :, 0].ravel()
+    stimulusSlotID = train_test_split_variables["stimulusSlotID_train"][:, :, 0].ravel()
+    stimulusSlotID_encounterNInBlock = train_test_split_variables["stimulusSlotID_encounterNInBlock_train"][:, :, 0].ravel()
 
-        df['model_est_optimal_prob'] = np.where(
-            df['correct_optimal_choice'] == 1, 
-            df['model_predicted_action'], 
-            1 - df['model_predicted_action']
-        )
-        df['human_chosen_action_prob'] = np.where(
-            df['human_chosen_action'] == 1, 
-            df['probability_of_choosing_action_0'], 
-            1 - df['probability_of_choosing_action_0']
-        )
-        df['rwd_manual'] = np.where(
-            df['human_chosen_action'] == df['correct_optimal_choice'], 
-            1, 
-            0
-        )
-        df["pred_action"] = (df["model_predicted_action"] > 0.5).astype(int)
+    # "rwd" logic: reward at trial t is the outcome from the next time-step's xs (column 0).
+    # This often depends on how your dataset is structured, but here's a typical approach:
+    rwd = np.vstack((xs[1:, :, 0], np.zeros((1, xs.shape[1])))).ravel()
+    
+    df = pd.DataFrame({
+        'context': context,
+        'blockN': blockN,
+        'sessionN': sessionN,
+        'trialNInBlock': trialNInBlock,
+        'human_chosen_action': ys_train[:, :, 0].ravel(),  # human-chosen action
+        'model_predicted_action': np.exp(predictions[:, :, 1].ravel()),  # the prob of "action=1" from model
+        'model_predicted_probability_of_the_human_chosen_action': np.exp(prediction_prob.ravel()), 
+        'correct_optimal_choice': correct_optimal_choice_full,
+        'prob_choosing_act_1_A': prob_choosing_act_1_A_full,
+        'rwd': rwd,
+        'stimulusSlotN': stimulusSlotN,
+        'stimulusSlotID': stimulusSlotID,
+        'stimulusSlotID_encounterNInBlock': stimulusSlotID_encounterNInBlock
+    })
 
-    else:
-        # Minimal usage: bitResponseAIsCorr is "correct_optimal_choice", P_A is the probability_of_choosing_action_0
-        if bitResponseAIsCorr is None or P_A is None:
-            raise ValueError("bitResponseAIsCorr and P_A must be provided if train_test_split_variables is None.")
-
-        # similarly for rwd, we shift one step
-        rwd = np.vstack((np.zeros((1, xs.shape[1])), xs[1:, :, 0])).ravel()
-
-        df = pd.DataFrame({
-            'human_chosen_action': actions[:, :, 0].ravel(),
-            'model_predicted_action': np.exp(predictions[:, :, 1].ravel()),
-            'model_predicted_probability_of_the_human_chosen_action': np.exp(prediction_prob.ravel()),
-            'correct_optimal_choice': bitResponseAIsCorr,
-            'probability_of_choosing_action_0': P_A,
-            'rwd': rwd
-        })
-        df['model_est_optimal_prob'] = np.where(
-            df['correct_optimal_choice'] == 1, 
-            df['model_predicted_action'], 
-            1 - df['model_predicted_action']
-        )
-        df['human_chosen_action_prob'] = np.where(
-            df['human_chosen_action'] == 1, 
-            df['probability_of_choosing_action_0'], 
-            1 - df['probability_of_choosing_action_0']
-        )
-        df['rwd_manual'] = np.where(
-            df['human_chosen_action'] == df['correct_optimal_choice'], 
-            1, 
-            0
-        )
+    df['model_est_optimal_prob'] = np.where(
+        df['correct_optimal_choice'] == 1, 
+        df['model_predicted_action'], 
+        1 - df['model_predicted_action']
+    )
+    df['human_chosen_action_prob'] = np.where(
+        df['human_chosen_action'] == 1, 
+        df['prob_choosing_act_1_A'], 
+        1 - df['prob_choosing_act_1_A']
+    )
+    df['rwd_manual'] = np.where(
+        df['human_chosen_action'] == df['correct_optimal_choice'], 
+        1, 
+        0
+    )
+    df["pred_action"] = (df["model_predicted_action"] > 0.5).astype(int)
 
     return df
 
@@ -1027,6 +990,7 @@ def plot_bottlenecks(
   if sort_latents:
     latent_sigma_order = np.argsort(latent_sigmas)
     latent_sigmas = latent_sigmas[latent_sigma_order]
+    print("latent sigmas",latent_sigmas)
 
     # Sort choice sigmas based on the order of latents, keeping subject
     # embedding dimensions first if they exist.
@@ -1238,7 +1202,7 @@ def plot_update_rules(
 
 
 def plot_latent_activations_overlayed(
-        sess_list: list,
+        seq_list: list,
         xs_train: np.ndarray,
         disrnn_params: dict,
         make_disrnn,
@@ -1247,7 +1211,7 @@ def plot_latent_activations_overlayed(
         df_train: pd.DataFrame
     ):
     """
-    For exactly four sessions (sess_list), run DisRNN once per session. Then for each latent:
+    For exactly four sessions (seq_list), run DisRNN once per session. Then for each latent:
       • plot the activation over trials
       • overlay all four sessions’ latent‐activation curves on a single axes
       • draw a thick black line at the final trial index (session end)
@@ -1255,15 +1219,15 @@ def plot_latent_activations_overlayed(
     All blue/green bars and clue bars have been removed.
     """
 
-    if len(sess_list) != 4:
-        raise ValueError("sess_list must contain exactly four session indices.")
+    if len(seq_list) != 4:
+        raise ValueError("seq_list must contain exactly four session indices.")
 
     # 1) Extract shapes
     n_trials, n_sessions, _ = xs_train.shape
 
     # 2) Forward‐pass each of the 4 requested sessions to collect latent activations
     activations_by_session = []
-    for sess_idx in sess_list:
+    for sess_idx in seq_list:
         # shape (n_trials, 1, obs_dim)
         session_xs = xs_train[:, sess_idx, :][:, None, :]
         _, network_states = rnn_utils.eval_network(make_disrnn, disrnn_params, session_xs)
@@ -1271,12 +1235,9 @@ def plot_latent_activations_overlayed(
         activations_by_session.append(np.array(network_states))
 
     # 3) Compute and sort latent σ’s
-    latent_sigmas = 2 * jax.nn.sigmoid(
-        jnp.array(disrnn_params['hk_disentangled_rnn']['latent_sigmas_unsquashed'])
-    )  # shape = (latent_dim,)
-    latent_sigma_order = np.argsort(
-        disrnn_params['hk_disentangled_rnn']['latent_sigmas_unsquashed']
-    )
+    latent_sigmas = disrnn.reparameterize_sigma(
+        disrnn_params['hk_disentangled_rnn']['latent_sigma_params'])
+    latent_sigma_order = np.argsort(latent_sigmas)
     sorted_sigmas = latent_sigmas[latent_sigma_order]
 
     # 4) Reorder each session’s activations by that same order
@@ -1287,14 +1248,14 @@ def plot_latent_activations_overlayed(
 
     os.makedirs(save_folder_name, exist_ok=True)
     session_colors = ['C0', 'C1', 'C2', 'C3']  # distinct colors for the 4 sessions
-    session_labels = [f"Session {s}" for s in sess_list]
+    session_labels = [f"Session {s}" for s in seq_list]
 
     # 5) Loop over each latent dimension
     for i in range(latent_dim):
         fig, ax = plt.subplots(figsize=(20, 6))
 
         # 5.1) Plot all four sessions’ latent‐activation curves on one axes
-        for idx, sess_idx in enumerate(sess_list):
+        for idx, sess_idx in enumerate(seq_list):
             series_i = activations_sorted[idx][:, 0, i]  # shape = (n_trials,)
             ax.plot(
                 series_i,
@@ -1490,6 +1451,9 @@ def plot_first_encounter_heatmap(df_human: pd.DataFrame,
     print(f"Saved first-encounter heatmap to {out}")
 
 
+# ------------------------------------------------------------------
+#  Seaborn colour‑blind safe palette (Wong, 2011) applied globally
+# ------------------------------------------------------------------
 def plot_latent_activations(
         seq_list: list,
         xs_train: np.ndarray,
@@ -1504,18 +1468,27 @@ def plot_latent_activations(
       • plot the activation over trials
       • draw block-boundary lines
       • draw a thick black line at sequence end
-      • draw RED vertical bars (bottom quarter) whenever previous model choice was correct
-      • draw YELLOW vertical bars (next quarter) whenever current model choice is correct
-      • draw GREEN vertical bars (third quarter) whenever previous choice was correct
-      • draw BLUE vertical bars (top quarter) whenever previous choice == 1
-      • draw a thin 4-color “slot bar” beneath the latent curve indicating slot position
-      • draw a thin 8-color “clue bar” beneath the latent curve indicating which of 8 clues
-      • draw a thin 2-color “context bar” beneath the latent/clue bars indicating which context
+      • draw ORANGE bars   (bottom quarter) whenever the model predicted action = 1
+      • draw SKY-BLUE bars (next quarter)   whenever the current model choice was correct
+      • draw GREEN bars    (third quarter)  whenever the previous HUMAN choice was correct
+      • draw NAVY bars     (top quarter)    whenever the previous HUMAN choice == 1
+      • draw a thin 4-colour “slot bar”    beneath the latent curve indicating slot
+      • draw a thin 8-colour “clue bar”    beneath the latent curve indicating clue
+      • draw a thin 2-colour “context bar” beneath the latent curve indicating context
     """
+    import seaborn as sns
+    sns.set_theme(style="whitegrid", palette="colorblind")  # use Seaborn colour‑blind template for all plots
+
+    CB_PALETTE = sns.color_palette("colorblind", 10)
+    CB_ORANGE  = CB_PALETTE[1]   # "#de8f05"
+    CB_SKYBLUE = CB_PALETTE[9]   # "#56b4e9"
+    CB_GREEN   = CB_PALETTE[2]   # "#029e73"
+    CB_BLUE    = CB_PALETTE[0]   # "#0173b2"
+
     if len(seq_list) != 4:
         raise ValueError("seq_list must contain exactly four sequence indices.")
 
-    # --- extract data arrays ---
+    # ─── extract data arrays ──────────────────────────────────────────────
     n_trials, n_sequences, _ = xs_train.shape
     prev_choice  = train_test_split_variables['bitResponseA_prev_train'][..., 0]
     prev_correct = train_test_split_variables['bitCorr_prev_train'][..., 0]
@@ -1523,132 +1496,132 @@ def plot_latent_activations(
     clue_ids     = train_test_split_variables['state_train'][..., 0]
     context_ids  = train_test_split_variables['context_train'][..., 0]
 
-    # --- get model predictions to compute model-correct flags ---
+    # ─── model predictions ────────────────────────────────────────────────
     model_logits, _ = rnn_utils.eval_network(make_disrnn, disrnn_params, xs_train)
-    model_logits = np.array(model_logits)
-    pred_probs = jax.nn.softmax(model_logits[..., :2], axis=-1)
-    pred_choices = np.argmax(np.array(pred_probs), axis=-1)
-    opt_choices = train_test_split_variables['bitResponseAIsCorr_train'][..., 0]
+    model_logits   = np.array(model_logits)
+    pred_probs     = jax.nn.softmax(model_logits[..., :2], axis=-1)
+    pred_choices   = np.argmax(np.array(pred_probs), axis=-1)
+    opt_choices    = train_test_split_variables['bitResponseAIsCorr_train'][..., 0]
     curr_model_correct = (pred_choices == opt_choices)
-    prev_model_correct = np.vstack([
-        np.zeros((1, curr_model_correct.shape[1]), dtype=bool),
-        curr_model_correct[:-1]
-    ])
+    model_choose_one   = (pred_choices == 1)  # ORANGE bars
 
-    # --- forward-pass to get activations ---
+    # ─── forward-pass to collect activations ──────────────────────────────
     activations_by_sequence = []
     for seq_idx in seq_list:
         seq_xs = xs_train[:, seq_idx, :][:, None, :]
         _, states = rnn_utils.eval_network(make_disrnn, disrnn_params, seq_xs)
         activations_by_sequence.append(np.array(states))
 
-    # --- sort latents by σ ---
-    latent_sigmas = 2 * jax.nn.sigmoid(
-        jnp.array(disrnn_params['hk_disentangled_rnn']['latent_sigma_params'])
-    )
-    order = np.argsort(disrnn_params['hk_disentangled_rnn']['latent_sigma_params'])
+    # ─── sort latents by σ (small → open) ─────────────────────────────────
+    latent_sigmas = disrnn.reparameterize_sigma(
+        disrnn_params['hk_disentangled_rnn']['latent_sigma_params'])
+    order         = np.argsort(latent_sigmas)
     sorted_sigmas = latent_sigmas[order]
     activations_sorted = [a[:, :, order] for a in activations_by_sequence]
-    latent_dim = activations_sorted[0].shape[2]
+    latent_dim         = activations_sorted[0].shape[2]
 
-    # --- build color maps ---
-    slot_cmap   = mcolors.ListedColormap(plt.cm.tab10(np.arange(4)))
-    slot_norm   = mcolors.BoundaryNorm(boundaries=np.arange(5), ncolors=4)
-    clue_cmap   = mcolors.ListedColormap(plt.cm.tab10(np.arange(8)))
-    clue_norm   = mcolors.BoundaryNorm(boundaries=np.arange(9), ncolors=8)
-    context_cmap = mcolors.ListedColormap(plt.cm.tab10(np.arange(2)))
-    context_norm = mcolors.BoundaryNorm(boundaries=np.arange(3), ncolors=2)
+    # ─── colour maps for slot / clue / context now use colour‑blind palette ─────
+    slot_cmap     = mcolors.ListedColormap(sns.color_palette("colorblind", 4))
+    slot_norm     = mcolors.BoundaryNorm(boundaries=np.arange(5), ncolors=4)
+    clue_cmap     = mcolors.ListedColormap(sns.color_palette("colorblind", 8))
+    clue_norm     = mcolors.BoundaryNorm(boundaries=np.arange(9), ncolors=8)
+    context_cmap  = mcolors.ListedColormap(sns.color_palette("colorblind", 2))
+    context_norm  = mcolors.BoundaryNorm(boundaries=np.arange(3), ncolors=2)
 
     os.makedirs(save_folder_name, exist_ok=True)
-    seq_colors = ['C0','C1','C2','C3']
+    seq_colors = ['C0', 'C1', 'C2', 'C3']   # now map to colour‑blind palette via seaborn
 
     for i in range(latent_dim):
         fig = plt.figure(figsize=(25, 16))
         outer = fig.add_gridspec(nrows=4, ncols=1, hspace=0.4)
 
-        # legend patches for spans and bars
-        red_patch     = Patch(facecolor="red",    alpha=0.3, label="prev_model_correct = 1")
-        yellow_patch  = Patch(facecolor="yellow", alpha=0.3, label="curr_model_correct = 1")
-        green_patch   = Patch(facecolor="green",  alpha=0.3, label="prev_correct = 1")
-        blue_patch    = Patch(facecolor="blue",   alpha=0.3, label="prev_choice = 1")
+        # ── legend patches using CB palette ───────────────────────────────
+        orange_patch  = Patch(facecolor=CB_ORANGE,  alpha=0.4, label="model_prediction = 1")
+        sky_patch     = Patch(facecolor=CB_SKYBLUE, alpha=0.4, label="curr_model_correct = 1")
+        green_patch   = Patch(facecolor=CB_GREEN,   alpha=0.4, label="prev_correct = 1")
+        blue_patch    = Patch(facecolor=CB_BLUE,    alpha=0.4, label="prev_choice = 1")
         slot_patches  = [Patch(facecolor=slot_cmap(j),    label=f"Slot {j+1}") for j in range(4)]
         clue_patches  = [Patch(facecolor=clue_cmap(j),    label=f"Clue {j+1}") for j in range(8)]
-        context_patches = [Patch(facecolor=context_cmap(j),label=f"Context {j+1}") for j in range(2)]
-        bar_handles = [red_patch, yellow_patch, green_patch, blue_patch] + slot_patches + clue_patches + context_patches
+        context_patches = [Patch(facecolor=context_cmap(j), label=f"Context {j+1}") for j in range(2)]
+        bar_handles = [orange_patch, sky_patch, green_patch, blue_patch] + slot_patches + clue_patches + context_patches
 
         for row_idx, seq_idx in enumerate(seq_list):
-            inner = outer[row_idx].subgridspec(
-                nrows=4, ncols=1,
-                height_ratios=[5, 2, 2, 2],
-                hspace=0.1
-            )
+            inner = outer[row_idx].subgridspec(nrows=4, ncols=1,
+                                               height_ratios=[5, 2, 2, 2],
+                                               hspace=0.1)
 
-            # --- activation plot ---
+            # ── activation curve ──────────────────────────────────────────
             ax_act = fig.add_subplot(inner[0])
-            vals = activations_sorted[row_idx][:,0,i]
+            vals   = activations_sorted[row_idx][:, 0, i]
             y_max, y_min = vals.max(), vals.min()
-            Δ = 0.05*(y_max-y_min) if y_max!=y_min else 0.1
-            ax_act.set_ylim((y_min-4*Δ, y_max+Δ))
+            Δ = 0.05*(y_max - y_min) if y_max != y_min else 0.1
+            ax_act.set_ylim((y_min - 4*Δ, y_max + Δ))
 
-            # plot line
-            lh, = ax_act.plot(vals, color=seq_colors[row_idx], lw=1.5, label=f"Sequence {seq_idx}", zorder=4)
+            lh, = ax_act.plot(vals, color=seq_colors[row_idx], lw=1.5,
+                              label=f"Sequence {seq_idx}", zorder=4)
 
-            # block boundaries
-            blocks = train_test_split_variables['blockN_train'][:,seq_idx,0]
-            changes = np.where(np.diff(blocks)!=0)[0]+1
+            # ── block boundaries ─────────────────────────────────────────
+            blocks  = train_test_split_variables['blockN_train'][:, seq_idx, 0]
+            changes = np.where(np.diff(blocks) != 0)[0] + 1
             for c in changes:
-                ax_act.axvline(c, color=seq_colors[row_idx], ls="--", lw=1, alpha=0.6, zorder=3)
-                ax_act.text(c, y_max+0.5*Δ, f"Block {int(blocks[c])}", rotation=90,
-                            va="bottom", ha="center", fontsize=8,
-                            color=seq_colors[row_idx], alpha=0.7, zorder=3)
+                ax_act.axvline(c, color=seq_colors[row_idx], ls="--", lw=1,
+                               alpha=0.6, zorder=3)
+                ax_act.text(c, y_max + 0.5*Δ, f"Block {int(blocks[c])}",
+                            rotation=90, va="bottom", ha="center",
+                            fontsize=8, color=seq_colors[row_idx], alpha=0.7,
+                            zorder=3)
 
             # sequence end
-            end = n_trials-1
+            end = n_trials - 1
             ax_act.axvline(end, color="black", lw=2, alpha=0.8, zorder=3)
-            ax_act.text(end, y_max+0.8*Δ, "Sequence End", rotation=90,
-                        va="top", ha="right", fontsize=9, color="black", zorder=3)
+            ax_act.text(end, y_max + 0.8*Δ, "Sequence End", rotation=90,
+                        va="top", ha="right", fontsize=9, color="black",
+                        zorder=3)
 
-            # --- quarter-height event bars ---
-            # red = prev_model_correct, yellow = curr_model_correct,
-            # green = prev_correct, blue = prev_choice
-            for t in np.where(prev_model_correct[:,seq_idx])[0]:
-                ax_act.axvspan(t, t+1, ymin=0.00, ymax=0.25, facecolor="red",    alpha=0.3, zorder=2)
-            for t in np.where(curr_model_correct[:,seq_idx])[0]:
-                ax_act.axvspan(t, t+1, ymin=0.25, ymax=0.50, facecolor="yellow", alpha=0.3, zorder=2)
-            for t in np.where(prev_correct[:,seq_idx]==1)[0]:
-                ax_act.axvspan(t, t+1, ymin=0.50, ymax=0.75, facecolor="green",  alpha=0.3, zorder=2)
-            for t in np.where(prev_choice[:,seq_idx]==1)[0]:
-                ax_act.axvspan(t, t+1, ymin=0.75, ymax=1.00, facecolor="blue",   alpha=0.3, zorder=2)
+            # ── quarter-height event bars (CB palette) ───────────────────
+            for t in np.where(model_choose_one[:, seq_idx])[0]:
+                ax_act.axvspan(t, t+1, ymin=0.00, ymax=0.25,
+                               facecolor=CB_ORANGE, alpha=0.4, zorder=2)
+            for t in np.where(curr_model_correct[:, seq_idx])[0]:
+                ax_act.axvspan(t, t+1, ymin=0.25, ymax=0.50,
+                               facecolor=CB_SKYBLUE, alpha=0.4, zorder=2)
+            for t in np.where(prev_correct[:, seq_idx] == 1)[0]:
+                ax_act.axvspan(t, t+1, ymin=0.50, ymax=0.75,
+                               facecolor=CB_GREEN, alpha=0.4, zorder=2)
+            for t in np.where(prev_choice[:, seq_idx] == 1)[0]:
+                ax_act.axvspan(t, t+1, ymin=0.75, ymax=1.00,
+                               facecolor=CB_BLUE, alpha=0.4, zorder=2)
 
             ax_act.set_ylabel(f"Latent {i+1}")
             ax_act.set_title(f"Sequence {seq_idx}")
             ax_act.grid(alpha=0.2)
 
-            # --- slot bar ---
+            # ── slot / clue / context bars (now colour‑blind palette) ────
             ax_slot = fig.add_subplot(inner[1], sharex=ax_act)
-            ax_slot.imshow(slot_ids[:,seq_idx].reshape(1,n_trials), aspect="auto",
-                            cmap=slot_cmap, norm=slot_norm, origin="lower",
-                            extent=(0,n_trials,0,1), interpolation="nearest", zorder=1)
+            ax_slot.imshow(slot_ids[:, seq_idx].reshape(1, n_trials), aspect="auto",
+                           cmap=slot_cmap, norm=slot_norm, origin="lower",
+                           extent=(0, n_trials, 0, 1), interpolation="nearest",
+                           zorder=1)
             ax_slot.set_yticks([])
             ax_slot.set_ylabel("Slot", labelpad=10)
 
-            # --- clue bar ---
             ax_clue = fig.add_subplot(inner[2], sharex=ax_act)
-            ax_clue.imshow(clue_ids[:,seq_idx].reshape(1,n_trials), aspect="auto",
-                            cmap=clue_cmap, norm=clue_norm, origin="lower",
-                            extent=(0,n_trials,0,1), interpolation="nearest", zorder=1)
+            ax_clue.imshow(clue_ids[:, seq_idx].reshape(1, n_trials), aspect="auto",
+                           cmap=clue_cmap, norm=clue_norm, origin="lower",
+                           extent=(0, n_trials, 0, 1), interpolation="nearest",
+                           zorder=1)
             ax_clue.set_yticks([])
             ax_clue.set_ylabel("Clue", labelpad=10)
 
-            # --- context bar ---
             ax_ctx = fig.add_subplot(inner[3], sharex=ax_act)
-            ax_ctx.imshow(context_ids[:,seq_idx].reshape(1,n_trials), aspect="auto",
-                            cmap=context_cmap, norm=context_norm, origin="lower",
-                            extent=(0,n_trials,0,1), interpolation="nearest", zorder=1)
+            ax_ctx.imshow(context_ids[:, seq_idx].reshape(1, n_trials), aspect="auto",
+                           cmap=context_cmap, norm=context_norm, origin="lower",
+                           extent=(0, n_trials, 0, 1), interpolation="nearest",
+                           zorder=1)
             ax_ctx.set_yticks([])
             ax_ctx.set_ylabel("Context", labelpad=10)
 
-            # reduce x‐tick density to avoid overlap
+            # reduce x-tick density
             step = max(n_trials // 10, 1)
             ax_ctx.set_xticks(np.arange(0, n_trials, step))
             ax_ctx.set_xlabel("Trial Index")
@@ -1656,28 +1629,23 @@ def plot_latent_activations(
             if row_idx == 0:
                 ax_act.legend(handles=[lh], loc="upper right", fontsize="small")
 
-        # --- global legend for bars ---
-        fig.legend(
-            handles=bar_handles,
-            labels=[h.get_label() for h in bar_handles],
-            loc="lower center",
-            ncol=12,
-            bbox_to_anchor=(0.5, 0.02)
-        )
+        # ── global legend for bars ────────────────────────────────────────
+        fig.legend(handles=bar_handles,
+                   labels=[h.get_label() for h in bar_handles],
+                   loc="lower center", ncol=12,
+                   bbox_to_anchor=(0.5, 0.02))
 
-        # supertitle & layout
-        fig.suptitle(
-            f"Latent {i+1} (σ = {sorted_sigmas[i]:.4f}) — Four Sequences",
-            fontsize=14
-        )
+        # ── title, layout, save ──────────────────────────────────────────
+        fig.suptitle(f"Latent {i+1} (σ = {sorted_sigmas[i]:.4f}) — Four Sequences",
+                     fontsize=14)
         plt.tight_layout(rect=[0, 0.06, 1, 0.96])
 
-        # save and close
         fname = f"latent_{i+1}_four_sequences_separate_bars.png"
-        path = os.path.join(save_folder_name, fname)
+        path  = os.path.join(save_folder_name, fname)
         plt.savefig(path)
         plt.close(fig)
         print(f"Saved: {path}")
+
 
 def main(seed, saved_checkpoint_pth):
     # Set the seed for reproducibility
@@ -1685,11 +1653,11 @@ def main(seed, saved_checkpoint_pth):
 
     # Dataset setup
     dataset_type = 'RealWorldKimmelfMRIDataset'
-    dataset_path = "dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-2_nBlocks-7_nTrialsPerBlock-25_b-multiple_20250131.mat"
+    dataset_path = "/home/rsw0/Desktop/yolanda/CogModRNN/CogModRNN/dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-4_nBlocks-7_nTrialsPerBlock-25_b-multiple_20250613.mat"
     dataset_train, dataset_test, train_test_split_variables = preprocess_data(dataset_type, dataset_path, 0.1)
 
     # Save folder setup
-    save_folder_name = os.path.join('plots', saved_checkpoint_pth.split('checkpoints/')[1].split('.pkl')[0])
+    save_folder_name = os.path.join('plots', saved_checkpoint_pth.split('checkpoints_new_data/')[1].split('.pkl')[0])
     os.makedirs(save_folder_name, exist_ok=True)
 
     # Load checkpoint data
@@ -1705,7 +1673,7 @@ def main(seed, saved_checkpoint_pth):
     # Model Initialization
     # ----------------------
     cfg = build_disrnn_config(
-            obs_size = 10,
+            obs_size = 18,
             output_size = 2,
             latent_size = args_dict['latent_size'],
             update_mlp_shape = args_dict['update_mlp_shape'],
@@ -1725,15 +1693,17 @@ def main(seed, saved_checkpoint_pth):
 
     print('Normalized Likelihoods and Accuracies for disRNN')
     print('Training Dataset')
-
     train_norm_likelihood, _ = compute_log_likelihood_and_accuracy(xs_train, ys_train, make_disrnn, disrnn_params)
-
     pred_train, ys_train, xs_train = evaluate(xs_train, ys_train, make_disrnn, disrnn_params)
-    
+
     # Create DataFrame for plotting
     df_train = create_dataframe_for_plotting(
         pred_train, ys_train, xs_train, train_test_split_variables=train_test_split_variables
     )
+    log_probs_train = np.log(df_train['human_chosen_action_prob'])
+    normalized_likelihood_upper_bound_train = np.exp(np.mean(log_probs_train))
+    print("Model Normalized likelihood Upperbound for training", normalized_likelihood_upper_bound_train)
+    
 
 
     # Ensure these columns exist for plotting
@@ -1788,10 +1758,21 @@ def main(seed, saved_checkpoint_pth):
         df_train=df_train
     )
 
-    # Save results
+    plot_latent_activations_overlayed(
+        seq_list=[1, 2, 10, 15],
+        xs_train=xs_train,
+        disrnn_params=disrnn_params,
+        make_disrnn=make_disrnn,
+        save_folder_name=save_folder_name,
+        train_test_split_variables=train_test_split_variables,
+        df_train=df_train
+    )
+
+    '''
     csv_outpath = os.path.join(save_folder_name, "df_train.csv")
     df_train.to_csv(csv_outpath, index=False)
     print(f"df_train has been saved to CSV at: {csv_outpath}")
+    '''
 
 
 if __name__ == "__main__":

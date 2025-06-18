@@ -61,7 +61,8 @@ def load_data(fname, data_dir="./"):
     if "state" in ddict:
         zs = np.clip(ddict["state"] - 1, a_min=-1, a_max=None)
         ddict["state"]        = zs
-        ddict["state_onehot"] = zs_to_onehot(zs)[..., :8]
+        ddict["state_onehot"] = zs_to_onehot(zs)
+        print(zs_to_onehot(zs).shape)
 
     if "bitResponseA" in ddict:
         ddict["ys"] = ddict["bitResponseA"]
@@ -216,7 +217,7 @@ def train_model(
         with open(saved_checkpoint_pth, "rb") as f:
             ckpt = pickle.load(f)
         args_dict     = ckpt["args_dict"]
-        disrnn_params = ckpt["disrnn_params"]
+        disrnn_params = ckpt["params"]
         opt_state     = ckpt["opt_state"]
         step          = ckpt["step"]
         print("Checkpoint loaded.")
@@ -236,6 +237,7 @@ def train_model(
         f"ls_{latent_size}"                                   # latent-state size
         f"_umlp_{'-'.join(map(str, update_mlp_shape))}"       # Update-MLP shape
         f"_cmlp_{'-'.join(map(str, choice_mlp_shape))}"       # Choice-MLP shape
+        f"_lparam_{loss_param}"
         f"_lp_{latent_penalty}"                               # latent_penalty
         f"_uobs_{update_net_obs_penalty}"                     # update_net_obs_penalty
         f"_ulat_{update_net_latent_penalty}"                  # update_net_latent_penalty
@@ -299,7 +301,7 @@ def train_model(
     # -------------------------------------------------
     # 1) Warm‑up (no penalties, no noise)
     # -------------------------------------------------s
-    if n_warmup_steps != 0:
+    if n_warmup_steps != 0 and not saved_checkpoint_pth:
         print("Warm‑up phase …")
         # 1) Warm-up -----------------------------------------
         disrnn_params, opt_state, _ = rnn_utils.train_network(
@@ -314,7 +316,7 @@ def train_model(
             n_steps=n_warmup_steps,
             do_plot=False,
             log_losses_every=100,      # exact analogue of old checkpoint_interval
-            checkpoint_dir="./checkpoints",  # Specify the directory to save checkpoints
+            checkpoint_dir="./checkpoints_new_data",  # Specify the directory to save checkpoints
             checkpoint_interval=100,   # Save checkpoint every 100 steps
             run_name=run_name,
             args_dict=args_dict
@@ -356,11 +358,7 @@ def main(args):
 
     # ---------- data ----------
     dataset_type = "RealWorldKimmelfMRIDataset"
-    dataset_path = (
-        "dataset/"
-        "tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-2_"
-        "nBlocks-7_nTrialsPerBlock-25_b-multiple_20250131.mat"
-    )
+    dataset_path = "/home/rsw0/Desktop/yolanda/CogModRNN/CogModRNN/dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-4_nBlocks-7_nTrialsPerBlock-25_b-multiple_20250613.mat"
     train_ds, test_ds, _ = preprocess_data(
         dataset_type, dataset_path, args.validation_proportion
     )
@@ -392,20 +390,20 @@ if __name__ == "__main__":
     parser.add_argument("--validation_proportion", type=float, default=0.1)
     parser.add_argument("--latent_size", type=int, default=8)
     parser.add_argument("--update_mlp_shape",
-                        nargs="+", type=int, default=[8, 8, 8])
+                        nargs="+", type=int, default=[12, 12, 12])
     parser.add_argument("--choice_mlp_shape",
-                        nargs="+", type=int, default=[8, 8, 8])
+                        nargs="+", type=int, default=[12, 12, 12])
     parser.add_argument("--n_training_steps", type=int, default=50000)
     parser.add_argument("--n_warmup_steps", type=int, default=1000)
     parser.add_argument("--n_steps_per_call", type=int, default=500)
     parser.add_argument("--saved_checkpoint_pth", type=str, default=None)
 
-    parser.add_argument("--latent_penalty",            type=float, default=1e-3)
-    parser.add_argument("--update_net_obs_penalty",    type=float, default=1e-3)
-    parser.add_argument("--update_net_latent_penalty", type=float, default=1e-3)
-    parser.add_argument("--choice_net_latent_penalty", type=float, default=1e-3)
+    parser.add_argument("--latent_penalty",            type=float, default=1e-4)
+    parser.add_argument("--update_net_obs_penalty",    type=float, default=2e-3)
+    parser.add_argument("--update_net_latent_penalty", type=float, default=2e-3)
+    parser.add_argument("--choice_net_latent_penalty", type=float, default=1e-4)
     parser.add_argument("--l2_scale",                  type=float, default=1e-5)
-    parser.add_argument("--loss_param",                type=float, default=0.01)
+    parser.add_argument("--loss_param",                type=float, default=1.00)
 
     args = parser.parse_args()
 
