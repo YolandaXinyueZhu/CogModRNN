@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 """
 Updated training script for DisRNN – adapted to the 2025
-`disentangled_rnns.library.disrnn` API.
+disentangled_rnns.library.disrnn API.
 
 Data loading, argument parsing, logging and checkpointing are unchanged.
-Only the model‑building utilities have been rewritten to use the new
-`DisRnnConfig` + `HkDisentangledRNN` pipeline.
+Only the model-building utilities have been rewritten to use the new
+DisRnnConfig + HkDisentangledRNN pipeline.
 """
 
 import argparse
@@ -19,7 +19,7 @@ import warnings
 from datetime import datetime
 
 # ---------------------------------------------------------------------
-# Third‑party libs
+# Third-party libs
 # ---------------------------------------------------------------------
 import jax
 import jax.numpy as jnp
@@ -206,7 +206,7 @@ def train_model(
     n_warmup_steps,
     n_steps_per_call,   # kept for CLI parity (not used)
     saved_checkpoint_pth=None,
-    checkpoint_interval=50,  # Save checkpoint every `checkpoint_interval` steps
+    checkpoint_interval=100,  # Save checkpoint every checkpoint_interval steps
 ):
 
     # -------------------------------------------------
@@ -230,7 +230,7 @@ def train_model(
     x, y = next(dataset_train)
 
     # -------------------------------------------------
-    # Run‑name / wandb initialisation
+    # Run-name / wandb initialisation
     # -------------------------------------------------
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_name = (
@@ -245,6 +245,11 @@ def train_model(
         f"_l2_{l2_scale}"                                     # L2 weight-decay
         f"_{ts}"                                              # timestamp
     )
+
+    suffix = args_dict.get("run_name", "")
+    if suffix:
+        run_name = f"{run_name}_{suffix}"
+
     wandb.init(
         project="CogModRNN",
         entity="yolandaz",
@@ -299,10 +304,10 @@ def train_model(
     opt = optax.adam(1e-3)
 
     # -------------------------------------------------
-    # 1) Warm‑up (no penalties, no noise)
+    # 1) Warm-up (no penalties, no noise)
     # -------------------------------------------------s
     if n_warmup_steps != 0 and not saved_checkpoint_pth:
-        print("Warm‑up phase …")
+        print("Warm-up phase …")
         # 1) Warm-up -----------------------------------------
         disrnn_params, opt_state, _ = rnn_utils.train_network(
             make_disrnn_warmup,
@@ -358,7 +363,7 @@ def main(args):
 
     # ---------- data ----------
     dataset_type = "RealWorldKimmelfMRIDataset"
-    dataset_path = "/home/rsw0/Desktop/yolanda/CogModRNN/CogModRNN/dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-4_nBlocks-7_nTrialsPerBlock-25_b-multiple_20250613.mat"
+    dataset_path = args.dataset_path
     train_ds, test_ds, _ = preprocess_data(
         dataset_type, dataset_path, args.validation_proportion
     )
@@ -388,11 +393,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--validation_proportion", type=float, default=0.1)
-    parser.add_argument("--latent_size", type=int, default=8)
+    parser.add_argument("--latent_size", type=int, default=10)
     parser.add_argument("--update_mlp_shape",
-                        nargs="+", type=int, default=[12, 12, 12])
+                        nargs="+", type=int, default=[20, 20, 20, 20])
     parser.add_argument("--choice_mlp_shape",
-                        nargs="+", type=int, default=[12, 12, 12])
+                        nargs="+", type=int, default=[16, 16, 16])
     parser.add_argument("--n_training_steps", type=int, default=50000)
     parser.add_argument("--n_warmup_steps", type=int, default=1000)
     parser.add_argument("--n_steps_per_call", type=int, default=500)
@@ -403,7 +408,14 @@ if __name__ == "__main__":
     parser.add_argument("--update_net_latent_penalty", type=float, default=2e-3)
     parser.add_argument("--choice_net_latent_penalty", type=float, default=1e-4)
     parser.add_argument("--l2_scale",                  type=float, default=1e-5)
-    parser.add_argument("--loss_param",                type=float, default=1.00)
+    parser.add_argument("--loss_param",                type=float, default=0.1)
+
+    # new arguments
+    parser.add_argument("--dataset_path", type=str,
+                        default="dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-4_nBlocks-7_nTrialsPerBlock-25_b-multiple_20250613.mat",
+                        help="Path to the dataset file")
+    parser.add_argument("--run_name", type=str, default="",
+                        help="Optional suffix to append to the WandB run name")
 
     args = parser.parse_args()
 
