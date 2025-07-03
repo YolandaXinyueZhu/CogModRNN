@@ -16,3 +16,5 @@ __pycache__/
 
 # virtual-env (if it ever ends up inside the repo)
 disrnn_venv/
+plots*/
+loss/
