@@ -179,7 +179,6 @@ def train_model(args_dict,
         disrnn_params = None
 
     x, y = next(dataset_train)
-    
     # -------------------------------------------------------------
     # Give your run a more meaningful name:
     # -------------------------------------------------------------

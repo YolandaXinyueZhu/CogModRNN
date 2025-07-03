@@ -948,18 +948,16 @@ def plot_bottlenecks(
     save_folder_name,
     sort_latents: bool = True,
 ) -> plt.Figure:
-  """Plot the bottleneck sigmas from an hk.DisentangledRNN."""
+    """Plot the bottleneck sigmas from an hk.DisentangledRNN."""
 
-  save_dir = save_folder_name
-  os.makedirs(save_dir, exist_ok=True)
-  plot_path = os.path.join(save_dir, "bottleneck.png")
+    save_dir = save_folder_name
+    os.makedirs(save_dir, exist_ok=True)
+    plot_path = os.path.join(save_dir, "bottleneck.png")
 
-  if True:
     params_disrnn = params['hk_disentangled_rnn']
     subject_embedding_size = 0
     update_input_names = disrnn_config.x_names
     # For update_sigmas: concatenate transposed reparameterized sigmas
-    # Order of inputs to update nets: observations, latents
     update_obs_sigmas_t = np.transpose(
         disrnn.reparameterize_sigma(
             params_disrnn['update_net_obs_sigma_params']
@@ -971,111 +969,108 @@ def plot_bottlenecks(
         )
     )
     update_sigmas = np.concatenate(
-        (update_obs_sigmas_t, update_latent_sigmas_t), axis=1)
+        (update_obs_sigmas_t, update_latent_sigmas_t), axis=1
+    )
     choice_sigmas = np.array(
         disrnn.reparameterize_sigma(
             np.transpose(params_disrnn['choice_net_sigma_params'])
         )
     )
-  else:
-    raise ValueError(
-        'plot_bottlenecks only supports DisRnnConfig and'
-        ' MultisubjectDisRnnConfig.'
+
+    latent_sigmas = np.array(
+        disrnn.reparameterize_sigma(params_disrnn['latent_sigma_params'])
     )
 
-  latent_sigmas = np.array(
-      disrnn.reparameterize_sigma(params_disrnn['latent_sigma_params'])
-  )
+    if sort_latents:
+        latent_sigma_order = np.argsort(latent_sigmas)
+        latent_sigmas = latent_sigmas[latent_sigma_order]
+        
+        choice_sigma_order = np.concatenate(
+            (
+                np.arange(0, subject_embedding_size),
+                subject_embedding_size + latent_sigma_order,
+            ),
+            axis=0,
+        )
+        choice_sigmas = choice_sigmas[choice_sigma_order]
 
-  if sort_latents:
-    latent_sigma_order = np.argsort(latent_sigmas)
-    latent_sigmas = latent_sigmas[latent_sigma_order]
-    print("latent sigmas",latent_sigmas)
+        non_latent_input_size = subject_embedding_size + disrnn_config.obs_size
+        update_sigma_order = np.concatenate(
+            (
+                np.arange(0, non_latent_input_size, 1),
+                non_latent_input_size + latent_sigma_order,
+            ),
+            axis=0,
+        )
+        update_sigmas = update_sigmas[latent_sigma_order, :]
+        update_sigmas = update_sigmas[:, update_sigma_order]
 
-    # Sort choice sigmas based on the order of latents, keeping subject
-    # embedding dimensions first if they exist.
-    choice_sigma_order = np.concatenate(
-        (
-            np.arange(0, subject_embedding_size),
-            subject_embedding_size + latent_sigma_order,
-        ),
-        axis=0,
+    latent_names = np.arange(1, disrnn_config.latent_size + 1)
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
+    # Plot Latent Bottlenecks on axes[0]
+    im1 = axes[0].imshow(np.swapaxes([1 - latent_sigmas], 0, 1), cmap='Oranges')
+    im1.set_clim(vmin=0, vmax=1)
+    axes[0].set_yticks(
+        ticks=range(disrnn_config.latent_size),
+        labels=latent_names,
+        fontsize=small,
     )
-    choice_sigmas = choice_sigmas[choice_sigma_order]
+    axes[0].set_xticks(ticks=[])
+    axes[0].set_ylabel('Latent #', fontsize=medium)
+    axes[0].set_title('Latent Bottlenecks', fontsize=large)
 
-    # Sort update sigmas based on the order of latents, keeping subject
-    # embedding dimensions first if they exist, then observations, then latents.
-    non_latent_input_size = subject_embedding_size + disrnn_config.obs_size
-    update_sigma_order = np.concatenate(
-        (
-            np.arange(0, non_latent_input_size, 1),
-            non_latent_input_size + latent_sigma_order,
-        ),
-        axis=0,
+    # Plot Choice Bottlenecks on axes[1]
+    choice_input_dim = subject_embedding_size + disrnn_config.latent_size
+    choice_input_names = np.concatenate((
+        [f'SubjEmb {i+1}' for i in range(subject_embedding_size)],
+        [f'Latent {i}' for i in latent_names]
+    ))
+    im2 = axes[1].imshow(np.swapaxes([1 - choice_sigmas], 0, 1), cmap='Oranges')
+    im2.set_clim(vmin=0, vmax=1)
+    axes[1].set_yticks(
+        ticks=range(choice_input_dim), labels=choice_input_names, fontsize=small
     )
-    update_sigmas = update_sigmas[latent_sigma_order, :]
-    update_sigmas = update_sigmas[:, update_sigma_order]
+    axes[1].set_xticks(ticks=[])
+    axes[1].set_ylabel('Choice Network Input', fontsize=medium)
+    axes[1].set_title('Choice Network Bottlenecks', fontsize=large)
 
-  latent_names = np.arange(1, disrnn_config.latent_size + 1)
-  fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+    # Plot Update Bottlenecks on axes[2]
+    im3 = axes[2].imshow(1 - update_sigmas, cmap='Oranges')
+    im3.set_clim(vmin=0, vmax=1)
+    cbar = fig.colorbar(im3, ax=axes[2])
+    cbar.ax.tick_params(labelsize=small)
+    axes[2].set_yticks(
+        ticks=range(disrnn_config.latent_size),
+        labels=latent_names,
+        fontsize=small,
+    )
+    # X-axis corresponds to the inputs to the update network: observations then latents
+    # Rename the first two observation labels and label the rest as stimuli
+    renamed_update_inputs = []
+    for idx in range(len(update_input_names)):
+        if idx == 0:
+            renamed_update_inputs.append('prev correct')
+        elif idx == 1:
+            renamed_update_inputs.append('prev choice')
+        else:
+            renamed_update_inputs.append(f'stimulus {idx-1}')
+    xlabels = renamed_update_inputs + [f'Latent {i}' for i in latent_names]
+    axes[2].set_xticks(
+        ticks=range(len(xlabels)),
+        labels=xlabels,
+        rotation='vertical',
+        fontsize=small,
+    )
+    axes[2].set_ylabel('Latent #', fontsize=medium)
+    axes[2].set_xlabel('Update Network Inputs', fontsize=medium)
+    axes[2].set_title('Update Network Bottlenecks', fontsize=large)
+    fig.tight_layout()
+    plt.savefig(plot_path)
+    plt.close(fig)
+    print(f"Bottleneck plot saved to {plot_path}")
+    return fig
 
-  # Plot Latent Bottlenecks on axes[0]
-  im1 = axes[0].imshow(np.swapaxes([1 - latent_sigmas], 0, 1), cmap='Oranges')
-  im1.set_clim(vmin=0, vmax=1)
-  axes[0].set_yticks(
-      ticks=range(disrnn_config.latent_size),
-      labels=latent_names,
-      fontsize=small,
-  )
-  axes[0].set_xticks(ticks=[])
-  axes[0].set_ylabel('Latent #', fontsize=medium)
-  axes[0].set_title('Latent Bottlenecks', fontsize=large)
-
-  # Plot Choice Bottlenecks on axes[1]
-  # These bottlenecks apply to the inputs of the choice network:
-  # [subject embeddings, latents]
-  choice_input_dim = subject_embedding_size + disrnn_config.latent_size
-  choice_input_names = np.concatenate((
-      [f'SubjEmb {i+1}' for i in range(subject_embedding_size)],
-      [f'Latent {i}' for i in latent_names]
-  ))
-  im2 = axes[1].imshow(np.swapaxes([1 - choice_sigmas], 0, 1), cmap='Oranges')
-  im2.set_clim(vmin=0, vmax=1)
-  axes[1].set_yticks(
-      ticks=range(choice_input_dim), labels=choice_input_names, fontsize=small
-  )
-  axes[1].set_xticks(ticks=[])
-  axes[1].set_ylabel('Choice Network Input', fontsize=medium)
-  axes[1].set_title('Choice Network Bottlenecks', fontsize=large)
-
-  # Plot Update Bottlenecks on axes[2]
-  im3 = axes[2].imshow(1 - update_sigmas, cmap='Oranges')
-  im3.set_clim(vmin=0, vmax=1)
-  cbar = fig.colorbar(im3, ax=axes[2])
-  # Y-axis corresponds to the target latent (sorted if sort_latents=True)
-  cbar.ax.tick_params(labelsize=small)
-  axes[2].set_yticks(
-      ticks=range(disrnn_config.latent_size),
-      labels=latent_names,
-      fontsize=small,
-  )
-  # X-axis corresponds to the inputs to the update network:
-  # [subject embeddings, observations, latents]
-  xlabels = update_input_names + [f'Latent {i}' for i in latent_names]
-  axes[2].set_xticks(
-      ticks=range(len(xlabels)),
-      labels=xlabels,
-      rotation='vertical',
-      fontsize=small,
-  )
-  axes[2].set_ylabel('Latent #', fontsize=medium)
-  axes[2].set_xlabel('Update Network Inputs', fontsize=medium)
-  axes[2].set_title('Update Network Bottlenecks', fontsize=large)
-  fig.tight_layout()  # Adjust layout to prevent overlap
-  plt.savefig(plot_path)
-  plt.close(fig)
-  print(f"Bottleneck plot saved to {plot_path}")
-  return fig
 
 def plot_update_rules(
     params: hk.Params,
@@ -1523,8 +1518,17 @@ def plot_latent_activations(
     # ─── colour maps for slot / clue / context now use colour‑blind palette ─────
     slot_cmap     = mcolors.ListedColormap(sns.color_palette("colorblind", 4))
     slot_norm     = mcolors.BoundaryNorm(boundaries=np.arange(5), ncolors=4)
-    clue_cmap     = mcolors.ListedColormap(sns.color_palette("colorblind", 8))
-    clue_norm     = mcolors.BoundaryNorm(boundaries=np.arange(9), ncolors=8)
+    # Define a 16-color colorblind-friendly palette (based on Tol & Okabe/Ito with perceptual spacing)
+    custom_clue_colors = [
+        "#332288", "#88CCEE", "#44AA99", "#117733",  # 1–4
+        "#DDCC77", "#CC6677", "#AA4499", "#882255",  # 5–8
+        "#6699CC", "#999933", "#E69F00", "#56B4E9",  # 9–12
+        "#009E73", "#F0E442", "#0072B2", "#D55E00",  # 13–16
+    ]
+
+    clue_cmap = mcolors.ListedColormap(custom_clue_colors)
+    clue_norm = mcolors.BoundaryNorm(boundaries=np.arange(17), ncolors=16)
+
     context_cmap  = mcolors.ListedColormap(sns.color_palette("colorblind", 2))
     context_norm  = mcolors.BoundaryNorm(boundaries=np.arange(3), ncolors=2)
 
@@ -1541,9 +1545,9 @@ def plot_latent_activations(
         green_patch   = Patch(facecolor=CB_GREEN,   alpha=0.4, label="prev_correct = 1")
         blue_patch    = Patch(facecolor=CB_BLUE,    alpha=0.4, label="prev_choice = 1")
         slot_patches  = [Patch(facecolor=slot_cmap(j),    label=f"Slot {j+1}") for j in range(4)]
-        clue_patches  = [Patch(facecolor=clue_cmap(j),    label=f"Clue {j+1}") for j in range(8)]
+        clue_patches = [Patch(facecolor=clue_cmap(j), label=f"Stimulus {j+1}") for j in range(16)]
         context_patches = [Patch(facecolor=context_cmap(j), label=f"Context {j+1}") for j in range(2)]
-        bar_handles = [orange_patch, sky_patch, green_patch, blue_patch] + slot_patches + clue_patches + context_patches
+        bar_handles = slot_patches + clue_patches + context_patches
 
         for row_idx, seq_idx in enumerate(seq_list):
             inner = outer[row_idx].subgridspec(nrows=4, ncols=1,
@@ -1577,7 +1581,7 @@ def plot_latent_activations(
             ax_act.text(end, y_max + 0.8*Δ, "Sequence End", rotation=90,
                         va="top", ha="right", fontsize=9, color="black",
                         zorder=3)
-
+            '''
             # ── quarter-height event bars (CB palette) ───────────────────
             for t in np.where(model_choose_one[:, seq_idx])[0]:
                 ax_act.axvspan(t, t+1, ymin=0.00, ymax=0.25,
@@ -1591,6 +1595,7 @@ def plot_latent_activations(
             for t in np.where(prev_choice[:, seq_idx] == 1)[0]:
                 ax_act.axvspan(t, t+1, ymin=0.75, ymax=1.00,
                                facecolor=CB_BLUE, alpha=0.4, zorder=2)
+            '''
 
             ax_act.set_ylabel(f"Latent {i+1}")
             ax_act.set_title(f"Sequence {seq_idx}")
@@ -1646,19 +1651,9 @@ def plot_latent_activations(
         plt.close(fig)
         print(f"Saved: {path}")
 
-
 def main(seed, saved_checkpoint_pth):
     # Set the seed for reproducibility
     np.random.seed(seed)
-
-    # Dataset setup
-    dataset_type = 'RealWorldKimmelfMRIDataset'
-    dataset_path = "/home/rsw0/Desktop/yolanda/CogModRNN/CogModRNN/dataset/tensor_for_dRNN_desc-syn_nSubs-2000_nSessions-4_nBlocks-7_nTrialsPerBlock-25_b-multiple_20250613.mat"
-    dataset_train, dataset_test, train_test_split_variables = preprocess_data(dataset_type, dataset_path, 0.1)
-
-    # Save folder setup
-    save_folder_name = os.path.join('plots', saved_checkpoint_pth.split('checkpoints_new_data/')[1].split('.pkl')[0])
-    os.makedirs(save_folder_name, exist_ok=True)
 
     # Load checkpoint data
     with open(saved_checkpoint_pth, 'rb') as file:
@@ -1666,6 +1661,20 @@ def main(seed, saved_checkpoint_pth):
 
     args_dict = checkpoint['args_dict']
     print(args_dict)
+
+    # Dataset setup
+    dataset_type = 'RealWorldKimmelfMRIDataset'
+    dataset_train, dataset_test, train_test_split_variables = preprocess_data(dataset_type=dataset_type, 
+                                                                              path=args_dict["dataset_path"], 
+                                                                              test_prop=0.1,
+                                                                              randomize_stimulus_ID=True, 
+                                                                              seed=42)
+
+    # Save folder setup
+    save_folder_name = os.path.join('plots', saved_checkpoint_pth.split('checkpoints/')[1].split('.pkl')[0])
+    os.makedirs(save_folder_name, exist_ok=True)
+
+
     disrnn_params = checkpoint['params']
     print(f'Loaded disrnn_params from {saved_checkpoint_pth}')
 
@@ -1690,11 +1699,15 @@ def main(seed, saved_checkpoint_pth):
    
     # Training and evaluation
     xs_train, ys_train = next(dataset_train)
+    xs_test, ys_test = next(dataset_test)
 
     print('Normalized Likelihoods and Accuracies for disRNN')
     print('Training Dataset')
     train_norm_likelihood, _ = compute_log_likelihood_and_accuracy(xs_train, ys_train, make_disrnn, disrnn_params)
     pred_train, ys_train, xs_train = evaluate(xs_train, ys_train, make_disrnn, disrnn_params)
+    print('Testings Dataset')
+    train_norm_likelihood, _ = compute_log_likelihood_and_accuracy(xs_test, ys_test, make_disrnn, disrnn_params)
+    pred_test, ys_test, xs_test = evaluate(xs_test, ys_test, make_disrnn, disrnn_params)
 
     # Create DataFrame for plotting
     df_train = create_dataframe_for_plotting(
@@ -1703,7 +1716,6 @@ def main(seed, saved_checkpoint_pth):
     log_probs_train = np.log(df_train['human_chosen_action_prob'])
     normalized_likelihood_upper_bound_train = np.exp(np.mean(log_probs_train))
     print("Model Normalized likelihood Upperbound for training", normalized_likelihood_upper_bound_train)
-    
 
 
     # Ensure these columns exist for plotting

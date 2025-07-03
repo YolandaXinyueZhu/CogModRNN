@@ -18,3 +18,4 @@ __pycache__/
 disrnn_venv/
 plots*/
 loss/
+disentangled_rnns_new/

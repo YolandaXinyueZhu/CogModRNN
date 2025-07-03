@@ -42,36 +42,89 @@ warnings.filterwarnings("ignore")
 # =====================================================================
 # -----------------------------  DATA  --------------------------------
 # =====================================================================
+def _randomize_state_onehot(state_oh: np.ndarray, *, rng: np.random.Generator) -> np.ndarray:
+    """Permute observation columns *within each session* (groups of four).
 
-def load_data(fname, data_dir="./"):
-    """Loads a single‐subject MATLAB file and packages variables."""
+    Parameters
+    ----------
+    state_oh
+        One‑hot state tensor of shape ``[T, E, 16]`` where 16 = 4 sessions ×
+        4 slots per session.
+    rng
+        ``numpy.random.Generator`` initialised with the global ``--seed``.
+
+    Returns
+    -------
+    np.ndarray
+        Tensor of the same shape with columns permuted per‑sequence and
+        per‑session.
+    """
+    if state_oh.shape[-1] != 16:
+        raise ValueError("`randomize_stimulus_ID` currently assumes 16 stimulus columns (4 sessions × 4 slots).")
+
+    T, E, D = state_oh.shape
+    group_size = 4  # columns per session
+    n_sessions = D // group_size
+
+    # Work on a copy to keep the original array untouched
+    out = state_oh.copy()
+
+    for seq in range(E):
+        # Build a single permutation vector covering all 16 columns, but
+        # constrained to within‑session shuffling.
+        full_perm = np.arange(D)
+        for s in range(n_sessions):
+            grp_idx = np.arange(s * group_size, (s + 1) * group_size)
+            full_perm[grp_idx] = grp_idx[rng.permutation(group_size)]
+        # Apply permutation (same for the whole time‑axis, only varies across sequences)
+        out[:, seq, :] = out[:, seq, full_perm]
+
+    return out
+
+
+def load_data(
+    fname: str,
+    data_dir: str = "./",
+    *,
+    randomize_stimulus_ID: bool = False,
+    seed = None,
+):
+    """Loads a single‐subject MATLAB file and packages variables.
+
+    If ``randomize_stimulus_ID`` is *True*, the 16 stimulus observation columns
+    (organised as 4 sessions × 4 slots) are **randomly permuted** within each
+    session and independently for every sequence.
+    """
     mat = sio.loadmat(os.path.join(data_dir, fname))
     data      = mat["tensor"]
     var_names = [v.item() for v in mat["vars_in_tensor"].ravel()]
     vars_for_state = [v.item() for v in mat["vars_for_state"].ravel()]
 
-    # Build dict of [T, E, 1] arrays
+    # Build dict of [trial, sequence, 1] arrays
     ddict = {}
     for v in var_names:
         idx   = (np.array(var_names) == v).flatten()
         arr   = np.transpose(data[:, :, idx], (1, 0, 2))
         ddict[v] = arr
 
-    # ---- special variables -------------------------------------------------
     if "state" in ddict:
         zs = np.clip(ddict["state"] - 1, a_min=-1, a_max=None)
         ddict["state"]        = zs
         ddict["state_onehot"] = zs_to_onehot(zs)
-        print(zs_to_onehot(zs).shape)
 
     if "bitResponseA" in ddict:
         ddict["ys"] = ddict["bitResponseA"]
 
     if "bitCorr_prev" in ddict and "bitResponseA_prev" in ddict:
         ddict["xs"] = np.concatenate(
-            [ddict["bitCorr_prev"], ddict["bitResponseA_prev"]], axis=2
+            [ddict["bitResponseA_prev"], ddict["bitCorr_prev"]], axis=2
         )
 
+    if randomize_stimulus_ID:
+        rng = np.random.default_rng(seed)
+        ddict["state_onehot"] = _randomize_state_onehot(ddict["state_onehot"], rng=rng)
+
+    # Build final inputs (prev‑choice / prev‑rwd + (possibly permuted) stimulus‑ID)
     ddict["inputs"] = np.concatenate(
         [ddict["xs"], ddict["state_onehot"]], axis=-1
     )
@@ -119,7 +172,6 @@ def create_train_test_datasets(data_dict,
         xs[:, idx[n_train:]], ys[:, idx[n_train:]], y_type="categorical"
     )
 
-
     # also return a split copy of any extra fields
     split_vars = {}
     for k in data_dict:
@@ -132,14 +184,21 @@ def create_train_test_datasets(data_dict,
     return train, test, split_vars
 
 
-def preprocess_data(dataset_type, path, test_prop):
+def preprocess_data(dataset_type,
+                    path,
+                    test_prop,
+                    *,
+                    randomize_stimulus_ID: bool = False,
+                    seed = None):
     if dataset_type != "RealWorldKimmelfMRIDataset":
         raise ValueError("Unsupported dataset type.")
 
     if not os.path.exists(path):
         raise ValueError(f"File {path} not found.")
 
-    d = load_data(path)
+    d = load_data(path,
+                  randomize_stimulus_ID=randomize_stimulus_ID,
+                  seed=seed)
     train, test, meta = create_train_test_datasets(
         d, rnn_utils.DatasetRNN, test_prop
     )
@@ -230,43 +289,6 @@ def train_model(
     x, y = next(dataset_train)
 
     # -------------------------------------------------
-    # Run-name / wandb initialisation
-    # -------------------------------------------------
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    run_name = (
-        f"ls_{latent_size}"                                   # latent-state size
-        f"_umlp_{'-'.join(map(str, update_mlp_shape))}"       # Update-MLP shape
-        f"_cmlp_{'-'.join(map(str, choice_mlp_shape))}"       # Choice-MLP shape
-        f"_lparam_{loss_param}"
-        f"_lp_{latent_penalty}"                               # latent_penalty
-        f"_uobs_{update_net_obs_penalty}"                     # update_net_obs_penalty
-        f"_ulat_{update_net_latent_penalty}"                  # update_net_latent_penalty
-        f"_clat_{choice_net_latent_penalty}"                  # choice_net_latent_penalty
-        f"_l2_{l2_scale}"                                     # L2 weight-decay
-        f"_{ts}"                                              # timestamp
-    )
-
-    suffix = args_dict.get("run_name", "")
-    if suffix:
-        run_name = f"{run_name}_{suffix}"
-
-    wandb.init(
-        project="CogModRNN",
-        entity="yolandaz",
-        name=run_name,
-        config={
-            **args_dict,
-            "run_name": run_name,
-        },
-    )
-
-    # dirs
-    plot_dir = os.path.join("plots_2025", run_name)
-    ckpt_dir = os.path.join("checkpoints_06", run_name)
-    os.makedirs(plot_dir, exist_ok=True)
-    os.makedirs(ckpt_dir, exist_ok=True)
-
-    # -------------------------------------------------
     # Model builders
     # -------------------------------------------------
     def make_disrnn():
@@ -300,6 +322,56 @@ def train_model(
             l2_scale = 0.0,      # ← no weight-decay in warm-up
         )
         return disrnn.HkDisentangledRNN(cfg)
+    
+    def _unroll(xs):
+        core = make_disrnn()
+        bsz = jnp.shape(xs)[1]
+        state = core.initial_state(bsz)
+        _ , _ = hk.dynamic_unroll(core, xs, state)   # forward pass (no loss yet)
+        return 0.0                                   # dummy value
+
+    _full_model = hk.transform(_unroll)
+    dummy_key   = jax.random.PRNGKey(args_dict.get("seed", 0))
+    full_params = _full_model.init(dummy_key, x)     # <- x is your sample batch
+    n_params    = disrnn.count_parameters(full_params)
+
+    print(f"Model has {n_params:,} trainable parameters.")          # e.g. 44,402
+
+    # -------------------------------------------------
+    # Run-name / wandb initialisation
+    # -------------------------------------------------
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_name = (
+        f"ls_{latent_size}"                                   # latent-state size
+        f"_umlp_{'-'.join(map(str, update_mlp_shape))}"       # Update-MLP shape
+        f"_cmlp_{'-'.join(map(str, choice_mlp_shape))}"       # Choice-MLP shape
+        f"_lparam_{loss_param}"
+        f"_lp_{latent_penalty}"                               # latent_penalty
+        f"_uobs_{update_net_obs_penalty}"                     # update_net_obs_penalty
+        f"_ulat_{update_net_latent_penalty}"                  # update_net_latent_penalty
+        f"_clat_{choice_net_latent_penalty}"                  # choice_net_latent_penalty
+        f"_l2_{l2_scale}"                                     # L2 weight-decay
+        f"_n_{n_params}"
+        f"_{ts}"                                              # timestamp
+    )
+
+    suffix = args_dict.get("run_name", "")
+    if suffix:
+        run_name = f"{run_name}_{suffix}"
+
+    wandb.init(
+        project="CogModRNN",
+        entity="yolandaz",
+        name=run_name,
+        config={
+            **args_dict,
+            "run_name": run_name,
+        },
+    )
+
+    # dirs
+    plot_dir = os.path.join("plots_2025", run_name)
+    os.makedirs(plot_dir, exist_ok=True)
 
     opt = optax.adam(1e-3)
 
@@ -359,13 +431,15 @@ def main(args):
     # Devices
     devs = jax.devices("gpu")
     print(f"JAX devices: {devs if devs else 'CPU'}")
-    np_rng = np.random.default_rng(args.seed)
 
     # ---------- data ----------
     dataset_type = "RealWorldKimmelfMRIDataset"
-    dataset_path = args.dataset_path
     train_ds, test_ds, _ = preprocess_data(
-        dataset_type, dataset_path, args.validation_proportion
+        dataset_type=dataset_type,
+        path=args.dataset_path,
+        test_prop=args.validation_proportion,
+        randomize_stimulus_ID=args.randomize_stimulus_ID,
+        seed=args.seed,
     )
 
     # ---------- train ----------
@@ -395,20 +469,23 @@ if __name__ == "__main__":
     parser.add_argument("--validation_proportion", type=float, default=0.1)
     parser.add_argument("--latent_size", type=int, default=10)
     parser.add_argument("--update_mlp_shape",
-                        nargs="+", type=int, default=[20, 20, 20, 20])
+                        nargs="+", type=int, default=[22, 22, 22, 22])
     parser.add_argument("--choice_mlp_shape",
-                        nargs="+", type=int, default=[16, 16, 16])
+                        nargs="+", type=int, default=[5, 5])
     parser.add_argument("--n_training_steps", type=int, default=50000)
     parser.add_argument("--n_warmup_steps", type=int, default=1000)
     parser.add_argument("--n_steps_per_call", type=int, default=500)
     parser.add_argument("--saved_checkpoint_pth", type=str, default=None)
 
-    parser.add_argument("--latent_penalty",            type=float, default=1e-4)
-    parser.add_argument("--update_net_obs_penalty",    type=float, default=2e-3)
-    parser.add_argument("--update_net_latent_penalty", type=float, default=2e-3)
-    parser.add_argument("--choice_net_latent_penalty", type=float, default=1e-4)
-    parser.add_argument("--l2_scale",                  type=float, default=1e-5)
-    parser.add_argument("--loss_param",                type=float, default=0.1)
+    parser.add_argument("--latent_penalty",            type=float, default=0.1)
+    parser.add_argument("--update_net_obs_penalty",    type=float, default=0.1)
+    parser.add_argument("--update_net_latent_penalty", type=float, default=1)
+    parser.add_argument("--choice_net_latent_penalty", type=float, default=0.1)
+    parser.add_argument("--l2_scale",                  type=float, default=0.001)
+    parser.add_argument("--loss_param",                type=float, default=0.5)
+
+    parser.add_argument("--randomize_stimulus_ID", action="store_true",
+                        help="Shuffle the 16 stimulus columns within each session.")
 
     # new arguments
     parser.add_argument("--dataset_path", type=str,
