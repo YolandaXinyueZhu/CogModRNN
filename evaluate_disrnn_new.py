@@ -461,7 +461,7 @@ def create_dataframe_for_plotting(predictions,
 
     # "rwd" logic: reward at trial t is the outcome from the next time-step's xs (column 0).
     # This often depends on how your dataset is structured, but here's a typical approach:
-    rwd = np.vstack((xs[1:, :, 0], np.zeros((1, xs.shape[1])))).ravel()
+    rwd = np.vstack((xs[1:, :, 1], np.zeros((1, xs.shape[1])))).ravel()
     
     df = pd.DataFrame({
         'context': context,

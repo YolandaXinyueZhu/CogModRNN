@@ -266,6 +266,7 @@ def train_model(
     n_steps_per_call,   # kept for CLI parity (not used)
     saved_checkpoint_pth=None,
     checkpoint_interval=100,  # Save checkpoint every checkpoint_interval steps
+    ntrials=None,
 ):
 
     # -------------------------------------------------
@@ -352,6 +353,7 @@ def train_model(
         f"_clat_{choice_net_latent_penalty}"                  # choice_net_latent_penalty
         f"_l2_{l2_scale}"                                     # L2 weight-decay
         f"_n_{n_params}"
+        f"_ntrials_{ntrials}"
         f"_{ts}"                                              # timestamp
     )
 
@@ -442,6 +444,24 @@ def main(args):
         seed=args.seed,
     )
 
+    if args.n_trials_train is not None:
+        # how many we have vs. how many we want
+        total_train = train_ds._xs.shape[1]
+        n_use = min(args.n_trials_train, total_train)
+        if n_use < total_train:
+            # reproducible shuffle using the same seed
+            rng = np.random.default_rng(args.seed)
+            idx = rng.permutation(total_train)[:n_use]
+            # rebuild the DatasetRNN on the sliced arrays
+            train_ds = rnn_utils.DatasetRNN(
+                train_ds._xs[:, idx],
+                train_ds._ys[:, idx],
+                y_type="categorical",
+            )
+            print(f"Subsampled training dataset to {n_use} trials (of {total_train}).")
+        else:
+            print(f"Requested {args.n_trials_train} trials; using all {total_train} available.")
+
     # ---------- train ----------
     train_model(
         args_dict       = vars(args),
@@ -460,6 +480,7 @@ def main(args):
         n_warmup_steps  = args.n_warmup_steps,
         n_steps_per_call= args.n_steps_per_call,
         saved_checkpoint_pth = args.saved_checkpoint_pth,
+        ntrials = args.n_trials_train
     )
 
 
@@ -469,23 +490,26 @@ if __name__ == "__main__":
     parser.add_argument("--validation_proportion", type=float, default=0.1)
     parser.add_argument("--latent_size", type=int, default=10)
     parser.add_argument("--update_mlp_shape",
-                        nargs="+", type=int, default=[22, 22, 22, 22])
+                        nargs="+", type=int, default=[32, 32, 32, 32])
     parser.add_argument("--choice_mlp_shape",
                         nargs="+", type=int, default=[5, 5])
-    parser.add_argument("--n_training_steps", type=int, default=50000)
-    parser.add_argument("--n_warmup_steps", type=int, default=1000)
+    parser.add_argument("--n_training_steps", type=int, default=20000)
+    parser.add_argument("--n_warmup_steps", type=int, default=3000)
     parser.add_argument("--n_steps_per_call", type=int, default=500)
     parser.add_argument("--saved_checkpoint_pth", type=str, default=None)
 
     parser.add_argument("--latent_penalty",            type=float, default=0.1)
-    parser.add_argument("--update_net_obs_penalty",    type=float, default=0.1)
+    parser.add_argument("--update_net_obs_penalty",    type=float, default=1)
     parser.add_argument("--update_net_latent_penalty", type=float, default=1)
-    parser.add_argument("--choice_net_latent_penalty", type=float, default=0.1)
+    parser.add_argument("--choice_net_latent_penalty", type=float, default=1)
     parser.add_argument("--l2_scale",                  type=float, default=0.001)
-    parser.add_argument("--loss_param",                type=float, default=0.5)
-
+    parser.add_argument("--loss_param",                type=float, default=0.0007)
     parser.add_argument("--randomize_stimulus_ID", action="store_true",
                         help="Shuffle the 16 stimulus columns within each session.")
+    parser.add_argument(
+                "--regression", action="store_true",
+                help="If set, train the network to regress P(A) with MSE instead of classify."
+            )
 
     # new arguments
     parser.add_argument("--dataset_path", type=str,
@@ -493,6 +517,12 @@ if __name__ == "__main__":
                         help="Path to the dataset file")
     parser.add_argument("--run_name", type=str, default="",
                         help="Optional suffix to append to the WandB run name")
+    
+    parser.add_argument(
+        "--n_trials_train", type=int, default=None,
+        help="Maximum number of training trials to use (default: all)"
+    )
+
 
     args = parser.parse_args()
 
